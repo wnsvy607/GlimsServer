@@ -13,14 +13,15 @@ import javax.persistence.Table;
 import com.glimps.glimpsserver.user.domain.User;
 
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-@NoArgsConstructor
-@Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "reviews")
+@Entity
 public class Review {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +33,7 @@ public class Review {
 	@Column(name = "body")
 	private String body;
 
-	@JoinColumn
+	@JoinColumn(name = "user_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 
