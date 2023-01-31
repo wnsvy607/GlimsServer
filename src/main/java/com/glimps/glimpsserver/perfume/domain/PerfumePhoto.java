@@ -20,5 +20,9 @@ public class PerfumePhoto {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "perfume_id")
     private Perfume perfume;
+    
+    private String Url;
+
+
 
 }
