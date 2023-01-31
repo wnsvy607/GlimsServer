@@ -28,7 +28,7 @@ public class Perfume {
     private double longevityRatings;
     private double sillageRatings;
 
-    private Integer reviewCnt;
+    private int reviewCnt;
 
 
     @Builder.Default
