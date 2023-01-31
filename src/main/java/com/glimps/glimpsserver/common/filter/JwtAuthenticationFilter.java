@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import com.glimps.glimpsserver.common.security.UserAuthentication;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
-import com.glimps.glimpsserver.user.domain.Role;
+import com.glimps.glimpsserver.user.domain.User;
 
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 	private final AuthenticationService authenticationService;
@@ -37,8 +37,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 			//TODO refresh token에 대한 처리 필요
 			String accessToken = authorization.substring("Bearer ".length());
 			String email = authenticationService.parseToken(accessToken);
-			List<Role> roles = authenticationService.getRoles(email);
-			Authentication authentication = new UserAuthentication(email, roles);
+			List<User> users = authenticationService.getRoles(email);
+			Authentication authentication = new UserAuthentication(email, users);
 
 			SecurityContext context = SecurityContextHolder.getContext();
 			context.setAuthentication(authentication);

@@ -7,7 +7,7 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import com.glimps.glimpsserver.user.domain.Role;
+import com.glimps.glimpsserver.user.domain.User;
 
 import lombok.Getter;
 
@@ -15,9 +15,16 @@ import lombok.Getter;
 public class UserAuthentication extends AbstractAuthenticationToken {
 	private final String email;
 
-	public UserAuthentication(String email, List<Role> roles) {
-		super(authorities(roles));
+
+	public UserAuthentication(String email, List<User> users) {
+		super(authorities(users));
 		this.email = email;
+	}
+
+	private static List<GrantedAuthority> authorities(List<User> users) {
+		return users.stream()
+			.map(user -> new SimpleGrantedAuthority(user.getRole().toString()))
+			.collect(Collectors.toList());
 	}
 
 	@Override
@@ -40,9 +47,13 @@ public class UserAuthentication extends AbstractAuthenticationToken {
 		return "Authentication(" + email + ")";
 	}
 
-	private static List<GrantedAuthority> authorities(List<Role> roles) {
-		return roles.stream()
-				.map(role -> new SimpleGrantedAuthority(role.getType().toString()))
-				.collect(Collectors.toList());
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 }
