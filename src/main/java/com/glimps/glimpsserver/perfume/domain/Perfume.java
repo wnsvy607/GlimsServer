@@ -1,5 +1,6 @@
 package com.glimps.glimpsserver.perfume.domain;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,12 +34,15 @@ public class Perfume {
 
     private int reviewCnt;
 
+
     protected Perfume() {
     }
+
 
     @Builder.Default
     @OneToMany(mappedBy = "perfume")
     private List<PerfumeTags> perfumeTags = new ArrayList<>();
+
 
     @Builder
     public Perfume(String brand, String perfumeName, double overallRatings, double longevityRatings,
