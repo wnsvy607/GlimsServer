@@ -26,7 +26,7 @@ public class ControllerErrorAdvice {
 
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
-		log.error("Exception occurs: {}", e.getErrorCode().getMessage());
+		log.error("Exception occurs: {}", e.getMessage());
 		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getStatus(), e.getMessage());
 		return ResponseEntity.status(errorResponse.getStatus())
 			.body(errorResponse);

@@ -6,16 +6,16 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
-	EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "E-001", "예외가 발생했습니다.");
+	EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "E-001"),
+	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "E-002");
+
 
 
 	private final HttpStatus status;
 	private final String code;
-	private final String message;
 
-	ErrorCode(HttpStatus status, String errorCode, String message) {
+	ErrorCode(HttpStatus status, String errorCode) {
 		this.status = status;
 		this.code = errorCode;
-		this.message = message;
 	}
 }
