@@ -6,16 +6,19 @@ import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
+import com.glimps.glimpsserver.common.error.CustomException;
+import com.glimps.glimpsserver.common.error.ErrorCode;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 
 @Component
-public class jwtUtil {
+public class JwtUtil {
 	private final Key key;
 
-	public jwtUtil() {
+	public JwtUtil() {
 		byte[] arr = new byte[32];
 		new Random().nextBytes(arr);
 		this.key = Keys.hmacShaKeyFor(arr);
@@ -32,7 +35,7 @@ public class jwtUtil {
 
 	public Claims decode(String token) {
 		if (token == null || token.isBlank()) {
-			// TODO: 2023/01/27 throw exception
+			throw new CustomException(ErrorCode.INVALID_TOKEN, "[ERROR] Invalid Token(token :" + token + ")");
 		}
 		try {
 			return Jwts.parserBuilder()
@@ -41,7 +44,7 @@ public class jwtUtil {
 				.parseClaimsJws(token)
 				.getBody();
 		} catch (SignatureException e) {
-			// TODO: 2023/01/27 throw exception
+			throw new CustomException(ErrorCode.INVALID_TOKEN, "[ERROR] Invalid Token(token :" + token + ")");
 		}
 	}
 }
