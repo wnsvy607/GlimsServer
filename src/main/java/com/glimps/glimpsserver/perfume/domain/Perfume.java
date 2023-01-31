@@ -11,14 +11,16 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "perfume")
 @Entity
-
 public class Perfume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,26 +36,14 @@ public class Perfume {
 
     private int reviewCnt;
 
-
-    protected Perfume() {
-    }
-
-
-    @Builder.Default
-    @OneToMany(mappedBy = "perfume")
-    private List<PerfumeTags> perfumeTags = new ArrayList<>();
-
-
     @Builder
     public Perfume(String brand, String perfumeName, double overallRatings, double longevityRatings,
-        double sillageRatings,
-        int reviewCnt, List<PerfumeTags> perfumeTags) {
+                   double sillageRatings, int reviewCnt) {
         this.brand = brand;
         this.perfumeName = perfumeName;
         this.overallRatings = overallRatings;
         this.longevityRatings = longevityRatings;
         this.sillageRatings = sillageRatings;
         this.reviewCnt = reviewCnt;
-        this.perfumeTags = perfumeTags;
     }
 }
