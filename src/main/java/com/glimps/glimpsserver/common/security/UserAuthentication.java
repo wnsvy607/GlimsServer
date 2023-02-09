@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.glimps.glimpsserver.user.domain.User;
 
@@ -15,10 +18,10 @@ import lombok.Getter;
 public class UserAuthentication extends AbstractAuthenticationToken {
 	private final String email;
 
-
 	public UserAuthentication(String email, List<User> users) {
 		super(authorities(users));
 		this.email = email;
+		super.setAuthenticated(true);
 	}
 
 	private static List<GrantedAuthority> authorities(List<User> users) {
@@ -33,13 +36,18 @@ public class UserAuthentication extends AbstractAuthenticationToken {
 	}
 
 	@Override
-	public Object getPrincipal() {
-		return null;
+	public String getPrincipal() {
+		return this.email;
 	}
 
 	@Override
 	public boolean isAuthenticated() {
-		return true;
+		SecurityContext context = SecurityContextHolder.getContext();
+		Authentication authentication = context.getAuthentication();
+		if (authentication == null) {
+			return false;
+		}
+		return authentication.isAuthenticated();
 	}
 
 	@Override
