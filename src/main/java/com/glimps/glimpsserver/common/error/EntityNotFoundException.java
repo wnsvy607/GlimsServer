@@ -13,4 +13,14 @@ public class EntityNotFoundException extends CustomException {
 		this.id = id;
 		this.email = email;
 	}
+
+	public EntityNotFoundException(ErrorCode errorCode, Long id) {
+		super(errorCode);
+		this.id = id;
+	}
+
+	public EntityNotFoundException(ErrorCode errorCode, String email) {
+		super(errorCode);
+		this.email = email;
+	}
 }
