@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
 
-class ReviewCreateResponseTest {
+class ReviewResponseTest {
 
 	private static final Perfume PERFUME = Perfume.builder()
 		.id(1L)
@@ -27,10 +27,10 @@ class ReviewCreateResponseTest {
 
 	@Test
 	void createReviewCreateResponse() {
-		ReviewCreateResponse reviewCreateResponse = ReviewCreateResponse.of(REVIEW);
+		ReviewResponse reviewResponse = ReviewResponse.of(REVIEW);
 
-		assertThat(reviewCreateResponse.getTitle()).isEqualTo("title");
-		assertThat(reviewCreateResponse.getBody()).isEqualTo("body");
+		assertThat(reviewResponse.getTitle()).isEqualTo("title");
+		assertThat(reviewResponse.getBody()).isEqualTo("body");
 
 	}
 

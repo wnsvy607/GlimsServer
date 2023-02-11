@@ -20,7 +20,9 @@ public enum ErrorCode {
 	NOT_VALID_BEARER_GRANT_TYPE(HttpStatus.UNAUTHORIZED, "A-003", "인증 타입이 Bearer 타입이 아닙니다."),
 
 	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "A-004", "토큰이 만료되었습니다."),
-	PERFUME_NOT_FOUND(HttpStatus.NOT_FOUND, "P-001", "향수를 찾을 수 없습니다.");
+	PERFUME_NOT_FOUND(HttpStatus.NOT_FOUND, "P-001", "향수를 찾을 수 없습니다."),
+
+	REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R-001", "[ERROR] 리뷰를 찾을 수 없습니다.");
 
 	private final HttpStatus status;
 	private final String code;

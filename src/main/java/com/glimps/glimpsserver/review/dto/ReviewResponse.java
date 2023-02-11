@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Builder
-public class ReviewCreateResponse {
+public class ReviewResponse {
 	private String title;
 	private String body;
 	private String perfumeName;
@@ -21,8 +21,8 @@ public class ReviewCreateResponse {
 	private double longevityRating;
 	private double sillageRating;
 
-	public static ReviewCreateResponse of(Review review) {
-		return ReviewCreateResponse.builder()
+	public static ReviewResponse of(Review review) {
+		return ReviewResponse.builder()
 			.title(review.getTitle())
 			.body(review.getBody())
 			.perfumeName(review.getPerfume().getPerfumeName())
