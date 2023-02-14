@@ -2,6 +2,7 @@ package com.glimps.glimpsserver.review.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,11 +30,13 @@ import lombok.NoArgsConstructor;
 @Table(name = "reviews")
 @Entity
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	private UUID uuid;
 
 	@Column(name = "title")
 	private String title;
@@ -62,27 +65,17 @@ public class Review {
 
 	private double sillageRating;
 
-	protected Review(
-		String title, String body, User user,
-		Perfume perfume, double overallRating,
-		double longevityRating, double sillageRatings
-	) {
-		this.title = title;
-		this.body = body;
-		this.user = user;
-		this.perfume = perfume;
-		this.overallRating = overallRating;
-		this.longevityRating = longevityRating;
-		this.sillageRating = sillageRatings;
-	}
-
 	public static Review createReview(ReviewCreateRequest reviewCreateRequest, User user, Perfume perfume) {
-		String title = reviewCreateRequest.getTitle();
-		String body = reviewCreateRequest.getBody();
-		double overallRating = reviewCreateRequest.getOverallRatings();
-		double longevityRating = reviewCreateRequest.getLongevityRatings();
-		double sillageRating = reviewCreateRequest.getSillageRatings();
-		return new Review(title, body, user, perfume, overallRating, longevityRating, sillageRating);
+		return Review.builder()
+			.uuid(UUID.randomUUID())
+			.title(reviewCreateRequest.getTitle())
+			.body(reviewCreateRequest.getBody())
+			.user(user)
+			.perfume(perfume)
+			.overallRating(reviewCreateRequest.getOverallRatings())
+			.longevityRating(reviewCreateRequest.getLongevityRatings())
+			.sillageRating(reviewCreateRequest.getSillageRatings())
+			.build();
 	}
 
 	protected void addPhoto(ReviewPhoto photo) {

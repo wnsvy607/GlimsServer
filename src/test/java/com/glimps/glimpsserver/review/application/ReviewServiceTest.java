@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,11 +37,14 @@ class ReviewServiceTest {
 	private static final Long EXISTS_PERFUME_ID = 3L;
 	private static final Long NOT_EXISTS_PERFUME_ID = 200L;
 	private static final Long NEW_REVIEW_ID = 1L;
+	private static final UUID NEW_REVIEW_UUID = UUID.randomUUID();
 	private static final Long EXISTS_REVIEW_ID = 3L;
-	private static final Long NOT_EXISTS_REVIEW_ID = 300L;
+	private static final UUID EXISTS_REVIEW_UUID = UUID.randomUUID();
+	private static final UUID NOT_EXISTS_REVIEW_UUID = UUID.randomUUID();
 
 	private static final Review EXISTS_REVIEW = Review.builder()
 		.id(EXISTS_REVIEW_ID)
+		.uuid(EXISTS_REVIEW_UUID)
 		.title(TITLE)
 		.body(BODY)
 		.overallRating(3)
@@ -88,6 +92,7 @@ class ReviewServiceTest {
 					Review source = invocation.getArgument(0);
 					return Review.builder()
 						.id(NEW_REVIEW_ID)
+						.uuid(NEW_REVIEW_UUID)
 						.title(source.getTitle())
 						.body(source.getBody())
 						.overallRating(source.getOverallRating())
@@ -115,6 +120,7 @@ class ReviewServiceTest {
 
 				assertThat(review.getTitle()).isEqualTo(TITLE);
 				assertThat(review.getBody()).isEqualTo(BODY);
+				assertThat(review.getUuid()).isEqualTo(NEW_REVIEW_UUID);
 				assertThat(review.getOverallRating()).isEqualTo(5.0);
 				assertThat(review.getLongevityRating()).isEqualTo(4.5);
 				assertThat(review.getSillageRating()).isEqualTo(4.0);
@@ -185,15 +191,18 @@ class ReviewServiceTest {
 		class Context_when_review_exists {
 			@BeforeEach
 			void setUp() {
-				given(reviewRepository.findById(EXISTS_REVIEW_ID)).willReturn(Optional.of(EXISTS_REVIEW));
+				given(reviewRepository.findByUuid(EXISTS_REVIEW_UUID)).willReturn(Optional.of(EXISTS_REVIEW));
 			}
 
 			@Test
 			@DisplayName("리뷰를 반환한다.")
 			void It_returns_review() {
-				Review review = reviewService.getReview(EXISTS_REVIEW_ID);
+				Review review = reviewService.getReview(EXISTS_REVIEW_UUID);
 
-				assertThat(review).isEqualTo(EXISTS_REVIEW);
+				assertThat(review.getId()).isEqualTo(EXISTS_REVIEW_ID);
+				assertThat(review.getUuid()).isEqualTo(EXISTS_REVIEW_UUID);
+				assertThat(review.getTitle()).isEqualTo(TITLE);
+				assertThat(review.getBody()).isEqualTo(BODY);
 				assertThat(review.getLongevityRating()).isEqualTo(3);
 				assertThat(review.getSillageRating()).isEqualTo(3);
 				assertThat(review.getOverallRating()).isEqualTo(3);
@@ -206,13 +215,13 @@ class ReviewServiceTest {
 		class Context_when_review_not_exists {
 			@BeforeEach
 			void setUp() {
-				given(reviewRepository.findById(NOT_EXISTS_REVIEW_ID)).willReturn(Optional.empty());
+				given(reviewRepository.findByUuid(NOT_EXISTS_REVIEW_UUID)).willReturn(Optional.empty());
 			}
 
 			@Test
 			@DisplayName("ReviewNotFoundException을 던진다.")
 			void It_throws_ReviewNotFoundException() {
-				assertThatThrownBy(() -> reviewService.getReview(NOT_EXISTS_REVIEW_ID))
+				assertThatThrownBy(() -> reviewService.getReview(NOT_EXISTS_REVIEW_UUID))
 					.isInstanceOf(CustomException.class);
 			}
 		}
@@ -222,9 +231,13 @@ class ReviewServiceTest {
 	@DisplayName("getMyReviews메서드는")
 	class Describe_getMyReviews {
 		private final Pageable pageable = PageRequest.of(0, 2);
+		private final UUID ELEMENT1_UUID = UUID.randomUUID();
+		private final UUID ELEMENT2_UUID = UUID.randomUUID();
+		private final UUID ELEMENT3_UUID = UUID.randomUUID();
 
 		Review element1 = Review.builder()
 			.id(5L)
+			.uuid(ELEMENT1_UUID)
 			.user(EXISTS_USER)
 			.title("element1 title")
 			.body("element1 body")
@@ -232,6 +245,7 @@ class ReviewServiceTest {
 
 		Review element2 = Review.builder()
 			.id(6L)
+			.uuid(ELEMENT2_UUID)
 			.user(EXISTS_USER)
 			.title("element2 title")
 			.body("element2 body")
@@ -239,6 +253,7 @@ class ReviewServiceTest {
 
 		Review element3 = Review.builder()
 			.id(7L)
+			.uuid(ELEMENT3_UUID)
 			.user(EXISTS_USER)
 			.title("element3 title")
 			.body("element3 body")

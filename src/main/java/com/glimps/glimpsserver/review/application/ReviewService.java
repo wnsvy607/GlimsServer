@@ -1,5 +1,9 @@
 package com.glimps.glimpsserver.review.application;
 
+import java.util.UUID;
+
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,11 +51,11 @@ public class ReviewService {
 	}
 
 	public Review getReview(UUID id) {
-		return reviewRepository.findById(id)
+		return reviewRepository.findByUuid(id)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, id));
 	}
 
-	public Page<Review> getMyReviews(Integer offset, Integer limit, String email) {
+	public Page<Review> getMyReviews(Integer offset, @NotNull int limit, String email) {
 		if (offset == null) {
 			offset = 0;
 		}

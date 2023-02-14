@@ -31,7 +31,7 @@ public class ReviewCreateRequest {
 	private double longevityRatings;
 	@Positive
 	private double sillageRatings;
-	@NotEmpty
+	@NotNull
 	private Long perfumeId;
 
 	@Builder.Default
