@@ -1,5 +1,8 @@
 package com.glimps.glimpsserver.review.infra;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +21,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewCus
 		+ "where u.id = :id "
 		+ "order by r.createdAt desc")
 	Page<Review> findAllByUser(Long id, Pageable pageable);
+	
+	Optional<Review> findByUuid(UUID id);
 }
