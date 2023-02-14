@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,6 +19,7 @@ import com.glimps.glimpsserver.common.filter.JwtAuthenticationFilter;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
 
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SpringSecurityConfig {
 	@Autowired
 	private AuthenticationService authenticationService;
@@ -33,20 +35,17 @@ public class SpringSecurityConfig {
 			http.getSharedObject(AuthenticationConfiguration.class));
 		Filter authenticationFilter = new JwtAuthenticationFilter(authenticationManager, authenticationService);
 		Filter authenticationErrorFilter = new AuthenticationErrorFilter();
-		
-		http.csrf().disable();
 
-		http.formLogin().disable();
-
-		http.addFilter(authenticationFilter);
-
-		http.addFilterAfter(authenticationErrorFilter, JwtAuthenticationFilter.class);
-
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.exceptionHandling()
-			.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-
-		return http.build();
+		return http.csrf().disable()
+			.authorizeHttpRequests().antMatchers("/api/v1/**").authenticated()
+			.and()
+			.formLogin().disable()
+			.addFilter(authenticationFilter)
+			.addFilterAfter(authenticationErrorFilter, JwtAuthenticationFilter.class)
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+			.and().build();
 	}
 
 }
