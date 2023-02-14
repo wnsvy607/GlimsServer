@@ -1,5 +1,7 @@
 package com.glimps.glimpsserver.review.domain;
 
+import java.util.UUID;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,10 +19,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class ReviewPhoto {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	private UUID uuid;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "review_id")
@@ -27,20 +34,13 @@ public class ReviewPhoto {
 
 	private String url;
 
-	public ReviewPhoto(Review review, String url) {
-		this.review = review;
-		this.url = url;
-	}
-
-	@Builder
-	public ReviewPhoto(Long id, Review review, String url) {
-		this.id = id;
-		this.review = review;
-		this.url = url;
-	}
-
 	public static ReviewPhoto createReviewPhoto(Review review, String url) {
-		ReviewPhoto reviewPhoto = new ReviewPhoto(review, url);
+		ReviewPhoto reviewPhoto = ReviewPhoto.builder()
+			.review(review)
+			.uuid(UUID.randomUUID())
+			.url(url)
+			.build();
+
 		review.addPhoto(reviewPhoto);
 		return reviewPhoto;
 	}
