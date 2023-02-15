@@ -35,7 +35,7 @@ public class JwtUtil {
 
 	public Claims decode(String token) {
 		if (token == null || token.isBlank()) {
-			throw new CustomException(ErrorCode.INVALID_TOKEN, "[ERROR] Invalid Token(token :" + token + ")");
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
 		try {
 			return Jwts.parserBuilder()
@@ -44,7 +44,7 @@ public class JwtUtil {
 				.parseClaimsJws(token)
 				.getBody();
 		} catch (SignatureException e) {
-			throw new CustomException(ErrorCode.INVALID_TOKEN, "[ERROR] Invalid Token(token :" + token + ")");
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
 	}
 }
