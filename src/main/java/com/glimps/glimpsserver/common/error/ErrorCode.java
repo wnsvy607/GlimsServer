@@ -9,7 +9,9 @@ public enum ErrorCode {
 
 	// E-XXX
 	EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "E-001", "서버 내부 오류입니다."),
-	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "E-002", "사용자를 찾을 수 없습니다."),
+
+	// U-XXX Error about User Entity
+	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U-001", "사용자를 찾을 수 없습니다."),
 
 	// A-XXX - Authentication Error
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A-001", "유효하지 않은 토큰입니다."),
