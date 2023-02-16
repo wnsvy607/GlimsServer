@@ -17,7 +17,8 @@ public enum ErrorCode {
 	NOT_EXISTS_AUTHORIZATION(HttpStatus.UNAUTHORIZED, "A-002", "Authorization Header 가 빈값입니다."),
 	NOT_VALID_BEARER_GRANT_TYPE(HttpStatus.UNAUTHORIZED, "A-003", "인증 타입이 Bearer 타입이 아닙니다."),
 
-	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "A-004", "토큰이 만료되었습니다.");
+	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "A-004", "토큰이 만료되었습니다."),
+	INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "A-005", "유효하지 않은 provider 입니다.");
 
 	private final HttpStatus status;
 	private final String code;
