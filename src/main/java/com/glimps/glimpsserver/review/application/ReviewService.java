@@ -1,5 +1,6 @@
 package com.glimps.glimpsserver.review.application;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
@@ -10,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.perfume.application.PerfumeService;
@@ -62,5 +62,9 @@ public class ReviewService {
 		Pageable pageRequest = PageRequest.of(offset, limit);
 		User user = userService.getUser(email);
 		return reviewRepository.findAllByUser(user.getId(), pageRequest);
+	}
+
+	public List<Review> getRecentReviews() {
+		return reviewRepository.findTop10ByOrderByCreatedAtDesc();
 	}
 }

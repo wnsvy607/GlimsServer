@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.glimps.glimpsserver.common.error.CustomException;
+import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.perfume.application.PerfumeService;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
@@ -79,7 +80,7 @@ class ReviewServiceTest {
 	}
 
 	@Nested
-	@DisplayName("createReview 메서드는")
+	@DisplayName("createReview 메소드는")
 	class Describe_createReview {
 		@Nested
 		@DisplayName("사용자가 존재하고, 향수가 존재할 때")
@@ -133,7 +134,7 @@ class ReviewServiceTest {
 		class Context_when_user_not_exists_and_perfume_exists {
 			@BeforeEach
 			void setUp() {
-				given(userService.getUser(NOT_EXISTS_EMAIL)).willThrow(CustomException.class);
+				given(userService.getUser(NOT_EXISTS_EMAIL)).willThrow(EntityNotFoundException.class);
 			}
 
 			@Test
@@ -150,7 +151,7 @@ class ReviewServiceTest {
 						.build();
 
 				assertThatThrownBy(() -> reviewService.createReview(reviewCreateRequest, NOT_EXISTS_EMAIL))
-					.isInstanceOf(CustomException.class);
+					.isInstanceOf(EntityNotFoundException.class);
 			}
 		}
 
@@ -161,7 +162,7 @@ class ReviewServiceTest {
 			@BeforeEach
 			void setUp() {
 				given(userService.getUser(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(perfumeService.getPerfume(NOT_EXISTS_PERFUME_ID)).willThrow(CustomException.class);
+				given(perfumeService.getPerfume(NOT_EXISTS_PERFUME_ID)).willThrow(EntityNotFoundException.class);
 			}
 
 			@Test
@@ -178,7 +179,7 @@ class ReviewServiceTest {
 						.build();
 
 				assertThatThrownBy(() -> reviewService.createReview(reviewCreateRequest, EXISTS_EMAIL))
-					.isInstanceOf(CustomException.class);
+					.isInstanceOf(EntityNotFoundException.class);
 			}
 		}
 	}
@@ -222,13 +223,13 @@ class ReviewServiceTest {
 			@DisplayName("ReviewNotFoundException을 던진다.")
 			void It_throws_ReviewNotFoundException() {
 				assertThatThrownBy(() -> reviewService.getReview(NOT_EXISTS_REVIEW_UUID))
-					.isInstanceOf(CustomException.class);
+					.isInstanceOf(EntityNotFoundException.class);
 			}
 		}
 	}
 
 	@Nested
-	@DisplayName("getMyReviews메서드는")
+	@DisplayName("getMyReviews 메소드는")
 	class Describe_getMyReviews {
 		private final Pageable pageable = PageRequest.of(0, 2);
 		private final UUID ELEMENT1_UUID = UUID.randomUUID();
@@ -304,7 +305,7 @@ class ReviewServiceTest {
 		class Context_when_user_not_exists {
 			@BeforeEach
 			void setUp() {
-				given(userService.getUser(NOT_EXISTS_EMAIL)).willThrow(CustomException.class);
+				given(userService.getUser(NOT_EXISTS_EMAIL)).willThrow(EntityNotFoundException.class);
 			}
 
 			@Test
@@ -312,6 +313,75 @@ class ReviewServiceTest {
 			void It_throws_UserNotFoundException() {
 				assertThatThrownBy(() -> reviewService.getMyReviews(0, 2, NOT_EXISTS_EMAIL))
 					.isInstanceOf(CustomException.class);
+			}
+		}
+	}
+
+	@Nested
+	@DisplayName("getRecentReviews 메소드는")
+	class Describe_getRecentReviews {
+		@Nested
+		@DisplayName("리뷰가 존재하면")
+		class Context_when_review_exists {
+			private final UUID ELEMENT1_UUID = UUID.randomUUID();
+			private final UUID ELEMENT2_UUID = UUID.randomUUID();
+			private final UUID ELEMENT3_UUID = UUID.randomUUID();
+
+			Review element1 = Review.builder()
+				.id(5L)
+				.uuid(ELEMENT1_UUID)
+				.user(EXISTS_USER)
+				.title("element1 title")
+				.body("element1 body")
+				.build();
+
+			Review element2 = Review.builder()
+				.id(6L)
+				.uuid(ELEMENT2_UUID)
+				.user(EXISTS_USER)
+				.title("element2 title")
+				.body("element2 body")
+				.build();
+
+			Review element3 = Review.builder()
+				.id(7L)
+				.uuid(ELEMENT3_UUID)
+				.user(EXISTS_USER)
+				.title("element3 title")
+				.body("element3 body")
+				.build();
+
+			@BeforeEach
+			void setUp() {
+
+				List<Review> result = List.of(element1, element2, element3);
+				given(reviewRepository.findTop10ByOrderByCreatedAtDesc())
+					.willReturn(result);
+			}
+			@Test
+			@DisplayName("리뷰를 최대 10개 반환한다.")
+			void It_returns_max_10_reviews() {
+				List<Review> reviews = reviewService.getRecentReviews();
+
+				assertThat(reviews).hasSize(3);
+				verify(reviewRepository).findTop10ByOrderByCreatedAtDesc();
+			}
+		}
+
+		@Nested
+		@DisplayName("리뷰가 존재하지 않으면")
+		class Context_when_review_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewRepository.findTop10ByOrderByCreatedAtDesc()).willReturn(List.of());
+			}
+			@Test
+			@DisplayName("빈 리스트를 반환한다.")
+			void It_returns_empty_list() {
+				List<Review> recentReviews = reviewService.getRecentReviews();
+
+				assertThat(recentReviews).isEmpty();
+				verify(reviewRepository).findTop10ByOrderByCreatedAtDesc();
 			}
 		}
 	}

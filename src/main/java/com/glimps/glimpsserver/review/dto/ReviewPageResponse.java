@@ -6,19 +6,23 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 
 import com.glimps.glimpsserver.review.domain.Review;
+import com.glimps.glimpsserver.review.domain.ReviewPhoto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Builder
 public class ReviewPageResponse {
 	private String title;
 	private String body;
+	private String nickname;
+	private List<String> photoUrl;
 	private String perfumeName;
 	private String perfumeBrand;
 	private double overallRating;
@@ -32,6 +36,10 @@ public class ReviewPageResponse {
 			.map(review -> ReviewPageResponse.builder()
 				.title(review.getTitle())
 				.body(review.getBody())
+				.nickname(review.getUser().getNickname())
+				.photoUrl(review.getReviewPhotos().stream()
+					.map(ReviewPhoto::getUrl)
+					.collect(Collectors.toList()))
 				.perfumeName(review.getPerfume().getPerfumeName())
 				.perfumeBrand(review.getPerfume().getBrand())
 				.overallRating(review.getOverallRating())

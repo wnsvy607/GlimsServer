@@ -8,11 +8,12 @@ import org.springframework.validation.FieldError;
 
 import com.glimps.glimpsserver.common.error.ErrorCode;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorResponse {
 	private String message;
 	private HttpStatus status;

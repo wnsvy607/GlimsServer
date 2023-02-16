@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.glimps.glimpsserver.common.domain.BaseTimeEntity;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
 import com.glimps.glimpsserver.user.domain.User;
@@ -31,7 +32,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review {
+public class Review extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -66,6 +67,7 @@ public class Review {
 	private double sillageRating;
 
 	public static Review createReview(ReviewCreateRequest reviewCreateRequest, User user, Perfume perfume) {
+		user.addReviewCnt();
 		return Review.builder()
 			.uuid(UUID.randomUUID())
 			.title(reviewCreateRequest.getTitle())

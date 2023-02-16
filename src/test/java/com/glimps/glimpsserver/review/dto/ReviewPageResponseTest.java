@@ -2,7 +2,11 @@ package com.glimps.glimpsserver.review.dto;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
@@ -10,7 +14,7 @@ import com.glimps.glimpsserver.review.domain.ReviewPhoto;
 import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 
-class ReviewResponseTest {
+class ReviewPageResponseTest {
 	private static final String TEST_BRAND = "brand";
 	private static final String TEST_PERFUME_NAME = "testPerfumeName";
 	private static final String TEST_NICKNAME = "testNickname";
@@ -46,27 +50,20 @@ class ReviewResponseTest {
 		.sillageRating(4.0)
 		.perfume(PERFUME)
 		.build();
-	
+
+	private static final Page<Review> REVIEW_PAGE = new PageImpl<>(List.of(REVIEW));
+
 	private static final ReviewPhoto photo1 = ReviewPhoto.createReviewPhoto(REVIEW, TEST_PHOTO_URL1);
 	private static final ReviewPhoto photo2 = ReviewPhoto.createReviewPhoto(REVIEW, TEST_PHOTO_URL2);
 	private static final ReviewPhoto photo3 = ReviewPhoto.createReviewPhoto(REVIEW, TEST_PHOTO_URL3);
 
 	@Test
-	void createReviewCreateResponse() {
-		ReviewResponse reviewResponse = ReviewResponse.of(REVIEW);
+	void createReviewPageResponse() {
+		List<ReviewPageResponse> reviewPageResponse = ReviewPageResponse.of(REVIEW_PAGE);
 
 		assertThat(REVIEW.getReviewPhotos()).isNotEmpty();
 		assertThat(REVIEW.getReviewPhotos()).hasSize(3);
-		assertThat(reviewResponse.getPhotoUrls()).hasSize(3);
-		assertThat(reviewResponse.getPhotoUrls()).contains(TEST_PHOTO_URL1,TEST_PHOTO_URL2,TEST_PHOTO_URL3);
-		assertThat(reviewResponse.getTitle()).isEqualTo(TEST_TITLE);
-		assertThat(reviewResponse.getBody()).isEqualTo(TEST_BODY);
-		assertThat(reviewResponse.getOverallRating()).isEqualTo(5.0);
-		assertThat(reviewResponse.getLongevityRating()).isEqualTo(4.5);
-		assertThat(reviewResponse.getSillageRating()).isEqualTo(4.0);
-		assertThat(reviewResponse.getPerfumeName()).isEqualTo(TEST_PERFUME_NAME);
-		assertThat(reviewResponse.getPerfumeBrand()).isEqualTo(TEST_BRAND);
-		assertThat(reviewResponse.getNickname()).isEqualTo(TEST_NICKNAME);
+		assertThat(reviewPageResponse.get(0).getPhotoUrl()).hasSize(3);
+		assertThat(reviewPageResponse.get(0).getPhotoUrl()).containsExactly(TEST_PHOTO_URL1, TEST_PHOTO_URL2, TEST_PHOTO_URL3);
 	}
-
 }

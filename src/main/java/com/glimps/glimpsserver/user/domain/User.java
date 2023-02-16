@@ -44,4 +44,12 @@ public class User {
 		this.reviewCnt = reviewCnt;
 		this.role = role;
 	}
+
+	public void addReviewCnt() {
+		this.reviewCnt++;
+	}
+
+	public void deleteReviewCnt() {
+		this.reviewCnt--;
+	}
 }
