@@ -10,13 +10,15 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-
+@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name="users")
+@Table(name = "users")
 @Entity
 public class User {
 	@Id
@@ -35,4 +37,17 @@ public class User {
 	@Column(name = "role")
 	@Enumerated(EnumType.STRING)
 	private RoleType role;
+
+	@Column
+	@Enumerated(EnumType.STRING)
+	private UserType userType;
+
+	@Builder
+	public User(String nickName, String email, RoleType role, UserType userType) {
+		this.nickName = nickName;
+		this.email = email;
+		this.role = role;
+		this.userType = userType;
+		this.reviewCnt = 0;
+	}
 }
