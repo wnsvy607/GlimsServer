@@ -1,6 +1,5 @@
-package com.glimps.glimpsserver.common.controller;
+package com.glimps.glimpsserver.common.presentation;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 public class HealthCheckController {
 
 	@RequestMapping("/health")
-	public ResponseEntity<String> healthCheck() {
-		return ResponseEntity.ok("Health is GOOD!");
+	public String healthCheck() {
+		return "Health is GOOD!";
 	}
 
 }
