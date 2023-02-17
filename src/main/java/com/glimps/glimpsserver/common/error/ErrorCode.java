@@ -12,7 +12,7 @@ public enum ErrorCode {
 
 	// U-XXX
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "M-001", "사용자를 찾을 수 없습니다."),
-	ALREADY_REGISTERED_MEMBER(HttpStatus.BAD_REQUEST, "M-002", "이미 가입된 회원 입니다."),
+	ALREADY_REGISTERED_USER(HttpStatus.BAD_REQUEST, "M-002", "이미 가입된 회원 입니다."),
 
 	// A-XXX - Authentication Error
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A-001", "유효하지 않은 토큰입니다."),
