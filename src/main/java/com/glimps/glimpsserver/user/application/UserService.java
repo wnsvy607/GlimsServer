@@ -1,4 +1,4 @@
-package com.glimps.glimpsserver.user.service;
+package com.glimps.glimpsserver.user.application;
 
 import java.util.Optional;
 
@@ -22,6 +22,7 @@ public class UserService {
 		return userRepository.findByEmail(email);
 	}
 
+	@Transactional
 	public Long registerUser(User user) {
 		validateDuplicateMember(user);
 		return userRepository.save(user).getId();

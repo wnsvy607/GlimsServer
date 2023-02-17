@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
+import com.glimps.glimpsserver.user.domain.RoleType;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -24,13 +25,35 @@ public class JwtUtil {
 		this.key = Keys.hmacShaKeyFor(arr);
 	}
 
-	public String encode(String email) {
+	public String createAccessToken(String email, RoleType role, Date expirationTime) {
 		return Jwts.builder()
+			.setSubject(email)
+			.setIssuedAt(new Date())
 			.signWith(key)
-			.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
+			.setExpiration(expirationTime)
+			.setHeaderParam("type", "jwt")
+			.claim("role", role)
+			.claim("email", email)
+			.compact();
+	}
+
+	public String createRefreshToken(String email, Date expirationTime) {
+		return Jwts.builder()
+			.setSubject(email)
+			.setIssuedAt(new Date())
+			.signWith(key)
+			.setExpiration(expirationTime)
 			.setHeaderParam("type", "jwt")
 			.claim("email", email)
 			.compact();
+	}
+
+	public Date createAccessTokenExpireTime() {
+		return new Date(System.currentTimeMillis() + Long.parseLong("9000000"));
+	}
+
+	public Date createRefreshTokenExpireTime() {
+		return new Date(System.currentTimeMillis() + Long.parseLong("1209600000"));
 	}
 
 	public Claims decode(String token) {
