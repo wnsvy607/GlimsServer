@@ -5,10 +5,10 @@ import com.glimps.glimpsserver.user.domain.UserType;
 import lombok.Getter;
 
 @Getter
-public class MemberDuplicationException extends CustomException {
+public class UserDuplicationException extends CustomException {
 	private UserType userType;
 
-	public MemberDuplicationException(ErrorCode errorCode, UserType userType) {
+	public UserDuplicationException(ErrorCode errorCode, UserType userType) {
 		super(errorCode);
 		this.userType = userType;
 	}

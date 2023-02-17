@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.glimps.glimpsserver.common.error.ErrorCode;
-import com.glimps.glimpsserver.common.error.MemberDuplicationException;
+import com.glimps.glimpsserver.common.error.UserDuplicationException;
 import com.glimps.glimpsserver.user.domain.User;
 import com.glimps.glimpsserver.user.infra.UserRepository;
 
@@ -29,9 +29,8 @@ public class UserService {
 	}
 
 	private void validateDuplicateMember(User user) {
-		Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
-		if (optionalUser.isPresent()) {
-			throw new MemberDuplicationException(ErrorCode.ALREADY_REGISTERED_MEMBER, optionalUser.get().getUserType());
-		}
+		userRepository.findByEmail(user.getEmail()).ifPresent(m ->
+			new UserDuplicationException(ErrorCode.ALREADY_REGISTERED_USER, m.getUserType())
+		);
 	}
 }
