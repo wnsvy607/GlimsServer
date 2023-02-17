@@ -13,17 +13,19 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import com.glimps.glimpsserver.common.domain.CustomPage;
+import com.glimps.glimpsserver.common.domain.CustomPageImpl;
 import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.perfume.application.PerfumeService;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
+import com.glimps.glimpsserver.review.dto.ReviewPageParam;
 import com.glimps.glimpsserver.review.infra.ReviewRepository;
 import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.RoleType;
@@ -231,7 +233,8 @@ class ReviewServiceTest {
 	@Nested
 	@DisplayName("getMyReviews 메소드는")
 	class Describe_getMyReviews {
-		private final Pageable pageable = PageRequest.of(0, 2);
+		private final ReviewPageParam reviewPageParam = new ReviewPageParam(0, 2, null, null);
+		private final Pageable pageable = PageRequest.of(0, 2, Sort.Direction.DESC, "createdAt");
 		private final UUID ELEMENT1_UUID = UUID.randomUUID();
 		private final UUID ELEMENT2_UUID = UUID.randomUUID();
 		private final UUID ELEMENT3_UUID = UUID.randomUUID();
@@ -260,21 +263,21 @@ class ReviewServiceTest {
 			.body("element3 body")
 			.build();
 
-
 		@Nested
 		@DisplayName("사용자가 존재하고, 사용자가 작성한 리뷰가 존재할 때")
 		class Context_when_user_exists_and_review_exists {
 			@BeforeEach
 			void setUp() {
-				PageImpl<Review> page = new PageImpl<>(List.of(EXISTS_REVIEW, element1, element2, element3), pageable, 4);
+				CustomPageImpl<Review> customPage = new CustomPageImpl<>(
+					List.of(EXISTS_REVIEW, element1, element2, element3), 0, 2, 4);
 				given(userService.getUser(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(reviewRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(page);
+				given(reviewRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(customPage);
 			}
 
 			@Test
 			@DisplayName("사용자가 작성한 리뷰 목록을 반환한다.")
 			void It_returns_review_list() {
-				Page<Review> reviews = reviewService.getMyReviews(0, 2, EXISTS_EMAIL);
+				CustomPage<Review> reviews = reviewService.getMyReviews(reviewPageParam, EXISTS_EMAIL);
 
 				assertThat(reviews.getTotalElements()).isEqualTo(4);
 				assertThat(reviews.getContent()).contains(EXISTS_REVIEW, element1, element2, element3);
@@ -288,15 +291,15 @@ class ReviewServiceTest {
 			@BeforeEach
 			void setUp() {
 				given(userService.getUser(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(reviewRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(Page.empty());
+				given(reviewRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(CustomPage.empty());
 			}
 
 			@Test
-			@DisplayName("빈 리스트를 반환한다.")
+			@DisplayName("빈 페이지를 반환한다.")
 			void It_returns_empty_list() {
-				Page<Review> reviews = reviewService.getMyReviews(0, 2, EXISTS_EMAIL);
+				CustomPage<Review> reviews = reviewService.getMyReviews(reviewPageParam, EXISTS_EMAIL);
 
-				assertThat(reviews).isEmpty();
+				assertThat(reviews.getContent()).isEmpty();
 			}
 		}
 
@@ -311,7 +314,7 @@ class ReviewServiceTest {
 			@Test
 			@DisplayName("UserNotFoundException을 던진다.")
 			void It_throws_UserNotFoundException() {
-				assertThatThrownBy(() -> reviewService.getMyReviews(0, 2, NOT_EXISTS_EMAIL))
+				assertThatThrownBy(() -> reviewService.getMyReviews(reviewPageParam, NOT_EXISTS_EMAIL))
 					.isInstanceOf(CustomException.class);
 			}
 		}
@@ -358,6 +361,7 @@ class ReviewServiceTest {
 				given(reviewRepository.findTop10ByOrderByCreatedAtDesc())
 					.willReturn(result);
 			}
+
 			@Test
 			@DisplayName("리뷰를 최대 10개 반환한다.")
 			void It_returns_max_10_reviews() {
@@ -375,6 +379,7 @@ class ReviewServiceTest {
 			void setUp() {
 				given(reviewRepository.findTop10ByOrderByCreatedAtDesc()).willReturn(List.of());
 			}
+
 			@Test
 			@DisplayName("빈 리스트를 반환한다.")
 			void It_returns_empty_list() {

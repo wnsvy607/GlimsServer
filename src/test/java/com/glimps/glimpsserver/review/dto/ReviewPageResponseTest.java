@@ -5,9 +5,9 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
+import com.glimps.glimpsserver.common.domain.CustomPage;
+import com.glimps.glimpsserver.common.domain.CustomPageImpl;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
@@ -24,7 +24,6 @@ class ReviewPageResponseTest {
 	private static final String TEST_PHOTO_URL1 = "testPhotoUrl1";
 	private static final String TEST_PHOTO_URL2 = "testPhotoUrl2";
 	private static final String TEST_PHOTO_URL3 = "testPhotoUrl3";
-
 
 	private static final Perfume PERFUME = Perfume.builder()
 		.id(1L)
@@ -51,7 +50,7 @@ class ReviewPageResponseTest {
 		.perfume(PERFUME)
 		.build();
 
-	private static final Page<Review> REVIEW_PAGE = new PageImpl<>(List.of(REVIEW));
+	private static final CustomPage<Review> REVIEW_PAGE = new CustomPageImpl<>(List.of(REVIEW), 0, 1, 1);
 
 	private static final ReviewPhoto photo1 = ReviewPhoto.createReviewPhoto(REVIEW, TEST_PHOTO_URL1);
 	private static final ReviewPhoto photo2 = ReviewPhoto.createReviewPhoto(REVIEW, TEST_PHOTO_URL2);
@@ -64,6 +63,7 @@ class ReviewPageResponseTest {
 		assertThat(REVIEW.getReviewPhotos()).isNotEmpty();
 		assertThat(REVIEW.getReviewPhotos()).hasSize(3);
 		assertThat(reviewPageResponse.get(0).getPhotoUrl()).hasSize(3);
-		assertThat(reviewPageResponse.get(0).getPhotoUrl()).containsExactly(TEST_PHOTO_URL1, TEST_PHOTO_URL2, TEST_PHOTO_URL3);
+		assertThat(reviewPageResponse.get(0).getPhotoUrl()).containsExactly(TEST_PHOTO_URL1, TEST_PHOTO_URL2,
+			TEST_PHOTO_URL3);
 	}
 }
