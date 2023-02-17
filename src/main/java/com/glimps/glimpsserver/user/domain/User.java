@@ -9,14 +9,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.glimps.glimpsserver.user.dto.UserCreateRequest;
+
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-@ToString
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 @Entity
@@ -42,12 +45,13 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private UserType userType;
 
-	@Builder
-	public User(String nickName, String email, RoleType role, UserType userType) {
-		this.nickName = nickName;
-		this.email = email;
-		this.role = role;
-		this.userType = userType;
-		this.reviewCnt = 0;
+	public static User createUser(UserCreateRequest userCreateRequest) {
+		return User.builder()
+			.nickName(userCreateRequest.getNickName())
+			.email(userCreateRequest.getEmail())
+			.userType(userCreateRequest.getUserType())
+			.role(userCreateRequest.getRole())
+			.reviewCnt(0)
+			.build();
 	}
 }
