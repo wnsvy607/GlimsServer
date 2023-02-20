@@ -46,7 +46,7 @@ public class UserService {
 			.ifPresent(m -> new UserDuplicationException(ErrorCode.ALREADY_REGISTERED_USER, m.getUserType()));
 	}
 
-	public List<User> findAllByEmail(String email) {
+	public List<User> getAllByEmail(String email) {
 		return userRepository.findAllByEmail(email);
 	}
 

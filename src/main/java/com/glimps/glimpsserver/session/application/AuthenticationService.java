@@ -31,7 +31,7 @@ public class AuthenticationService {
 
 	// TODO 삭제 필요
 	public List<User> getRoles(String email) {
-		return userService.findAllByEmail(email);
+		return userService.getAllByEmail(email);
 	}
 
 	@Transactional
