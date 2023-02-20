@@ -1,5 +1,6 @@
 package com.glimps.glimpsserver.session.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.glimps.glimpsserver.common.oauth.dto.JwtTokenDto;
 import com.glimps.glimpsserver.common.oauth.dto.OAuthUserVo;
+import com.glimps.glimpsserver.common.util.DateTimeUtils;
 import com.glimps.glimpsserver.common.util.JwtUtil;
 import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.RoleType;
@@ -52,7 +54,11 @@ public class AuthenticationService {
 
 	private JwtTokenDto issueJwt(User user) {
 		JwtTokenDto jwtTokenDto = jwtUtil.createJwtTokenDto(user.getEmail(), user.getRole());
-		user.updateRefreshToken(jwtTokenDto.getRefreshToken(), jwtTokenDto.getRefreshTokenExpireTime());
+		LocalDateTime convertedExpTime = DateTimeUtils.convertToLocalDateTime(
+			jwtTokenDto.getRefreshTokenExpireTime());
+
+		user.updateRefreshToken(jwtTokenDto.getRefreshToken(), convertedExpTime);
+
 		return jwtTokenDto;
 	}
 }

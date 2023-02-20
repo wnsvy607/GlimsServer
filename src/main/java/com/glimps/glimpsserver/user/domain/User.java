@@ -1,7 +1,6 @@
 package com.glimps.glimpsserver.user.domain;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.glimps.glimpsserver.common.oauth.dto.OAuthUserVo;
-import com.glimps.glimpsserver.common.util.DateTimeUtils;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -63,9 +61,9 @@ public class User {
 			.build();
 	}
 
-	public void updateRefreshToken(String refreshToken, Date refreshTokenExpireTime) {
+	public void updateRefreshToken(String refreshToken, LocalDateTime refreshTokenExpireTime) {
 		this.refreshToken = refreshToken;
-		this.tokenExpirationTime = DateTimeUtils.convertToLocalDateTime(refreshTokenExpireTime);
+		this.tokenExpirationTime = refreshTokenExpireTime;
 	}
-	
+
 }
