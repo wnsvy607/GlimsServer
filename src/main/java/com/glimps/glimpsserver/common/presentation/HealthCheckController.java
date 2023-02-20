@@ -1,6 +1,6 @@
 package com.glimps.glimpsserver.common.presentation;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HealthCheckController {
 
-	@RequestMapping("/health")
+	@GetMapping("/health")
 	public String healthCheck() {
 		return "Health is GOOD!";
 	}
