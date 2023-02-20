@@ -1,5 +1,6 @@
 package com.glimps.glimpsserver.user.application;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -11,7 +12,9 @@ import com.glimps.glimpsserver.user.domain.User;
 import com.glimps.glimpsserver.user.infra.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -25,12 +28,22 @@ public class UserService {
 	@Transactional
 	public Long registerUser(User user) {
 		validateDuplicateMember(user);
-		return userRepository.save(user).getId();
+		User savedUser = userRepository.save(user);
+
+		log.info("The new user registered email={}	role={}	provider={}", savedUser.getEmail(),
+			savedUser.getRole(),
+			savedUser.getUserType());
+
+		return savedUser.getId();
 	}
 
 	private void validateDuplicateMember(User user) {
-		userRepository.findByEmail(user.getEmail()).ifPresent(m ->
-			new UserDuplicationException(ErrorCode.ALREADY_REGISTERED_USER, m.getUserType())
-		);
+		userRepository.findByEmail(user.getEmail())
+			.ifPresent(m -> new UserDuplicationException(ErrorCode.ALREADY_REGISTERED_USER, m.getUserType()));
 	}
+
+	public List<User> findAllByEmail(String email) {
+		return userRepository.findAllByEmail(email);
+	}
+
 }
