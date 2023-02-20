@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.glimps.glimpsserver.common.oauth.dto.OAuthUserVo;
+import com.glimps.glimpsserver.session.dto.SignUpInfo;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -51,11 +51,11 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private UserType userType;
 
-	public static User createUser(OAuthUserVo oAuthUserVo, RoleType role) {
+	public static User createUser(SignUpInfo signUpInfo, RoleType role) {
 		return User.builder()
-			.nickname(oAuthUserVo.getName())
-			.email(oAuthUserVo.getEmail())
-			.userType(oAuthUserVo.getUserType())
+			.nickname(signUpInfo.getName())
+			.email(signUpInfo.getEmail())
+			.userType(signUpInfo.getUserType())
 			.role(role)
 			.reviewCnt(0)
 			.build();

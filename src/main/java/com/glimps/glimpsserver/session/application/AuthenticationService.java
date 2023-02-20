@@ -13,7 +13,6 @@ import com.glimps.glimpsserver.common.oauth.dto.OAuthUserVo;
 import com.glimps.glimpsserver.common.util.DateTimeUtils;
 import com.glimps.glimpsserver.common.util.JwtUtil;
 import com.glimps.glimpsserver.user.application.UserService;
-import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 
 import io.jsonwebtoken.Claims;
@@ -31,7 +30,6 @@ public class AuthenticationService {
 	}
 
 	// TODO 삭제 필요
-	@Transactional(readOnly = true)
 	public List<User> getRoles(String email) {
 		return userService.findAllByEmail(email);
 	}
@@ -39,24 +37,20 @@ public class AuthenticationService {
 	@Transactional
 	public JwtTokenDto oauthLogin(OAuth2User oauth2User) {
 		OAuthUserVo oauthUserVo = OAuthUserVo.from(oauth2User);
+		Optional<User> optionalUser = userService.getOptionalUserByEmail(oauthUserVo.getEmail());
 
-		Optional<User> optionalUser = userService.findUserByEmail(oauthUserVo.getEmail());
+		User user = optionalUser.orElseGet(() -> {
+			Long id = userService.registerUser(oauthUserVo);
+			return userService.findById(id);
+		});
 
-		if (optionalUser.isEmpty()) {
-			// 회원 가입
-			User createdUser = User.createUser(oauthUserVo, RoleType.USER);
-			userService.registerUser(createdUser);
-			return issueJwt(createdUser);
-		}
-
-		return issueJwt(optionalUser.get());
+		return issueJwt(user);
 	}
 
 	private JwtTokenDto issueJwt(User user) {
 		JwtTokenDto jwtTokenDto = jwtUtil.createJwtTokenDto(user.getEmail(), user.getRole());
 		LocalDateTime convertedExpTime = DateTimeUtils.convertToLocalDateTime(
 			jwtTokenDto.getRefreshTokenExpireTime());
-
 		user.updateRefreshToken(jwtTokenDto.getRefreshToken(), convertedExpTime);
 
 		return jwtTokenDto;
