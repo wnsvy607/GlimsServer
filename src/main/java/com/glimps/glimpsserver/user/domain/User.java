@@ -1,5 +1,8 @@
 package com.glimps.glimpsserver.user.domain;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.glimps.glimpsserver.common.oauth.dto.OAuthUserVo;
+import com.glimps.glimpsserver.common.util.DateTimeUtils;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -41,6 +45,10 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private RoleType role;
 
+	private String refreshToken;
+
+	private LocalDateTime tokenExpirationTime;
+
 	@Column
 	@Enumerated(EnumType.STRING)
 	private UserType userType;
@@ -54,4 +62,10 @@ public class User {
 			.reviewCnt(0)
 			.build();
 	}
+
+	public void updateRefreshToken(String refreshToken, Date refreshTokenExpireTime) {
+		this.refreshToken = refreshToken;
+		this.tokenExpirationTime = DateTimeUtils.convertToLocalDateTime(refreshTokenExpireTime);
+	}
+	
 }

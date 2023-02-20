@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.glimps.glimpsserver.common.oauth.dto.JwtTokenDto;
 import com.glimps.glimpsserver.common.oauth.dto.OAuthUserVo;
@@ -28,10 +29,12 @@ public class AuthenticationService {
 	}
 
 	// TODO 삭제 필요
+	@Transactional(readOnly = true)
 	public List<User> getRoles(String email) {
 		return userService.findAllByEmail(email);
 	}
 
+	@Transactional
 	public JwtTokenDto oauthLogin(OAuth2User oauth2User) {
 		OAuthUserVo oauthUserVo = OAuthUserVo.from(oauth2User);
 
@@ -41,13 +44,15 @@ public class AuthenticationService {
 			// 회원 가입
 			User createdUser = User.createUser(oauthUserVo, RoleType.USER);
 			userService.registerUser(createdUser);
-			return createJwt(createdUser);
+			return issueJwt(createdUser);
 		}
 
-		return createJwt(optionalUser.get());
+		return issueJwt(optionalUser.get());
 	}
 
-	private JwtTokenDto createJwt(User user) {
-		return jwtUtil.createJwtTokenDto(user.getEmail(), user.getRole());
+	private JwtTokenDto issueJwt(User user) {
+		JwtTokenDto jwtTokenDto = jwtUtil.createJwtTokenDto(user.getEmail(), user.getRole());
+		user.updateRefreshToken(jwtTokenDto.getRefreshToken(), jwtTokenDto.getRefreshTokenExpireTime());
+		return jwtTokenDto;
 	}
 }
