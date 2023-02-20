@@ -39,8 +39,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		Map<String, Object> memberAttribute = oAuth2Attribute.convertToMap();
 
 		return new DefaultOAuth2User(
-			Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+			Collections.singleton(new SimpleGrantedAuthority("USER")),
 			memberAttribute, "email");
-
 	}
 }

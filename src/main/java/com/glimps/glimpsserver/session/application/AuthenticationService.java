@@ -1,22 +1,25 @@
 package com.glimps.glimpsserver.session.application;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.glimps.glimpsserver.common.oauth.dto.JwtTokenDto;
+import com.glimps.glimpsserver.common.oauth.dto.OAuthUserVo;
 import com.glimps.glimpsserver.common.util.JwtUtil;
+import com.glimps.glimpsserver.user.application.UserService;
+import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
-import com.glimps.glimpsserver.user.infra.UserRepository;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class AuthenticationService {
-	private final UserRepository userRepository;
+	private final UserService userService;
 	private final JwtUtil jwtUtil;
 
 	public String parseToken(String accessToken) {
@@ -24,23 +27,27 @@ public class AuthenticationService {
 		return claims.get("email", String.class);
 	}
 
+	// TODO 삭제 필요
 	public List<User> getRoles(String email) {
-		return userRepository.findAllByEmail(email);
+		return userService.findAllByEmail(email);
 	}
 
-	public JwtTokenDto createJwt(User user) {
-		Date accessTokenExpireTime = jwtUtil.createAccessTokenExpireTime();
-		String accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole(), accessTokenExpireTime);
+	public JwtTokenDto oauthLogin(OAuth2User oauth2User) {
+		OAuthUserVo oauthUserVo = OAuthUserVo.from(oauth2User);
 
-		Date refreshTokenExpireTime = jwtUtil.createRefreshTokenExpireTime();
-		String refreshToken = jwtUtil.createRefreshToken(user.getEmail(), refreshTokenExpireTime);
+		Optional<User> optionalUser = userService.findUserByEmail(oauthUserVo.getEmail());
 
-		return JwtTokenDto.builder()
-			.grantType("Bearer")
-			.accessToken(accessToken)
-			.refreshToken(refreshToken)
-			.accessTokenExpireTime(accessTokenExpireTime)
-			.refreshTokenExpireTime(refreshTokenExpireTime)
-			.build();
+		if (optionalUser.isEmpty()) {
+			// 회원 가입
+			User createdUser = User.createUser(oauthUserVo, RoleType.USER);
+			userService.registerUser(createdUser);
+			return createJwt(createdUser);
+		}
+
+		return createJwt(optionalUser.get());
+	}
+
+	private JwtTokenDto createJwt(User user) {
+		return jwtUtil.createJwtTokenDto(user.getEmail(), user.getRole());
 	}
 }

@@ -6,8 +6,9 @@ import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
-import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
+import com.glimps.glimpsserver.common.error.InvalidTokenException;
+import com.glimps.glimpsserver.common.oauth.dto.JwtTokenDto;
 import com.glimps.glimpsserver.user.domain.RoleType;
 
 import io.jsonwebtoken.Claims;
@@ -25,7 +26,38 @@ public class JwtUtil {
 		this.key = Keys.hmacShaKeyFor(arr);
 	}
 
-	public String createAccessToken(String email, RoleType role, Date expirationTime) {
+	public Claims decode(String token) {
+		if (token == null || token.isBlank()) {
+			throw new InvalidTokenException(ErrorCode.INVALID_TOKEN, token);
+		}
+		try {
+			return Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+		} catch (SignatureException e) {
+			throw new InvalidTokenException(ErrorCode.INVALID_TOKEN, token);
+		}
+	}
+
+	public JwtTokenDto createJwtTokenDto(String email, RoleType role) {
+		Date accessTokenExpireTime = createAccessTokenExpireTime();
+		Date refreshTokenExpireTime = createRefreshTokenExpireTime();
+
+		String accessToken = createAccessToken(email, role, accessTokenExpireTime);
+		String refreshToken = createRefreshToken(email, refreshTokenExpireTime);
+
+		return JwtTokenDto.builder()
+			.grantType("Bearer")
+			.accessToken(accessToken)
+			.refreshToken(refreshToken)
+			.accessTokenExpireTime(accessTokenExpireTime)
+			.refreshTokenExpireTime(refreshTokenExpireTime)
+			.build();
+	}
+
+	private String createAccessToken(String email, RoleType role, Date expirationTime) {
 		return Jwts.builder()
 			.setSubject(email)
 			.setIssuedAt(new Date())
@@ -37,7 +69,7 @@ public class JwtUtil {
 			.compact();
 	}
 
-	public String createRefreshToken(String email, Date expirationTime) {
+	private String createRefreshToken(String email, Date expirationTime) {
 		return Jwts.builder()
 			.setSubject(email)
 			.setIssuedAt(new Date())
@@ -48,26 +80,12 @@ public class JwtUtil {
 			.compact();
 	}
 
-	public Date createAccessTokenExpireTime() {
+	private Date createAccessTokenExpireTime() {
 		return new Date(System.currentTimeMillis() + Long.parseLong("9000000"));
 	}
 
-	public Date createRefreshTokenExpireTime() {
+	private Date createRefreshTokenExpireTime() {
 		return new Date(System.currentTimeMillis() + Long.parseLong("1209600000"));
 	}
 
-	public Claims decode(String token) {
-		if (token == null || token.isBlank()) {
-			throw new CustomException(ErrorCode.INVALID_TOKEN);
-		}
-		try {
-			return Jwts.parserBuilder()
-				.setSigningKey(key)
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
-		} catch (SignatureException e) {
-			throw new CustomException(ErrorCode.INVALID_TOKEN);
-		}
-	}
 }

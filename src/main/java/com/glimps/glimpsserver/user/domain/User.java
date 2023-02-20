@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.glimps.glimpsserver.user.dto.UserCreateRequest;
+import com.glimps.glimpsserver.common.oauth.dto.OAuthUserVo;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class User {
 	private Long id;
 
 	@Column(name = "nick_name")
-	private String nickName;
+	private String nickname;
 
 	@Column(name = "email")
 	private String email;
@@ -45,12 +45,12 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private UserType userType;
 
-	public static User createUser(UserCreateRequest userCreateRequest) {
+	public static User createUser(OAuthUserVo oAuthUserVo, RoleType role) {
 		return User.builder()
-			.nickName(userCreateRequest.getNickName())
-			.email(userCreateRequest.getEmail())
-			.userType(userCreateRequest.getUserType())
-			.role(userCreateRequest.getRole())
+			.nickname(oAuthUserVo.getName())
+			.email(oAuthUserVo.getEmail())
+			.userType(oAuthUserVo.getUserType())
+			.role(role)
 			.reviewCnt(0)
 			.build();
 	}
