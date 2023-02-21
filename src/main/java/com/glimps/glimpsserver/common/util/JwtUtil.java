@@ -18,6 +18,8 @@ import io.jsonwebtoken.security.SignatureException;
 
 @Component
 public class JwtUtil {
+
+	// TODO Key를 외부에서 참조하도록 수정 필요
 	private final Key key;
 
 	public JwtUtil() {
