@@ -91,8 +91,8 @@ class ReviewServiceTest {
 		class Context_when_user_exists_and_perfume_exists {
 			@BeforeEach
 			void setUp() {
-				given(userService.getUser(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(perfumeService.getPerfume(EXISTS_PERFUME_ID)).willReturn(EXISTS_PERFUME);
+				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
+				given(perfumeService.getPerfumeById(EXISTS_PERFUME_ID)).willReturn(EXISTS_PERFUME);
 				given(reviewRepository.save(any(Review.class))).will(invocation -> {
 					Review source = invocation.getArgument(0);
 					return Review.builder()
@@ -138,7 +138,7 @@ class ReviewServiceTest {
 		class Context_when_user_not_exists_and_perfume_exists {
 			@BeforeEach
 			void setUp() {
-				given(userService.getUser(NOT_EXISTS_EMAIL)).willThrow(EntityNotFoundException.class);
+				given(userService.getUserByEmail(NOT_EXISTS_EMAIL)).willThrow(EntityNotFoundException.class);
 			}
 
 			@Test
@@ -165,8 +165,8 @@ class ReviewServiceTest {
 
 			@BeforeEach
 			void setUp() {
-				given(userService.getUser(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(perfumeService.getPerfume(NOT_EXISTS_PERFUME_ID)).willThrow(EntityNotFoundException.class);
+				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
+				given(perfumeService.getPerfumeById(NOT_EXISTS_PERFUME_ID)).willThrow(EntityNotFoundException.class);
 			}
 
 			@Test
@@ -202,7 +202,7 @@ class ReviewServiceTest {
 			@Test
 			@DisplayName("리뷰를 반환한다.")
 			void It_returns_review() {
-				Review review = reviewService.getReview(EXISTS_REVIEW_UUID);
+				Review review = reviewService.getReviewById(EXISTS_REVIEW_UUID);
 
 				assertThat(review.getId()).isEqualTo(EXISTS_REVIEW_ID);
 				assertThat(review.getUuid()).isEqualTo(EXISTS_REVIEW_UUID);
@@ -226,7 +226,7 @@ class ReviewServiceTest {
 			@Test
 			@DisplayName("ReviewNotFoundException을 던진다.")
 			void It_throws_ReviewNotFoundException() {
-				assertThatThrownBy(() -> reviewService.getReview(NOT_EXISTS_REVIEW_UUID))
+				assertThatThrownBy(() -> reviewService.getReviewById(NOT_EXISTS_REVIEW_UUID))
 					.isInstanceOf(EntityNotFoundException.class);
 			}
 		}
@@ -272,7 +272,7 @@ class ReviewServiceTest {
 			void setUp() {
 				CustomPageImpl<Review> customPage = new CustomPageImpl<>(
 					List.of(EXISTS_REVIEW, element1, element2, element3), 0, 2, 4);
-				given(userService.getUser(EXISTS_EMAIL)).willReturn(EXISTS_USER);
+				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
 				given(reviewCustomRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(customPage);
 			}
 
@@ -292,7 +292,7 @@ class ReviewServiceTest {
 		class Context_when_user_exists_and_review_not_exists {
 			@BeforeEach
 			void setUp() {
-				given(userService.getUser(EXISTS_EMAIL)).willReturn(EXISTS_USER);
+				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
 				given(reviewCustomRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(CustomPage.empty());
 			}
 
@@ -310,7 +310,7 @@ class ReviewServiceTest {
 		class Context_when_user_not_exists {
 			@BeforeEach
 			void setUp() {
-				given(userService.getUser(NOT_EXISTS_EMAIL)).willThrow(EntityNotFoundException.class);
+				given(userService.getUserByEmail(NOT_EXISTS_EMAIL)).willThrow(EntityNotFoundException.class);
 			}
 
 			@Test

@@ -24,7 +24,7 @@ public class PerfumeService {
 			reviewCreateRequest.getSillageRatings());
 	}
 
-	public Perfume getPerfume(Long perfumeId) {
+	public Perfume getPerfumeById(Long perfumeId) {
 		return findPerfume(perfumeId);
 	}
 

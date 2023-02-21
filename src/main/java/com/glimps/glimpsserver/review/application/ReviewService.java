@@ -41,9 +41,9 @@ public class ReviewService {
 
 	@Transactional
 	public Review createReview(ReviewCreateRequest reviewCreateRequest, String email) {
-		User user = userService.getUser(email);
+		User user = userService.getUserByEmail(email);
 		Long perfumeId = reviewCreateRequest.getPerfumeId();
-		Perfume perfume = perfumeService.getPerfume(perfumeId);
+		Perfume perfume = perfumeService.getPerfumeById(perfumeId);
 
 		Review review = Review.createReview(reviewCreateRequest, user, perfume);
 
@@ -54,7 +54,7 @@ public class ReviewService {
 		return reviewRepository.save(review);
 	}
 
-	public Review getReview(UUID id) {
+	public Review getReviewById(UUID id) {
 		return reviewCustomRepository.findByUuid(id)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, id));
 	}
@@ -68,7 +68,7 @@ public class ReviewService {
 		Pageable pageRequest = PageRequest.of(offset, reviewPageParam.getLimit(),
 			reviewPageParam.getSortType().getDirection(), reviewPageParam.getOrderStandard().getProperty());
 
-		User user = userService.getUser(email);
+		User user = userService.getUserByEmail(email);
 
 		return reviewCustomRepository.findAllByUser(user.getId(), pageRequest);
 	}
