@@ -26,6 +26,7 @@ import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
 import com.glimps.glimpsserver.review.dto.ReviewPageParam;
+import com.glimps.glimpsserver.review.infra.ReviewCustomRepository;
 import com.glimps.glimpsserver.review.infra.ReviewRepository;
 import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.RoleType;
@@ -68,6 +69,7 @@ class ReviewServiceTest {
 		.brand("향수 브랜드")
 		.build();
 
+	private final ReviewCustomRepository reviewCustomRepository = mock(ReviewCustomRepository.class);
 	private final ReviewRepository reviewRepository = mock(ReviewRepository.class);
 	private final UserService userService = mock(UserService.class);
 	private ReviewService reviewService;
@@ -78,7 +80,7 @@ class ReviewServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		reviewService = new ReviewService(reviewRepository, userService, reviewPhotoService, perfumeService);
+		reviewService = new ReviewService(reviewCustomRepository, reviewRepository, userService, reviewPhotoService, perfumeService);
 	}
 
 	@Nested
@@ -194,7 +196,7 @@ class ReviewServiceTest {
 		class Context_when_review_exists {
 			@BeforeEach
 			void setUp() {
-				given(reviewRepository.findByUuid(EXISTS_REVIEW_UUID)).willReturn(Optional.of(EXISTS_REVIEW));
+				given(reviewCustomRepository.findByUuid(EXISTS_REVIEW_UUID)).willReturn(Optional.of(EXISTS_REVIEW));
 			}
 
 			@Test
@@ -218,7 +220,7 @@ class ReviewServiceTest {
 		class Context_when_review_not_exists {
 			@BeforeEach
 			void setUp() {
-				given(reviewRepository.findByUuid(NOT_EXISTS_REVIEW_UUID)).willReturn(Optional.empty());
+				given(reviewCustomRepository.findByUuid(NOT_EXISTS_REVIEW_UUID)).willReturn(Optional.empty());
 			}
 
 			@Test
@@ -271,7 +273,7 @@ class ReviewServiceTest {
 				CustomPageImpl<Review> customPage = new CustomPageImpl<>(
 					List.of(EXISTS_REVIEW, element1, element2, element3), 0, 2, 4);
 				given(userService.getUser(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(reviewRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(customPage);
+				given(reviewCustomRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(customPage);
 			}
 
 			@Test
@@ -291,7 +293,7 @@ class ReviewServiceTest {
 			@BeforeEach
 			void setUp() {
 				given(userService.getUser(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(reviewRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(CustomPage.empty());
+				given(reviewCustomRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(CustomPage.empty());
 			}
 
 			@Test
@@ -358,7 +360,7 @@ class ReviewServiceTest {
 			void setUp() {
 
 				List<Review> result = List.of(element1, element2, element3);
-				given(reviewRepository.findTop10ByOrderByCreatedAtDesc())
+				given(reviewCustomRepository.findTop10ByOrderByCreatedAtDesc())
 					.willReturn(result);
 			}
 
@@ -368,7 +370,7 @@ class ReviewServiceTest {
 				List<Review> reviews = reviewService.getRecentReviews();
 
 				assertThat(reviews).hasSize(3);
-				verify(reviewRepository).findTop10ByOrderByCreatedAtDesc();
+				verify(reviewCustomRepository).findTop10ByOrderByCreatedAtDesc();
 			}
 		}
 
@@ -377,7 +379,7 @@ class ReviewServiceTest {
 		class Context_when_review_not_exists {
 			@BeforeEach
 			void setUp() {
-				given(reviewRepository.findTop10ByOrderByCreatedAtDesc()).willReturn(List.of());
+				given(reviewCustomRepository.findTop10ByOrderByCreatedAtDesc()).willReturn(List.of());
 			}
 
 			@Test
@@ -386,7 +388,7 @@ class ReviewServiceTest {
 				List<Review> recentReviews = reviewService.getRecentReviews();
 
 				assertThat(recentReviews).isEmpty();
-				verify(reviewRepository).findTop10ByOrderByCreatedAtDesc();
+				verify(reviewCustomRepository).findTop10ByOrderByCreatedAtDesc();
 			}
 		}
 	}

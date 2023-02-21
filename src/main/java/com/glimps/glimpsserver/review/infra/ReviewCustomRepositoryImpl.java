@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Repository;
 
 import com.glimps.glimpsserver.common.domain.CustomPage;
 import com.glimps.glimpsserver.common.domain.CustomPageImpl;
@@ -23,6 +24,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
+@Repository
 @RequiredArgsConstructor
 public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	private final JPAQueryFactory jpaQueryFactory;

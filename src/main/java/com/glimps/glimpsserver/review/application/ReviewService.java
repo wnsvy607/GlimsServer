@@ -16,6 +16,7 @@ import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
 import com.glimps.glimpsserver.review.dto.ReviewPageParam;
+import com.glimps.glimpsserver.review.infra.ReviewCustomRepository;
 import com.glimps.glimpsserver.review.infra.ReviewRepository;
 import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.User;
@@ -23,13 +24,15 @@ import com.glimps.glimpsserver.user.domain.User;
 @Service
 @Transactional(readOnly = true)
 public class ReviewService {
+	private final ReviewCustomRepository reviewCustomRepository;
 	private final ReviewRepository reviewRepository;
 	private final UserService userService;
 	private final ReviewPhotoService reviewPhotoService;
 	private final PerfumeService perfumeService;
 
-	public ReviewService(ReviewRepository reviewRepository, UserService userService,
+	public ReviewService(ReviewCustomRepository reviewCustomRepository, ReviewRepository reviewRepository, UserService userService,
 		ReviewPhotoService reviewPhotoService, PerfumeService perfumeService) {
+		this.reviewCustomRepository = reviewCustomRepository;
 		this.reviewRepository = reviewRepository;
 		this.userService = userService;
 		this.reviewPhotoService = reviewPhotoService;
@@ -52,7 +55,7 @@ public class ReviewService {
 	}
 
 	public Review getReview(UUID id) {
-		return reviewRepository.findByUuid(id)
+		return reviewCustomRepository.findByUuid(id)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, id));
 	}
 
@@ -67,11 +70,11 @@ public class ReviewService {
 
 		User user = userService.getUser(email);
 
-		return reviewRepository.findAllByUser(user.getId(), pageRequest);
+		return reviewCustomRepository.findAllByUser(user.getId(), pageRequest);
 	}
 
 	public List<Review> getRecentReviews() {
-		return reviewRepository.findTop10ByOrderByCreatedAtDesc();
+		return reviewCustomRepository.findTop10ByOrderByCreatedAtDesc();
 	}
 
 	public CustomPage<Review> getReviews(ReviewPageParam reviewPageParam) {
@@ -84,7 +87,7 @@ public class ReviewService {
 		Pageable pageRequest = PageRequest.of(offset, reviewPageParam.getLimit(),
 			reviewPageParam.getSortType().getDirection(),
 			reviewPageParam.getOrderStandard().getProperty());
-		return reviewRepository.findAllByOrder(pageRequest);
+		return reviewCustomRepository.findAllByOrder(pageRequest);
 	}
 
 }
