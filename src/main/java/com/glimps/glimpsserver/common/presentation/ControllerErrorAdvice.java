@@ -1,4 +1,4 @@
-package com.glimps.glimpsserver.common.controller;
+package com.glimps.glimpsserver.common.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +10,7 @@ import com.glimps.glimpsserver.common.dto.ErrorResponse;
 import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.InvalidTokenException;
+import com.glimps.glimpsserver.common.error.UserDuplicationException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,5 +64,17 @@ public class ControllerErrorAdvice {
 		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getStatus(),
 			e.getMessage() + " Token: " + e.getToken());
 		return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+	}
+
+	/**
+	 * 회원가입시 같은 이메일을 가진 유저가 이미 있을 때 어디로 가입되어 있는지 반환
+	 */
+	@ExceptionHandler(UserDuplicationException.class)
+	protected ResponseEntity<ErrorResponse> handleDuplicateRequestException(UserDuplicationException e) {
+		log.error("Exception occurs: {}, User type: {}", e.getMessage(), e.getUserType());
+		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getStatus(),
+			e.getMessage() + " UserType: " + e.getUserType());
+		return ResponseEntity.status(e.getErrorCode().getStatus())
+			.body(errorResponse);
 	}
 }

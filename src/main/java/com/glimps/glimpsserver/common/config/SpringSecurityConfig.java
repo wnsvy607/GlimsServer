@@ -1,51 +1,62 @@
 package com.glimps.glimpsserver.common.config;
 
-import javax.servlet.Filter;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
-import com.glimps.glimpsserver.common.filter.AuthenticationErrorFilter;
-import com.glimps.glimpsserver.common.filter.JwtAuthenticationFilter;
-import com.glimps.glimpsserver.session.application.AuthenticationService;
+import com.glimps.glimpsserver.common.oauth.handler.OAuth2SuccessHandler;
+import com.glimps.glimpsserver.common.oauth.service.CustomOAuth2UserService;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class SpringSecurityConfig {
-	@Autowired
-	private AuthenticationService authenticationService;
+	// @Autowired
+	// private AuthenticationService authenticationService;
+	//
+	// @Bean
+	// public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+	// 	return configuration.getAuthenticationManager();
+	// }
 
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-		return configuration.getAuthenticationManager();
-	}
+	private final CustomOAuth2UserService oAuth2UserService;
+	private final OAuth2SuccessHandler successHandler;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		AuthenticationManager authenticationManager = authenticationManager(
-			http.getSharedObject(AuthenticationConfiguration.class));
-		Filter authenticationFilter = new JwtAuthenticationFilter(authenticationManager, authenticationService);
-		Filter authenticationErrorFilter = new AuthenticationErrorFilter();
-		
-		http.csrf().disable();
 
-		http.formLogin().disable();
+		http.csrf()
+			.disable()
+			.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.authorizeRequests()
+			.antMatchers("/token/**", "/health", "/v3/api-docs", "/swagger*/**", "/h2-console/**", "/session/token")
+			.permitAll()
+			.anyRequest()
+			.authenticated()
+			.and()
+			.formLogin()
+			.disable()
+			.oauth2Login()
+			.successHandler(successHandler)
+			.userInfoEndpoint()
+			.userService(oAuth2UserService);
 
-		http.addFilter(authenticationFilter);
+		// AuthenticationManager authenticationManager = authenticationManager(
+		// 	http.getSharedObject(AuthenticationConfiguration.class));
+		// Filter authenticationFilter = new JwtAuthenticationFilter(authenticationManager, authenticationService);
+		// Filter authenticationErrorFilter = new AuthenticationErrorFilter();
+		// http.exceptionHandling()
+		// 	.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+		// http.formLogin().disable();
 
-		http.addFilterAfter(authenticationErrorFilter, JwtAuthenticationFilter.class);
+		// http.addFilter(authenticationFilter);
 
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.exceptionHandling()
-			.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-
+		// http.addFilterAfter(authenticationErrorFilter, JwtAuthenticationFilter.class);
 		return http.build();
 	}
 
