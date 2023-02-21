@@ -1,6 +1,7 @@
 package com.glimps.glimpsserver.user.application;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.UserDuplicationException;
+import com.glimps.glimpsserver.common.util.DateTimeUtils;
 import com.glimps.glimpsserver.session.dto.SignUpRequest;
 import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
@@ -59,9 +61,13 @@ public class UserService {
 	}
 
 	@Transactional
-	public Long updateRefreshToken(Long id, String refreshToken, LocalDateTime expTime) {
+	public Long updateRefreshToken(Long id, String refreshToken, Date refreshTokenExpireTime) {
 		User user = findById(id);
-		user.updateRefreshToken(refreshToken, expTime);
+		LocalDateTime convertedExpTime = DateTimeUtils.convertToLocalDateTime(
+			refreshTokenExpireTime);
+
+		user.updateRefreshToken(refreshToken, convertedExpTime);
+
 		return user.getId();
 	}
 }

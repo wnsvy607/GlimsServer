@@ -67,7 +67,8 @@ class AuthenticationServiceTest {
 		//then
 		verify(userService, times(1)).registerUser(any());
 		verify(jwtUtil, times(1)).createJwtTokenDto(EMAIL, ROLE);
-		verify(userService, times(1)).updateRefreshToken(ID, jwtTokenDto.getRefreshToken(), convertedExpTime);
+		verify(userService, times(1)).updateRefreshToken(ID, jwtTokenDto.getRefreshToken(),
+			jwtTokenDto.getRefreshTokenExpireTime());
 	}
 
 	@Test
@@ -78,13 +79,12 @@ class AuthenticationServiceTest {
 
 		//when
 		JwtTokenDto jwtTokenDto = authenticationService.oauthLogin(oAuth2User);
-		LocalDateTime convertedExpTime = DateTimeUtils.convertToLocalDateTime(
-			jwtTokenDto.getRefreshTokenExpireTime());
 
 		//then
 		verify(userService, times(0)).registerUser(any());
 		verify(jwtUtil, times(1)).createJwtTokenDto(EMAIL, ROLE);
-		verify(userService, times(1)).updateRefreshToken(ID, jwtTokenDto.getRefreshToken(), convertedExpTime);
+		verify(userService, times(1)).updateRefreshToken(ID, jwtTokenDto.getRefreshToken(),
+			jwtTokenDto.getRefreshTokenExpireTime());
 	}
 
 }
