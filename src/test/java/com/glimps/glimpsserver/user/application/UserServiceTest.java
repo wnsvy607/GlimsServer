@@ -46,7 +46,7 @@ class UserServiceTest {
 	private UserService userService;
 
 	@Test
-	@DisplayName("가입된 유저의 이메일로 가입 요청이 오면 예외를 던진다.")
+	@DisplayName("회원가입 중 이메일 중복 => 예외 발생")
 	public void validateDuplicationWhenSignUp() {
 		//given
 		given(userRepository.findByEmail(EMAIL)).willReturn(Optional.of(EXIST_USER));

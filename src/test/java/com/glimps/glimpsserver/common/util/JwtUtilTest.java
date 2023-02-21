@@ -33,7 +33,7 @@ class JwtUtilTest {
 	}
 
 	@Test
-	@DisplayName("발급된 Jwt 토큰 Decode")
+	@DisplayName("발급된 Jwt Decode")
 	void decodeAccessToken() throws Exception {
 		//given
 		JwtTokenDto jwtTokenDto = jwtUtil.createJwtTokenDto(EMAIL, ROLE);
