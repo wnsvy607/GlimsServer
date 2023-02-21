@@ -1,5 +1,6 @@
 package com.glimps.glimpsserver.user.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,5 +56,12 @@ public class UserService {
 	public User findById(Long id) {
 		return userRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, id, "UNKNOWN"));
+	}
+
+	@Transactional
+	public Long updateRefreshToken(Long id, String refreshToken, LocalDateTime expTime) {
+		User user = findById(id);
+		user.updateRefreshToken(refreshToken, expTime);
+		return user.getId();
 	}
 }

@@ -51,7 +51,8 @@ public class AuthenticationService {
 		JwtTokenDto jwtTokenDto = jwtUtil.createJwtTokenDto(user.getEmail(), user.getRole());
 		LocalDateTime convertedExpTime = DateTimeUtils.convertToLocalDateTime(
 			jwtTokenDto.getRefreshTokenExpireTime());
-		user.updateRefreshToken(jwtTokenDto.getRefreshToken(), convertedExpTime);
+
+		userService.updateRefreshToken(user.getId(), jwtTokenDto.getRefreshToken(), convertedExpTime);
 
 		return jwtTokenDto;
 	}

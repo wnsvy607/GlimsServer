@@ -2,6 +2,7 @@ package com.glimps.glimpsserver.session.application;
 
 import static org.mockito.BDDMockito.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -15,6 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import com.glimps.glimpsserver.common.oauth.dto.JwtTokenDto;
+import com.glimps.glimpsserver.common.util.DateTimeUtils;
 import com.glimps.glimpsserver.common.util.JwtUtil;
 import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.RoleType;
@@ -57,11 +60,14 @@ class AuthenticationServiceTest {
 		given(userService.findById(ID)).willReturn(USER);
 
 		//when
-		authenticationService.oauthLogin(oAuth2User);
+		JwtTokenDto jwtTokenDto = authenticationService.oauthLogin(oAuth2User);
+		LocalDateTime convertedExpTime = DateTimeUtils.convertToLocalDateTime(
+			jwtTokenDto.getRefreshTokenExpireTime());
 
 		//then
 		verify(userService, times(1)).registerUser(any());
 		verify(jwtUtil, times(1)).createJwtTokenDto(EMAIL, ROLE);
+		verify(userService, times(1)).updateRefreshToken(ID, jwtTokenDto.getRefreshToken(), convertedExpTime);
 	}
 
 	@Test
@@ -71,11 +77,14 @@ class AuthenticationServiceTest {
 		given(userService.getOptionalUserByEmail(EMAIL)).willReturn(Optional.of(USER));
 
 		//when
-		authenticationService.oauthLogin(oAuth2User);
+		JwtTokenDto jwtTokenDto = authenticationService.oauthLogin(oAuth2User);
+		LocalDateTime convertedExpTime = DateTimeUtils.convertToLocalDateTime(
+			jwtTokenDto.getRefreshTokenExpireTime());
 
 		//then
 		verify(userService, times(0)).registerUser(any());
 		verify(jwtUtil, times(1)).createJwtTokenDto(EMAIL, ROLE);
+		verify(userService, times(1)).updateRefreshToken(ID, jwtTokenDto.getRefreshToken(), convertedExpTime);
 	}
 
 }
