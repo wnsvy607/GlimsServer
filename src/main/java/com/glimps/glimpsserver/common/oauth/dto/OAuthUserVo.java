@@ -3,7 +3,6 @@ package com.glimps.glimpsserver.common.oauth.dto;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.glimps.glimpsserver.session.dto.SignUpInfo;
-import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.UserType;
 
 import lombok.Builder;
@@ -32,7 +31,7 @@ public class OAuthUserVo implements SignUpInfo {
 	}
 
 	@Builder
-	private OAuthUserVo(String name, String email, UserType userType, RoleType roleType) {
+	private OAuthUserVo(String name, String email, UserType userType) {
 		this.name = name;
 		this.email = email;
 		this.userType = userType;
