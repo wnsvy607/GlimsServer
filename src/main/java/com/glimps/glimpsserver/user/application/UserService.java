@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.UserDuplicationException;
-import com.glimps.glimpsserver.session.dto.SignUpInfo;
+import com.glimps.glimpsserver.session.dto.SignUpRequest;
 import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 import com.glimps.glimpsserver.user.infra.UserRepository;
@@ -29,8 +29,8 @@ public class UserService {
 	}
 
 	@Transactional
-	public Long registerUser(SignUpInfo signUpInfo) {
-		User user = User.createUser(signUpInfo, RoleType.USER);
+	public Long registerUser(SignUpRequest signUpRequest) {
+		User user = User.createUser(signUpRequest, RoleType.USER);
 		validateDuplicateUser(user);
 		User savedUser = userRepository.save(user);
 

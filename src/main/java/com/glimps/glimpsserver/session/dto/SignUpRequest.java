@@ -2,7 +2,7 @@ package com.glimps.glimpsserver.session.dto;
 
 import com.glimps.glimpsserver.user.domain.UserType;
 
-public interface SignUpInfo {
+public interface SignUpRequest {
 
 	public String getName();
 

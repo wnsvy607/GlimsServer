@@ -2,7 +2,7 @@ package com.glimps.glimpsserver.common.oauth.dto;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import com.glimps.glimpsserver.session.dto.SignUpInfo;
+import com.glimps.glimpsserver.session.dto.SignUpRequest;
 import com.glimps.glimpsserver.user.domain.UserType;
 
 import lombok.Builder;
@@ -14,7 +14,7 @@ import lombok.Getter;
  * User.createUser() 메서드에서 Arg로 활용
  */
 @Getter
-public class OAuthUserVo implements SignUpInfo {
+public class OAuthUserVo implements SignUpRequest {
 
 	private final String name;
 	private final String email;

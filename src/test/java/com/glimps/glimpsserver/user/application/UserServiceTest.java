@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.UserDuplicationException;
-import com.glimps.glimpsserver.session.dto.SignUpInfo;
+import com.glimps.glimpsserver.session.dto.SignUpRequest;
 import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 import com.glimps.glimpsserver.user.domain.UserType;
@@ -40,7 +40,7 @@ class UserServiceTest {
 	private UserRepository userRepository;
 
 	@Mock
-	private SignUpInfo signUpInfo;
+	private SignUpRequest signUpRequest;
 
 	@InjectMocks
 	private UserService userService;
@@ -50,13 +50,13 @@ class UserServiceTest {
 	public void validateDuplicationWhenSignUp() {
 		//given
 		given(userRepository.findByEmail(EMAIL)).willReturn(Optional.of(EXIST_USER));
-		given(signUpInfo.getEmail()).willReturn(EMAIL);
-		given(signUpInfo.getName()).willReturn(NAME);
-		given(signUpInfo.getUserType()).willReturn(UserType.GOOGLE);
+		given(signUpRequest.getEmail()).willReturn(EMAIL);
+		given(signUpRequest.getName()).willReturn(NAME);
+		given(signUpRequest.getUserType()).willReturn(UserType.GOOGLE);
 
 		assertThatExceptionOfType(UserDuplicationException.class).isThrownBy(() -> {
 				//when
-				userService.registerUser(signUpInfo);
+				userService.registerUser(signUpRequest);
 			})
 			//then
 			.withMessage(ErrorCode.ALREADY_REGISTERED_USER.getMessage());
