@@ -31,7 +31,7 @@ public class UserService {
 	@Transactional
 	public Long registerUser(SignUpInfo signUpInfo) {
 		User user = User.createUser(signUpInfo, RoleType.USER);
-		validateDuplicateMember(user);
+		validateDuplicateUser(user);
 		User savedUser = userRepository.save(user);
 
 		log.info("The new user registered email={}	role={}	provider={}", savedUser.getEmail(),
@@ -41,9 +41,11 @@ public class UserService {
 		return savedUser.getId();
 	}
 
-	private void validateDuplicateMember(User user) {
+	private void validateDuplicateUser(User user) {
 		userRepository.findByEmail(user.getEmail())
-			.ifPresent(m -> new UserDuplicationException(ErrorCode.ALREADY_REGISTERED_USER, m.getUserType()));
+			.ifPresent(m -> {
+				throw new UserDuplicationException(ErrorCode.ALREADY_REGISTERED_USER, m.getUserType());
+			});
 	}
 
 	public List<User> getAllByEmail(String email) {
