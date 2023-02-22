@@ -24,6 +24,7 @@ import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.perfume.application.PerfumeService;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
+import com.glimps.glimpsserver.review.domain.ReviewHeart;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
 import com.glimps.glimpsserver.review.dto.ReviewPageParam;
 import com.glimps.glimpsserver.review.infra.ReviewCustomRepository;
@@ -51,6 +52,7 @@ class ReviewServiceTest {
 		.uuid(EXISTS_REVIEW_UUID)
 		.title(TITLE)
 		.body(BODY)
+		.heartsCnt(5)
 		.overallRating(3)
 		.longevityRating(3)
 		.sillageRating(3)
@@ -77,10 +79,14 @@ class ReviewServiceTest {
 	private ReviewPhotoService reviewPhotoService;
 	@MockBean
 	private PerfumeService perfumeService;
+	@MockBean
+	private ReviewHeartService reviewHeartService;
 
 	@BeforeEach
 	void setUp() {
-		reviewService = new ReviewService(reviewCustomRepository, reviewRepository, userService, reviewPhotoService, perfumeService);
+		reviewService = new ReviewService(reviewCustomRepository, reviewRepository, userService, reviewPhotoService,
+			perfumeService,
+			reviewHeartService);
 	}
 
 	@Nested
@@ -170,7 +176,7 @@ class ReviewServiceTest {
 			}
 
 			@Test
-			@DisplayName("PerfumeNotFoundException을 던진다.")
+			@DisplayName("PerfumeNotFoundException 을 던진다.")
 			void It_throws_PerfumeNotFoundException() {
 				ReviewCreateRequest reviewCreateRequest =
 					ReviewCreateRequest.builder()
@@ -293,7 +299,8 @@ class ReviewServiceTest {
 			@BeforeEach
 			void setUp() {
 				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(reviewCustomRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(CustomPage.empty());
+				given(reviewCustomRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(
+					CustomPage.empty());
 			}
 
 			@Test
@@ -389,6 +396,112 @@ class ReviewServiceTest {
 
 				assertThat(recentReviews).isEmpty();
 				verify(reviewCustomRepository).findTop10ByOrderByCreatedAtDesc();
+			}
+		}
+	}
+
+	@Nested
+	@DisplayName("createHeart 메서드는")
+	class Describe_createHeart {
+		@Nested
+		@DisplayName("리뷰가 존재하고, 사용자가 존재하고, 사용자가 리뷰에 좋아요를 누를 때")
+		class Context_when_review_exists_and_user_exists_and_user_click_heart {
+			@BeforeEach
+			void setUp() {
+				given(reviewCustomRepository.findByUuid(EXISTS_REVIEW.getUuid())).willReturn(
+					Optional.of(EXISTS_REVIEW));
+				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
+				given(reviewHeartService.createReviewHeart(any(Review.class), any(User.class))).will(invocation -> {
+					Review review = invocation.getArgument(0);
+					User user = invocation.getArgument(1);
+					return ReviewHeart.createReviewHeart(review, user);
+				});
+
+			}
+
+			@Test
+			@DisplayName("리뷰에 좋아요 수를 증가시킨다.")
+			void It_increase_heart_cnt() {
+				int originalReviewCnt = EXISTS_REVIEW.getHeartsCnt();
+				Review review = reviewService.createHeart(EXISTS_REVIEW.getUuid(), EXISTS_EMAIL);
+
+				assertThat(review.getHeartsCnt()).isEqualTo(originalReviewCnt + 1);
+
+				verify(reviewCustomRepository).findByUuid(EXISTS_REVIEW.getUuid());
+				verify(userService).getUserByEmail(EXISTS_EMAIL);
+				verify(reviewHeartService).createReviewHeart(any(Review.class), any(User.class));
+			}
+		}
+
+		@Nested
+		@DisplayName("리뷰가 존재하지 않을 때")
+		class Context_when_review_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewCustomRepository.findByUuid(NOT_EXISTS_REVIEW_UUID)).willReturn(
+					Optional.empty());
+			}
+
+			@Test
+			void It_throws_ReviewNotFoundException() {
+				assertThatThrownBy(() -> reviewService.createHeart(NOT_EXISTS_REVIEW_UUID, EXISTS_EMAIL))
+					.isInstanceOf(EntityNotFoundException.class);
+			}
+		}
+
+		@Nested
+		@DisplayName("사용자가 존재하지 않을 때")
+		class Context_when_user_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewCustomRepository.findByUuid(EXISTS_REVIEW.getUuid())).willReturn(
+					Optional.of(EXISTS_REVIEW));
+				given(userService.getUserByEmail(NOT_EXISTS_EMAIL)).willThrow(EntityNotFoundException.class);
+			}
+
+			@Test
+			void It_throws_UserNotFoundException() {
+				assertThatThrownBy(() -> reviewService.createHeart(EXISTS_REVIEW_UUID, NOT_EXISTS_EMAIL))
+					.isInstanceOf(EntityNotFoundException.class);
+			}
+		}
+	}
+
+	@Nested
+	@DisplayName("cancelHeart 메서드는")
+	class Describe_cancelHeart {
+		@Nested
+		@DisplayName("리뷰가 존재하고, 사용자가 존재하고, 사용자가 리뷰에 좋아요를 취소할 때")
+		class Context_when_review_exists_and_user_exists_and_user_cancel_heart {
+			private final ReviewHeart EXISTS_REVIEW_HEART = ReviewHeart.builder()
+				.id(1L)
+				.review(EXISTS_REVIEW)
+				.user(EXISTS_USER)
+				.build();
+
+			@BeforeEach
+			void setUp() {
+				given(reviewCustomRepository.findByUuid(EXISTS_REVIEW.getUuid())).willReturn(
+					Optional.of(EXISTS_REVIEW));
+				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
+				given(reviewHeartService.cancelReviewHeart(any(Review.class), any(User.class))).will(invocation -> {
+					Review review = invocation.getArgument(0);
+					review.decreaseHeartCnt();
+					return EXISTS_REVIEW_HEART;
+				});
+			}
+
+			@Test
+			@DisplayName("리뷰에 좋아요 수를 감소시킨다.")
+			void It_decreases_heart_cnt() {
+				int originalReviewCnt = EXISTS_REVIEW.getHeartsCnt();
+				Review review = reviewService.cancelHeart(EXISTS_REVIEW.getUuid(), EXISTS_EMAIL);
+
+				assertThat(review.getHeartsCnt()).isEqualTo(originalReviewCnt - 1);
+
+				verify(reviewCustomRepository).findByUuid(EXISTS_REVIEW.getUuid());
+				verify(userService).getUserByEmail(EXISTS_EMAIL);
+				verify(reviewHeartService).cancelReviewHeart(any(Review.class), any(User.class));
 			}
 		}
 	}

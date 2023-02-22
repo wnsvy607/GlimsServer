@@ -85,4 +85,14 @@ public class Review extends BaseTimeEntity {
 			this.reviewPhotos.add(photo);
 		}
 	}
+
+	protected void increaseHeartCnt() {
+		this.heartsCnt++;
+	}
+
+	public void decreaseHeartCnt() {
+		if (this.heartsCnt != 0) {
+			this.heartsCnt--;
+		}
+	}
 }

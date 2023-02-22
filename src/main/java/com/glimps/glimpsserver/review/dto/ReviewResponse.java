@@ -25,6 +25,7 @@ public class ReviewResponse {
 	private List<String> photoUrls = new ArrayList<>();
 	private String perfumeName;
 	private String perfumeBrand;
+	private int heartCnt;
 	private double overallRating;
 	private double longevityRating;
 	private double sillageRating;
@@ -38,6 +39,7 @@ public class ReviewResponse {
 				.map(ReviewPhoto::getUrl)
 				.collect(Collectors.toList()))
 			.perfumeName(review.getPerfume().getPerfumeName())
+			.heartCnt(review.getHeartsCnt())
 			.perfumeBrand(review.getPerfume().getBrand())
 			.overallRating(review.getOverallRating())
 			.longevityRating(review.getLongevityRating())

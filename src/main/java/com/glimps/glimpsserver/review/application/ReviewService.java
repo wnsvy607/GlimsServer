@@ -29,14 +29,17 @@ public class ReviewService {
 	private final UserService userService;
 	private final ReviewPhotoService reviewPhotoService;
 	private final PerfumeService perfumeService;
+	private final ReviewHeartService reviewHeartService;
 
-	public ReviewService(ReviewCustomRepository reviewCustomRepository, ReviewRepository reviewRepository, UserService userService,
-		ReviewPhotoService reviewPhotoService, PerfumeService perfumeService) {
+	public ReviewService(ReviewCustomRepository reviewCustomRepository, ReviewRepository reviewRepository,
+		UserService userService,
+		ReviewPhotoService reviewPhotoService, PerfumeService perfumeService, ReviewHeartService reviewHeartService) {
 		this.reviewCustomRepository = reviewCustomRepository;
 		this.reviewRepository = reviewRepository;
 		this.userService = userService;
 		this.reviewPhotoService = reviewPhotoService;
 		this.perfumeService = perfumeService;
+		this.reviewHeartService = reviewHeartService;
 	}
 
 	@Transactional
@@ -90,4 +93,18 @@ public class ReviewService {
 		return reviewCustomRepository.findAllByOrder(pageRequest);
 	}
 
+	public Review createHeart(UUID reviewId, String existsEmail) {
+		Review review = getReviewById(reviewId);
+		User user = userService.getUserByEmail(existsEmail);
+		reviewHeartService.createReviewHeart(review, user);
+
+		return review;
+	}
+
+	public Review cancelHeart(UUID id, String email) {
+		Review review = getReviewById(id);
+		User user = userService.getUserByEmail(email);
+		reviewHeartService.cancelReviewHeart(review, user);
+		return review;
+	}
 }
