@@ -87,6 +87,19 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 		return new CustomPageImpl<>(result, pageRequest.getOffset(), pageRequest.getPageSize(), totalElements);
 	}
 
+	@Override
+	public List<Review> findAllByPerfumeId(UUID perfumeId) {
+		return jpaQueryFactory.selectFrom(review)
+			.fetchJoin().leftJoin(reviewPhoto)
+			.on(reviewPhoto.review.id.eq(review.id))
+			.fetchJoin().leftJoin(user)
+			.on(user.id.eq(review.user.id))
+			.fetchJoin().leftJoin(perfume)
+			.on(perfume.id.eq(review.perfume.id))
+			.where(review.perfume.uuid.eq(perfumeId))
+			.stream().collect(Collectors.toList());
+	}
+
 	private OrderSpecifier<?> getSort(Pageable pageRequest) {
 		for (Sort.Order order : pageRequest.getSort()) {
 			Order direction = order.isAscending() ? Order.ASC : Order.DESC;

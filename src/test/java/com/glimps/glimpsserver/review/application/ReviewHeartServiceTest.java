@@ -26,7 +26,6 @@ class ReviewHeartServiceTest {
 	private static final String TITLE = "제목입니다.";
 	private static final String BODY = "본문입니다.";
 	private static final String EXISTS_EMAIL = "exists@email.com";
-
 	private static final Long EXISTS_REVIEW_ID = 3L;
 	private static final Long EXISTS_USER_ID = 3L;
 	private static final UUID EXISTS_REVIEW_UUID = UUID.randomUUID();

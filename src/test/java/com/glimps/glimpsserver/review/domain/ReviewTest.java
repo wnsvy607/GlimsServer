@@ -19,8 +19,7 @@ class ReviewTest {
 	private static final User user =
 		new User(5L, "nickname", "email", 0, RoleType.USER);
 
-	private static final Perfume perfume =
-		new Perfume(1L, "channel", "No.5", 0.0, 0.0, 0.0, 0);
+	private static final Perfume perfume = Perfume.createPerfume("channel", "No.5");
 
 	@Test
 	void createReview() {

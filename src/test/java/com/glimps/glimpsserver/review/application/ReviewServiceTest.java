@@ -47,11 +47,19 @@ class ReviewServiceTest {
 	private static final UUID EXISTS_REVIEW_UUID = UUID.randomUUID();
 	private static final UUID NOT_EXISTS_REVIEW_UUID = UUID.randomUUID();
 
+	private static final Perfume EXISTS_PERFUME = Perfume.builder()
+		.id(EXISTS_PERFUME_ID)
+		.uuid(UUID.randomUUID())
+		.perfumeName("향수 이름")
+		.brand("향수 브랜드")
+		.build();
+
 	private static final Review EXISTS_REVIEW = Review.builder()
 		.id(EXISTS_REVIEW_ID)
 		.uuid(EXISTS_REVIEW_UUID)
 		.title(TITLE)
 		.body(BODY)
+		.perfume(EXISTS_PERFUME)
 		.heartsCnt(5)
 		.overallRating(3)
 		.longevityRating(3)
@@ -65,11 +73,7 @@ class ReviewServiceTest {
 		.role(RoleType.USER)
 		.build();
 
-	private static final Perfume EXISTS_PERFUME = Perfume.builder()
-		.id(EXISTS_PERFUME_ID)
-		.perfumeName("향수 이름")
-		.brand("향수 브랜드")
-		.build();
+
 
 	private final ReviewCustomRepository reviewCustomRepository = mock(ReviewCustomRepository.class);
 	private final ReviewRepository reviewRepository = mock(ReviewRepository.class);
@@ -502,6 +506,30 @@ class ReviewServiceTest {
 				verify(reviewCustomRepository).findByUuid(EXISTS_REVIEW.getUuid());
 				verify(userService).getUserByEmail(EXISTS_EMAIL);
 				verify(reviewHeartService).cancelReviewHeart(any(Review.class), any(User.class));
+			}
+		}
+	}
+
+	@Nested
+	@DisplayName("getPerfumeReviews 메서드는")
+	class Describe_getPerfumeReviews {
+		@Nested
+		@DisplayName("향수가 존재하고, 향수에 따른 리뷰가 존재할 때")
+		class Context_when_perfume_exists_and_review_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewCustomRepository.findAllByPerfumeId(EXISTS_PERFUME.getUuid())).willReturn(List.of(EXISTS_REVIEW));
+			}
+
+			@Test
+			@DisplayName("향수에 따른 리뷰를 반환한다.")
+			void It_returns_perfume_reviews() {
+				List<Review> reviews = reviewService.getPerfumeReviews(EXISTS_PERFUME.getUuid());
+				
+				assertThat(reviews).hasSize(1);
+				assertThat(reviews.get(0)).isEqualTo(EXISTS_REVIEW);
+
+				verify(reviewCustomRepository).findAllByPerfumeId(EXISTS_PERFUME.getUuid());
 			}
 		}
 	}

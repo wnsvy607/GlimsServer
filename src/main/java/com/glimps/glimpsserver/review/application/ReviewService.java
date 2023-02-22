@@ -93,6 +93,7 @@ public class ReviewService {
 		return reviewCustomRepository.findAllByOrder(pageRequest);
 	}
 
+	@Transactional
 	public Review createHeart(UUID reviewId, String existsEmail) {
 		Review review = getReviewById(reviewId);
 		User user = userService.getUserByEmail(existsEmail);
@@ -101,10 +102,15 @@ public class ReviewService {
 		return review;
 	}
 
+	@Transactional
 	public Review cancelHeart(UUID id, String email) {
 		Review review = getReviewById(id);
 		User user = userService.getUserByEmail(email);
 		reviewHeartService.cancelReviewHeart(review, user);
 		return review;
+	}
+
+	public List<Review> getPerfumeReviews(UUID perfumeId) {
+		return reviewCustomRepository.findAllByPerfumeId(perfumeId);
 	}
 }

@@ -1,5 +1,7 @@
 package com.glimps.glimpsserver.perfume.domain;
 
+import java.util.UUID;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +18,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "perfume")
 @Entity
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Perfume {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	private UUID uuid;
 
 	private String brand;
 
@@ -30,16 +37,16 @@ public class Perfume {
 
 	private int reviewCnt;
 
-	@Builder
-	public Perfume(Long id, String brand, String perfumeName, double overallRatings, double longevityRatings,
-		double sillageRatings, int reviewCnt) {
-		this.id = id;
-		this.brand = brand;
-		this.perfumeName = perfumeName;
-		this.overallRatings = overallRatings;
-		this.longevityRatings = longevityRatings;
-		this.sillageRatings = sillageRatings;
-		this.reviewCnt = reviewCnt;
+public static Perfume createPerfume(String brand, String perfumeName) {
+		return Perfume.builder()
+			.uuid(UUID.randomUUID())
+			.brand(brand)
+			.perfumeName(perfumeName)
+			.overallRatings(0)
+			.longevityRatings(0)
+			.sillageRatings(0)
+			.reviewCnt(0)
+			.build();
 	}
 
 	public void updateRatings(double overallRatings, double longevityRatings, double sillageRatings) {
