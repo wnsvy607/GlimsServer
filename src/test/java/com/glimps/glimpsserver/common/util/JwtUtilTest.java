@@ -7,12 +7,12 @@ import java.util.Date;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.glimps.glimpsserver.common.constant.TokenType;
 import com.glimps.glimpsserver.common.oauth.dto.JwtDto;
 import com.glimps.glimpsserver.user.domain.RoleType;
 
 import io.jsonwebtoken.Claims;
 
-// @ExtendWith(MockitoExtension.class)
 class JwtUtilTest {
 
 	private static final String SECRET = "ugKv3L25LnW1ndJvnUpTZQ77MxkVxqhpexelDc5mR5MmWMFyTnm8h12J8q3wn7dAE";
@@ -47,7 +47,9 @@ class JwtUtilTest {
 
 		//then
 		assertThat(accessTokenClaims.getSubject()).isEqualTo(EMAIL);
+		assertThat(accessTokenClaims.get("token_type")).isEqualTo(TokenType.ACCESS_TOKEN.getType());
 		assertThat(refreshTokenClaims.getSubject()).isEqualTo(EMAIL);
+		assertThat(refreshTokenClaims.get("token_type")).isEqualTo(TokenType.REFRESH_TOKEN.getType());
 		assertThat(accessTokenClaims.get("role")).isEqualTo(ROLE.toString());
 	}
 
