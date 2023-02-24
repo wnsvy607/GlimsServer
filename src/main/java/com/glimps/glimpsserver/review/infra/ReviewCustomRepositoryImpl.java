@@ -100,6 +100,21 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			.stream().collect(Collectors.toList());
 	}
 
+	@Override
+	public List<Review> findBestReviewByAmount(int amountOfBestReview) {
+		return jpaQueryFactory.selectFrom(review)
+			.fetchJoin().leftJoin(reviewPhoto)
+			.on(reviewPhoto.review.id.eq(review.id))
+			.fetchJoin().leftJoin(user)
+			.on(user.id.eq(review.user.id))
+			.fetchJoin().leftJoin(perfume)
+			.on(perfume.id.eq(review.perfume.id))
+			.orderBy(review.heartsCnt.desc())
+			.limit(amountOfBestReview)
+			.stream()
+			.collect(Collectors.toList());
+	}
+
 	private OrderSpecifier<?> getSort(Pageable pageRequest) {
 		for (Sort.Order order : pageRequest.getSort()) {
 			Order direction = order.isAscending() ? Order.ASC : Order.DESC;

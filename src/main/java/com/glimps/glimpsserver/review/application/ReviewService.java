@@ -57,9 +57,9 @@ public class ReviewService {
 		return reviewRepository.save(review);
 	}
 
-	public Review getReviewById(UUID id) {
-		return reviewCustomRepository.findByUuid(id)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, id));
+	public Review getReviewById(UUID uuid) {
+		return reviewCustomRepository.findByUuid(uuid)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, uuid));
 	}
 
 	public CustomPage<Review> getMyReviews(ReviewPageParam reviewPageParam, String email) {
@@ -103,14 +103,18 @@ public class ReviewService {
 	}
 
 	@Transactional
-	public Review cancelHeart(UUID id, String email) {
-		Review review = getReviewById(id);
+	public Review cancelHeart(UUID uuid, String email) {
+		Review review = getReviewById(uuid);
 		User user = userService.getUserByEmail(email);
 		reviewHeartService.cancelReviewHeart(review, user);
 		return review;
 	}
 
-	public List<Review> getPerfumeReviews(UUID perfumeId) {
-		return reviewCustomRepository.findAllByPerfumeId(perfumeId);
+	public List<Review> getPerfumeReviews(UUID perfumeUuid) {
+		return reviewCustomRepository.findAllByPerfumeId(perfumeUuid);
+	}
+
+	public List<Review> getBestReviews(int amountOfBestReview) {
+		return reviewCustomRepository.findBestReviewByAmount(amountOfBestReview);
 	}
 }

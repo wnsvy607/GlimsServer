@@ -1,5 +1,6 @@
 package com.glimps.glimpsserver.review.dto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +31,8 @@ public class ReviewResponse {
 	private double longevityRating;
 	private double sillageRating;
 
+	private LocalDateTime createdAt;
+
 	public static ReviewResponse of(Review review) {
 		return ReviewResponse.builder()
 			.title(review.getTitle())
@@ -44,6 +47,7 @@ public class ReviewResponse {
 			.overallRating(review.getOverallRating())
 			.longevityRating(review.getLongevityRating())
 			.sillageRating(review.getSillageRating())
+			.createdAt(review.getCreatedAt())
 			.build();
 	}
 

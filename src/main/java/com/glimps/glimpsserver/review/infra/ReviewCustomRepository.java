@@ -20,4 +20,6 @@ public interface ReviewCustomRepository {
 	CustomPage<Review> findAllByUser(Long userId, Pageable pageRequest);
 
 	List<Review> findAllByPerfumeId(UUID perfumeId);
+
+	List<Review> findBestReviewByAmount(int amountOfBestReview);
 }

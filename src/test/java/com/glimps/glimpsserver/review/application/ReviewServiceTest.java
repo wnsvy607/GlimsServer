@@ -46,6 +46,7 @@ class ReviewServiceTest {
 	private static final Long EXISTS_REVIEW_ID = 3L;
 	private static final UUID EXISTS_REVIEW_UUID = UUID.randomUUID();
 	private static final UUID NOT_EXISTS_REVIEW_UUID = UUID.randomUUID();
+	private static final UUID NOT_EXISTS_PERFUME_UUID = UUID.randomUUID();
 
 	private static final Perfume EXISTS_PERFUME = Perfume.builder()
 		.id(EXISTS_PERFUME_ID)
@@ -72,8 +73,6 @@ class ReviewServiceTest {
 		.nickname("test_nickname")
 		.role(RoleType.USER)
 		.build();
-
-
 
 	private final ReviewCustomRepository reviewCustomRepository = mock(ReviewCustomRepository.class);
 	private final ReviewRepository reviewRepository = mock(ReviewRepository.class);
@@ -325,7 +324,7 @@ class ReviewServiceTest {
 			}
 
 			@Test
-			@DisplayName("UserNotFoundException을 던진다.")
+			@DisplayName("UserNotFoundException 을 던진다.")
 			void It_throws_UserNotFoundException() {
 				assertThatThrownBy(() -> reviewService.getMyReviews(reviewPageParam, NOT_EXISTS_EMAIL))
 					.isInstanceOf(CustomException.class);
@@ -369,7 +368,6 @@ class ReviewServiceTest {
 
 			@BeforeEach
 			void setUp() {
-
 				List<Review> result = List.of(element1, element2, element3);
 				given(reviewCustomRepository.findTop10ByOrderByCreatedAtDesc())
 					.willReturn(result);
@@ -447,6 +445,7 @@ class ReviewServiceTest {
 			}
 
 			@Test
+			@DisplayName("ReviewNotFoundException 을 던진다.")
 			void It_throws_ReviewNotFoundException() {
 				assertThatThrownBy(() -> reviewService.createHeart(NOT_EXISTS_REVIEW_UUID, EXISTS_EMAIL))
 					.isInstanceOf(EntityNotFoundException.class);
@@ -464,6 +463,7 @@ class ReviewServiceTest {
 			}
 
 			@Test
+			@DisplayName("UserNotFoundException 을 던진다.")
 			void It_throws_UserNotFoundException() {
 				assertThatThrownBy(() -> reviewService.createHeart(EXISTS_REVIEW_UUID, NOT_EXISTS_EMAIL))
 					.isInstanceOf(EntityNotFoundException.class);
@@ -518,19 +518,104 @@ class ReviewServiceTest {
 		class Context_when_perfume_exists_and_review_exists {
 			@BeforeEach
 			void setUp() {
-				given(reviewCustomRepository.findAllByPerfumeId(EXISTS_PERFUME.getUuid())).willReturn(List.of(EXISTS_REVIEW));
+				given(reviewCustomRepository.findAllByPerfumeId(EXISTS_PERFUME.getUuid())).willReturn(
+					List.of(EXISTS_REVIEW));
 			}
 
 			@Test
 			@DisplayName("향수에 따른 리뷰를 반환한다.")
 			void It_returns_perfume_reviews() {
 				List<Review> reviews = reviewService.getPerfumeReviews(EXISTS_PERFUME.getUuid());
-				
+
 				assertThat(reviews).hasSize(1);
 				assertThat(reviews.get(0)).isEqualTo(EXISTS_REVIEW);
 
 				verify(reviewCustomRepository).findAllByPerfumeId(EXISTS_PERFUME.getUuid());
 			}
 		}
+
+		@Nested
+		@DisplayName("향수가 존재하지 않을 때")
+		class Context_when_perfume_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewCustomRepository.findAllByPerfumeId(NOT_EXISTS_PERFUME_UUID)).willReturn(List.of());
+			}
+
+			@Test
+			@DisplayName("PerfumeNotFoundException 을 던진다.")
+			void It_throws_PerfumeNotFoundException() {
+				List<Review> reviews = reviewService.getPerfumeReviews(NOT_EXISTS_PERFUME_UUID);
+
+				assertThat(reviews).isEmpty();
+
+				verify(reviewCustomRepository).findAllByPerfumeId(NOT_EXISTS_PERFUME_UUID);
+			}
+		}
 	}
+
+	@Nested
+	@DisplayName("getBestReviews 메서드는")
+	class Describe_getBestReviews {
+		@Nested
+		@DisplayName("리뷰가 존재할 때")
+		class Context_when_review_exists {
+			private Review review1 = Review.builder()
+				.id(1L)
+				.perfume(EXISTS_PERFUME)
+				.user(EXISTS_USER)
+				.heartsCnt(10)
+				.build();
+
+			private Review review2 = Review.builder()
+				.id(2L)
+				.perfume(EXISTS_PERFUME)
+				.user(EXISTS_USER)
+				.heartsCnt(5)
+				.build();
+
+			private Review review3 = Review.builder()
+				.id(3L)
+				.perfume(EXISTS_PERFUME)
+				.user(EXISTS_USER)
+				.heartsCnt(3)
+				.build();
+
+			@BeforeEach
+			void setUp() {
+				given(reviewCustomRepository.findBestReviewByAmount(anyInt())).willReturn(
+					List.of(review1, review2, review3)
+				);
+			}
+
+			@Test
+			@DisplayName("좋아요 수 상위 n개의 리뷰를 반환한다.")
+			void It_returns_best_reviews() {
+				List<Review> bestReviews = reviewService.getBestReviews(3);
+
+				assertThat(bestReviews).hasSize(3);
+				assertThat(bestReviews.get(0).getHeartsCnt()).isEqualTo(10);
+				assertThat(bestReviews.get(1).getHeartsCnt()).isEqualTo(5);
+				assertThat(bestReviews.get(2).getHeartsCnt()).isEqualTo(3);
+			}
+		}
+
+		@Nested
+		@DisplayName("리뷰가 존재하지 않을 때")
+		class Context_when_review_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewCustomRepository.findBestReviewByAmount(anyInt())).willReturn(List.of());
+			}
+
+			@Test
+			@DisplayName("빈 리스트를 반환한다.")
+			void It_returns_empty_list() {
+				List<Review> bestReviews = reviewService.getBestReviews(3);
+
+				assertThat(bestReviews).isEmpty();
+			}
+		}
+	}
+
 }
