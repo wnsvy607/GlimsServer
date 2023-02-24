@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.glimps.glimpsserver.common.oauth.dto.JwtTokenDto;
+import com.glimps.glimpsserver.common.oauth.dto.JwtDto;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,14 +37,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		Authentication authentication) throws IOException {
 
 		OAuth2User oauth2User = (OAuth2User)authentication.getPrincipal();
-		JwtTokenDto jwtTokenDto = authenticationService.oauthLogin(oauth2User);
+		JwtDto jwtDto = authenticationService.oauthLogin(oauth2User);
 
-		responseJwtToken(response, jwtTokenDto);
+		responseJwt(response, jwtDto);
 
 	}
 
-	private void responseJwtToken(HttpServletResponse response, JwtTokenDto jwtTokenDto) throws IOException {
-		String convertedDto = mapper.writeValueAsString(jwtTokenDto);
+	private void responseJwt(HttpServletResponse response, JwtDto jwtDto) throws IOException {
+		String convertedDto = mapper.writeValueAsString(jwtDto);
 		PrintWriter writer = response.getWriter();
 
 		response.setStatus(HttpStatus.ACCEPTED.value());

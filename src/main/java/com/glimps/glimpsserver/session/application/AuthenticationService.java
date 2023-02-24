@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.glimps.glimpsserver.common.oauth.dto.JwtTokenDto;
+import com.glimps.glimpsserver.common.oauth.dto.JwtDto;
 import com.glimps.glimpsserver.common.oauth.dto.OAuthUserVo;
 import com.glimps.glimpsserver.common.util.JwtUtil;
 import com.glimps.glimpsserver.user.application.UserService;
@@ -33,7 +33,7 @@ public class AuthenticationService {
 	}
 
 	@Transactional
-	public JwtTokenDto oauthLogin(OAuth2User oauth2User) {
+	public JwtDto oauthLogin(OAuth2User oauth2User) {
 		OAuthUserVo oauthUserVo = OAuthUserVo.from(oauth2User);
 		Optional<User> optionalUser = userService.getOptionalUserByEmail(oauthUserVo.getEmail());
 
@@ -45,12 +45,12 @@ public class AuthenticationService {
 		return issueJwt(user);
 	}
 
-	private JwtTokenDto issueJwt(User user) {
-		JwtTokenDto jwtTokenDto = jwtUtil.createJwtTokenDto(user.getEmail(), user.getRole());
+	private JwtDto issueJwt(User user) {
+		JwtDto jwtDto = jwtUtil.createJwtDto(user.getEmail(), user.getRole());
 
-		userService.updateRefreshToken(user.getId(), jwtTokenDto.getRefreshToken(),
-			jwtTokenDto.getRefreshTokenExpireTime());
+		userService.updateRefreshToken(user.getId(), jwtDto.getRefreshToken(),
+			jwtDto.getRefreshTokenExpireTime());
 
-		return jwtTokenDto;
+		return jwtDto;
 	}
 }

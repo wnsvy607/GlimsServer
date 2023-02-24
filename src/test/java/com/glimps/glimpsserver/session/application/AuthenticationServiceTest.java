@@ -60,15 +60,13 @@ class AuthenticationServiceTest {
 		given(userService.findById(ID)).willReturn(USER);
 
 		//when
-		JwtTokenDto jwtTokenDto = authenticationService.oauthLogin(oAuth2User);
-		LocalDateTime convertedExpTime = DateTimeUtils.convertToLocalDateTime(
-			jwtTokenDto.getRefreshTokenExpireTime());
+		JwtDto jwtDto = authenticationService.oauthLogin(oAuth2User);
 
 		//then
 		verify(userService, times(1)).registerUser(any());
-		verify(jwtUtil, times(1)).createJwtTokenDto(EMAIL, ROLE);
-		verify(userService, times(1)).updateRefreshToken(ID, jwtTokenDto.getRefreshToken(),
-			jwtTokenDto.getRefreshTokenExpireTime());
+		verify(jwtUtil, times(1)).createJwtDto(EMAIL, ROLE);
+		verify(userService, times(1)).updateRefreshToken(ID, jwtDto.getRefreshToken(),
+			jwtDto.getRefreshTokenExpireTime());
 	}
 
 	@Test
@@ -78,13 +76,13 @@ class AuthenticationServiceTest {
 		given(userService.getOptionalUserByEmail(EMAIL)).willReturn(Optional.of(USER));
 
 		//when
-		JwtTokenDto jwtTokenDto = authenticationService.oauthLogin(oAuth2User);
+		JwtDto jwtDto = authenticationService.oauthLogin(oAuth2User);
 
 		//then
 		verify(userService, times(0)).registerUser(any());
-		verify(jwtUtil, times(1)).createJwtTokenDto(EMAIL, ROLE);
-		verify(userService, times(1)).updateRefreshToken(ID, jwtTokenDto.getRefreshToken(),
-			jwtTokenDto.getRefreshTokenExpireTime());
+		verify(jwtUtil, times(1)).createJwtDto(EMAIL, ROLE);
+		verify(userService, times(1)).updateRefreshToken(ID, jwtDto.getRefreshToken(),
+			jwtDto.getRefreshTokenExpireTime());
 	}
 
 }

@@ -1,32 +1,27 @@
 package com.glimps.glimpsserver.common.util;
 
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Random;
-
-import org.springframework.stereotype.Component;
 
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.InvalidTokenException;
-import com.glimps.glimpsserver.common.oauth.dto.JwtTokenDto;
+import com.glimps.glimpsserver.common.oauth.dto.JwtDto;
 import com.glimps.glimpsserver.user.domain.RoleType;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Slf4j
+@RequiredArgsConstructor
 public class JwtUtil {
 
-	// TODO Key를 외부에서 참조하도록 수정 필요
-	private final Key key;
-
-	public JwtUtil() {
-		byte[] arr = new byte[32];
-		new Random().nextBytes(arr);
-		this.key = Keys.hmacShaKeyFor(arr);
-	}
+	private final String accessTokenExpirationTime;
+	private final String refreshTokenExpirationTime;
+	private final String tokenSecret;
 
 	public Claims decode(String token) {
 		if (token == null || token.isBlank()) {
@@ -34,7 +29,7 @@ public class JwtUtil {
 		}
 		try {
 			return Jwts.parserBuilder()
-				.setSigningKey(key)
+				.setSigningKey(tokenSecret.getBytes(StandardCharsets.UTF_8))
 				.build()
 				.parseClaimsJws(token)
 				.getBody();
@@ -43,14 +38,14 @@ public class JwtUtil {
 		}
 	}
 
-	public JwtTokenDto createJwtTokenDto(String email, RoleType role) {
+	public JwtDto createJwtDto(String email, RoleType role) {
 		Date accessTokenExpireTime = createAccessTokenExpireTime();
 		Date refreshTokenExpireTime = createRefreshTokenExpireTime();
 
 		String accessToken = createAccessToken(email, role, accessTokenExpireTime);
 		String refreshToken = createRefreshToken(email, refreshTokenExpireTime);
 
-		return JwtTokenDto.builder()
+		return JwtDto.builder()
 			.grantType("Bearer")
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
@@ -61,33 +56,31 @@ public class JwtUtil {
 
 	private String createAccessToken(String email, RoleType role, Date expirationTime) {
 		return Jwts.builder()
+			.setHeaderParam("typ", "jwt")
 			.setSubject(email)
 			.setIssuedAt(new Date())
-			.signWith(key)
 			.setExpiration(expirationTime)
-			.setHeaderParam("type", "jwt")
+			.signWith(SignatureAlgorithm.HS512, tokenSecret.getBytes(StandardCharsets.UTF_8))
 			.claim("role", role)
-			.claim("email", email)
 			.compact();
 	}
 
 	private String createRefreshToken(String email, Date expirationTime) {
 		return Jwts.builder()
+			.setHeaderParam("typ", "jwt")
 			.setSubject(email)
 			.setIssuedAt(new Date())
-			.signWith(key)
 			.setExpiration(expirationTime)
-			.setHeaderParam("type", "jwt")
-			.claim("email", email)
+			.signWith(SignatureAlgorithm.HS512, tokenSecret.getBytes(StandardCharsets.UTF_8))
 			.compact();
 	}
 
 	private Date createAccessTokenExpireTime() {
-		return new Date(System.currentTimeMillis() + Long.parseLong("9000000"));
+		return new Date(System.currentTimeMillis() + Long.parseLong(accessTokenExpirationTime));
 	}
 
 	private Date createRefreshTokenExpireTime() {
-		return new Date(System.currentTimeMillis() + Long.parseLong("1209600000"));
+		return new Date(System.currentTimeMillis() + Long.parseLong(refreshTokenExpirationTime));
 	}
 
 }

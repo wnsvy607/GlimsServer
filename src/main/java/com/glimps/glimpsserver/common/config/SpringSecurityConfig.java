@@ -5,6 +5,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
 import com.glimps.glimpsserver.common.oauth.handler.OAuth2SuccessHandler;
 import com.glimps.glimpsserver.common.oauth.service.CustomOAuth2UserService;
@@ -41,6 +42,9 @@ public class SpringSecurityConfig {
 			.and()
 			.formLogin()
 			.disable()
+			.headers()
+			.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+			.and()
 			.oauth2Login()
 			.successHandler(successHandler)
 			.userInfoEndpoint()
