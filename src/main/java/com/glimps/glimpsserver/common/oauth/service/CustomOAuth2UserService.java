@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.glimps.glimpsserver.common.oauth.model.OAuth2Attribute;
+import com.glimps.glimpsserver.user.domain.RoleType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,7 +40,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		Map<String, Object> memberAttribute = oAuth2Attribute.convertToMap();
 
 		return new DefaultOAuth2User(
-			Collections.singleton(new SimpleGrantedAuthority("USER")),
+			Collections.singleton(new SimpleGrantedAuthority(RoleType.USER.toString())),
 			memberAttribute, "email");
 	}
 }

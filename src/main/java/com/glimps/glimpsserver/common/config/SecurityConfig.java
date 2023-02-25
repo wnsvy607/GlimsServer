@@ -5,7 +5,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+
+import com.glimps.glimpsserver.common.filter.CustomAccessDeniedHandler;
+import com.glimps.glimpsserver.common.filter.CustomAuthenticationEntryPoint;
+import com.glimps.glimpsserver.common.filter.JwtAuthenticationFilter;
+import com.glimps.glimpsserver.common.oauth.handler.OAuth2SuccessHandler;
+import com.glimps.glimpsserver.common.oauth.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,11 +21,23 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 public class SecurityConfig {
 
+	private final OAuth2SuccessHandler successHandler;
+	private final CustomOAuth2UserService oAuth2UserService;
+
+	private final JwtAuthenticationFilter jwtFilter;
+
+	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+	private final CustomAccessDeniedHandler accessDeniedHandler;
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 		http.csrf()
 			.disable();
+
+		http.exceptionHandling()
+			.authenticationEntryPoint(authenticationEntryPoint)
+			.accessDeniedHandler(accessDeniedHandler);
 
 		http.sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -27,6 +47,22 @@ public class SecurityConfig {
 
 		http.headers()
 			.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN));
+
+		http.oauth2Login()
+			.successHandler(successHandler)
+			.userInfoEndpoint()
+			.userService(oAuth2UserService);
+
+		http.authorizeRequests()
+			.antMatchers("/token/**", "/health", "/v3/api-docs", "/swagger*/**", "/h2-console/**", "/session/token",
+				"/").permitAll()
+			.antMatchers("/api/user/**").hasRole("USER")
+			.antMatchers("/admin/**").hasRole("ADMIN")
+			.anyRequest().authenticated();
+
+		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+
 
 		return http.build();
 	}

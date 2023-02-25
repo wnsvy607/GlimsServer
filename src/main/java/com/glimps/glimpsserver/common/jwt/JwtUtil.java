@@ -6,16 +6,15 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.glimps.glimpsserver.common.jwt.TokenType;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.InvalidTokenException;
-import com.glimps.glimpsserver.common.jwt.JwtDto;
 import com.glimps.glimpsserver.user.domain.RoleType;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -36,16 +35,15 @@ public class JwtUtil {
 	}
 
 	public Claims decode(String token) {
-		if (token == null || token.isBlank()) {
-			throw new InvalidTokenException(ErrorCode.INVALID_TOKEN, token);
-		}
 		try {
 			return Jwts.parserBuilder()
 				.setSigningKey(tokenSecret.getBytes(StandardCharsets.UTF_8))
 				.build()
 				.parseClaimsJws(token)
 				.getBody();
-		} catch (SignatureException e) {
+		} catch (ExpiredJwtException e) {
+			throw new InvalidTokenException(ErrorCode.TOKEN_EXPIRED, token);
+		} catch (JwtException e) {
 			throw new InvalidTokenException(ErrorCode.INVALID_TOKEN, token);
 		}
 	}
@@ -74,7 +72,7 @@ public class JwtUtil {
 			.setExpiration(expirationTime)
 			.signWith(SignatureAlgorithm.HS512, tokenSecret.getBytes(StandardCharsets.UTF_8))
 			.claim("token_type", TokenType.ACCESS_TOKEN.getType())
-			.claim("role", role)
+			.claim("role", role.toString())
 			.compact();
 	}
 
