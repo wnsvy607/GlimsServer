@@ -1,4 +1,4 @@
-package com.glimps.glimpsserver.common.oauth.dto;
+package com.glimps.glimpsserver.common.jwt;
 
 import java.util.Date;
 

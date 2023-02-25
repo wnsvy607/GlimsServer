@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.glimps.glimpsserver.common.oauth.dto.JwtDto;
+import com.glimps.glimpsserver.common.jwt.JwtDto;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;

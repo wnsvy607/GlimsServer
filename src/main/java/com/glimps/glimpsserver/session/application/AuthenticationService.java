@@ -7,9 +7,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.glimps.glimpsserver.common.oauth.dto.JwtDto;
+import com.glimps.glimpsserver.common.jwt.JwtDto;
 import com.glimps.glimpsserver.common.oauth.dto.OAuthUserVo;
-import com.glimps.glimpsserver.common.util.JwtUtil;
+import com.glimps.glimpsserver.common.jwt.JwtUtil;
 import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.User;
 

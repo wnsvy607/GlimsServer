@@ -1,7 +1,7 @@
 package com.glimps.glimpsserver.session.application;
 
-import com.glimps.glimpsserver.common.oauth.dto.JwtDto;
-import com.glimps.glimpsserver.common.util.JwtUtil;
+import com.glimps.glimpsserver.common.jwt.JwtDto;
+import com.glimps.glimpsserver.common.jwt.JwtUtil;
 import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
@@ -11,14 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;

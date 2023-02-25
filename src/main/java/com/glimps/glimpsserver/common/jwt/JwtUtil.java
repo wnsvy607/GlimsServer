@@ -1,4 +1,4 @@
-package com.glimps.glimpsserver.common.util;
+package com.glimps.glimpsserver.common.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.glimps.glimpsserver.common.jwt.TokenType;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.InvalidTokenException;
-import com.glimps.glimpsserver.common.oauth.dto.JwtDto;
+import com.glimps.glimpsserver.common.jwt.JwtDto;
 import com.glimps.glimpsserver.user.domain.RoleType;
 
 import io.jsonwebtoken.Claims;
