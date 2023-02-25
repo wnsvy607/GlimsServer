@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.glimps.glimpsserver.common.security.UserAuthentication;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
 import com.glimps.glimpsserver.user.domain.User;
 
@@ -33,16 +32,16 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 		ServletException {
 		String authorization = request.getHeader("Authorization");
 
-		if (authorization != null) {
-			//TODO refresh token에 대한 처리 필요
-			String accessToken = authorization.substring("Bearer ".length());
-			String email = authenticationService.parseToken(accessToken);
-			List<User> users = authenticationService.getRoles(email);
-			Authentication authentication = new UserAuthentication(email, users);
-
-			SecurityContext context = SecurityContextHolder.getContext();
-			context.setAuthentication(authentication);
-		}
+		// if (authorization != null) {
+		// 	//TODO refresh token에 대한 처리 필요
+		// 	String accessToken = authorization.substring("Bearer ".length());
+		// 	String email = authenticationService.parseToken(accessToken);
+		// 	List<User> users = authenticationService.getRoles(email);
+		// 	Authentication authentication = new UserAuthentication(email, users);
+		//
+		// 	SecurityContext context = SecurityContextHolder.getContext();
+		// 	context.setAuthentication(authentication);
+		// }
 		chain.doFilter(request, response);
 	}
 }

@@ -7,7 +7,7 @@ import java.util.Date;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.glimps.glimpsserver.common.constant.TokenType;
+import com.glimps.glimpsserver.common.jwt.TokenType;
 import com.glimps.glimpsserver.common.oauth.dto.JwtDto;
 import com.glimps.glimpsserver.user.domain.RoleType;
 

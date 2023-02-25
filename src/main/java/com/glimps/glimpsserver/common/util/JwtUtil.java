@@ -6,7 +6,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.glimps.glimpsserver.common.constant.TokenType;
+import com.glimps.glimpsserver.common.jwt.TokenType;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.InvalidTokenException;
 import com.glimps.glimpsserver.common.oauth.dto.JwtDto;
