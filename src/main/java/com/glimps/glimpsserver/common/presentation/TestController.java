@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class TestController {
 
 
+	@Tag(name = "Test", description = "Test API")
 	@Operation(summary = "Test API", description = "권한이 필요한 Test API")
 	@GetMapping("/test")
 	public String test(UserAuthentication userAuthentication) {
