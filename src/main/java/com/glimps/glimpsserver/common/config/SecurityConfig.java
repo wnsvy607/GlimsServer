@@ -1,11 +1,11 @@
 package com.glimps.glimpsserver.common.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
@@ -54,16 +54,13 @@ public class SecurityConfig {
 			.userService(oAuth2UserService);
 
 		http.authorizeRequests()
-			.antMatchers("/token/**", "/health", "/v3/api-docs", "/swagger*/**", "/h2-console/**", "/session/token",
-				"/").permitAll()
-			.antMatchers("/api/user/**").hasRole("USER")
-			.antMatchers("/admin/**").hasRole("ADMIN")
-			.anyRequest().authenticated();
+			.antMatchers(MatcherConfig.getAuthURL().toArray(new String[0])).authenticated()
+			.antMatchers(MatcherConfig.getAdminURL().toArray(new String[0])).hasRole("ADMIN")
+			.anyRequest().permitAll();
 
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-
-
 		return http.build();
 	}
+
 }

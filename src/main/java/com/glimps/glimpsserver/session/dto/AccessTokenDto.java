@@ -1,4 +1,4 @@
-package com.glimps.glimpsserver.common.jwt;
+package com.glimps.glimpsserver.session.dto;
 
 import java.util.Date;
 
@@ -11,13 +11,10 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class JwtDto {
+public class AccessTokenDto {
 
 	private String grantType;
 	private String accessToken;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "Asia/Seoul")
 	private Date accessTokenExpireTime;
-	private String refreshToken;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "Asia/Seoul")
-	private Date refreshTokenExpireTime;
 }

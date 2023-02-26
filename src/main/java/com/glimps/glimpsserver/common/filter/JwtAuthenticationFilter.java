@@ -2,6 +2,7 @@ package com.glimps.glimpsserver.common.filter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,24 +32,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final AuthenticationService authenticationService;
 	private final ObjectMapper mapper;
 
+	private final List<RequestMatcher> matcher;
+
+	// private final RequestMatcher matcher;
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws
 		IOException,
 		ServletException {
-		String authorizationHeader = request.getHeader("Authorization");
 
-		try {
-
-			UserAuthentication authentication = authenticationService.authenticate(authorizationHeader);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		} catch (CustomException e) {
-			responseError(response, e.getErrorCode().getCode(), e);
-		} catch (Exception e) {
-			responseError(response, HttpStatus.UNAUTHORIZED.toString(), e);
-		} finally {
+		if (!requiresAuthentication(request, matcher)) {
 			chain.doFilter(request, response);
+		} else {
+			String authorizationHeader = request.getHeader("Authorization");
+
+			try {
+
+				UserAuthentication authentication = authenticationService.authenticate(authorizationHeader);
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+
+			} catch (CustomException e) {
+				responseError(response, e.getErrorCode().getCode(), e);
+			} catch (Exception e) {
+				responseError(response, HttpStatus.UNAUTHORIZED.toString(), e);
+			} finally {
+				chain.doFilter(request, response);
+			}
 		}
+
 	}
 
 	private void responseError(HttpServletResponse response, String errorCode, Exception e) throws IOException {
@@ -58,4 +70,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
 		response.getWriter().write(convertedErrorResponse);
 	}
+
+	private boolean requiresAuthentication(HttpServletRequest request, List<RequestMatcher> matcher) {
+		return matcher.stream().anyMatch(m -> m.matches(request));
+	}
+
 }

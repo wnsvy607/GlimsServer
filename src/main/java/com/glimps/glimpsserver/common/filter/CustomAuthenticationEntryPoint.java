@@ -27,14 +27,5 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException authException) throws IOException, ServletException {
 
-		// response.setStatus(401);
-		// PrintWriter writer = response.getWriter();
-		//
-		// response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		// response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
-		// ErrorResponse of = ErrorResponse.of("401", authException.getMessage());
-		// String convertedError = mapper.writeValueAsString(of);
-		//
-		// writer.write(convertedError);
 	}
 }

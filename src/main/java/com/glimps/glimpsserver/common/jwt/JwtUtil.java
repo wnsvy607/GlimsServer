@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.InvalidTokenException;
+import com.glimps.glimpsserver.session.dto.AccessTokenDto;
 import com.glimps.glimpsserver.user.domain.RoleType;
 
 import io.jsonwebtoken.Claims;
@@ -61,6 +62,17 @@ public class JwtUtil {
 			.refreshToken(refreshToken)
 			.accessTokenExpireTime(accessTokenExpireTime)
 			.refreshTokenExpireTime(refreshTokenExpireTime)
+			.build();
+	}
+
+	public AccessTokenDto createAccessTokenDto(String email, RoleType role) {
+		Date accessTokenExpireTime = createAccessTokenExpireTime();
+		String accessToken = createAccessToken(email, role, accessTokenExpireTime);
+
+		return AccessTokenDto.builder()
+			.grantType("Bearer")
+			.accessToken(accessToken)
+			.accessTokenExpireTime(accessTokenExpireTime)
 			.build();
 	}
 
