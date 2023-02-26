@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.UserDuplicationException;
@@ -69,5 +70,16 @@ public class UserService {
 		user.updateRefreshToken(refreshToken, convertedExpTime);
 
 		return user.getId();
+	}
+
+	public User getByRefreshToken(String refreshToken) {
+		User user = userRepository.findByRefreshToken(refreshToken)
+			.orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
+
+		LocalDateTime tokenExpirationTime = user.getTokenExpirationTime();
+		if(tokenExpirationTime.isBefore(LocalDateTime.now())){
+			throw new CustomException(ErrorCode.REFRESH_TOKEN_EXPIRED);
+		}
+		return user;
 	}
 }

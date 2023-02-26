@@ -2,6 +2,8 @@ package com.glimps.glimpsserver.common.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,25 +22,22 @@ public class ControllerErrorAdvice {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception e) {
 		log.error("Exception occurs: {}", e.getMessage());
-		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-		return ResponseEntity.status(errorResponse.getStatus())
-			.body(errorResponse);
+		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.toString(), e.getMessage());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 	}
 
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
 		log.error("Exception occurs: {}", e.getMessage());
-		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getStatus(), e.getMessage());
-		return ResponseEntity.status(errorResponse.getStatus())
-			.body(errorResponse);
+		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getCode(), e.getMessage());
+		return ResponseEntity.status(e.getErrorCode().getStatus()).body(errorResponse);
 	}
 
 	@ExceptionHandler(BindException.class)
 	public ResponseEntity<ErrorResponse> handleBindException(BindException e) {
 		log.error("Exception occurs: {}", e.getMessage());
-		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, e.getBindingResult());
-		return ResponseEntity.status(errorResponse.getStatus())
-			.body(errorResponse);
+		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getBindingResult());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 
 	/**
@@ -49,10 +48,9 @@ public class ControllerErrorAdvice {
 	public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
 		// 로그에는 ID, EMAIL 전부 노출, 반환값으로는 EMAIL만 노출
 		log.error("Exception occurs: {}, Id: {}, Email: {}", e.getMessage(), e.getId(), e.getEmail());
-		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getStatus(),
+		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getCode(),
 			e.getMessage() + " Email: " + e.getEmail());
-		return ResponseEntity.status(errorResponse.getStatus())
-			.body(errorResponse);
+		return ResponseEntity.status(e.getErrorCode().getStatus()).body(errorResponse);
 	}
 
 	/**
@@ -61,9 +59,9 @@ public class ControllerErrorAdvice {
 	@ExceptionHandler(InvalidTokenException.class)
 	public ResponseEntity<ErrorResponse> handleInvalidTokenException(InvalidTokenException e) {
 		log.error("Exception occurs: {}, Invalid token: {}", e.getMessage(), e.getToken());
-		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getStatus(),
+		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getCode(),
 			e.getMessage() + " Token: " + e.getToken());
-		return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+		return ResponseEntity.status(e.getErrorCode().getStatus()).body(errorResponse);
 	}
 
 	/**
@@ -72,9 +70,23 @@ public class ControllerErrorAdvice {
 	@ExceptionHandler(UserDuplicationException.class)
 	protected ResponseEntity<ErrorResponse> handleDuplicateRequestException(UserDuplicationException e) {
 		log.error("Exception occurs: {}, User type: {}", e.getMessage(), e.getUserType());
-		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getStatus(),
+		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode().getCode(),
 			e.getMessage() + " UserType: " + e.getUserType());
-		return ResponseEntity.status(e.getErrorCode().getStatus())
-			.body(errorResponse);
+		return ResponseEntity.status(e.getErrorCode().getStatus()).body(errorResponse);
 	}
+
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException e) {
+		log.error("Exception occurs: {}", e.getMessage());
+		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.UNAUTHORIZED.toString(), e.getMessage());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ErrorResponse> handlerAccessDeniedException(AccessDeniedException e) {
+		log.error("Exception occurs: {}", e.getMessage());
+		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.FORBIDDEN.toString(), e.getMessage());
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+	}
+
 }
