@@ -27,10 +27,6 @@ public class UserAuthentication extends AbstractAuthenticationToken {
 		super.setAuthenticated(true);
 	}
 
-	// public static UserAuthentication getAnonymous() {
-	// 	return new UserAuthentication(List.of(new SimpleGrantedAuthority("ROLE_UNKNOWN")));
-	// }
-
 	@Override
 	public Object getCredentials() {
 		return null;
