@@ -1,0 +1,16 @@
+spring:
+  config:
+    use-legacy-processing: true
+  profiles:
+    include: oauth
+
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+
+
+token:
+  secret: VMOYV9AlhmyO8quHcWwJUE3dEa2RblfL7QZW4GYzaNZo061ZiEJ8kx8ZWuvlC6Jcj # 64바이트 이상의 문자열
+  access-token-expiration-time: 90000000  # 1500분 100000(ms) x 60(s) x 15(m)
+  refresh-token-expiration-time: 1209600000 # 2주 1000(ms) x 60 (s) x 60(m) x 24(h) x 14(d)
+      
