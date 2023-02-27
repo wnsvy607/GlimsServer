@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "authentication", description = "로그아웃/토큰재발급 API")
+@Tag(name = "Authentication", description = "로그아웃/토큰재발급 API")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1")
@@ -22,7 +22,7 @@ public class TokenController {
 
 	private final AuthenticationService authenticationService;
 
-	@Tag(name = "authentication")
+	@Tag(name = "Authentication")
 	@Operation(summary = "Access Token 재발급 API", description = "Access Token 재발급 API")
 	@PostMapping("/access-token/issue")
 	public AccessTokenDto logout(HttpServletRequest request) {
