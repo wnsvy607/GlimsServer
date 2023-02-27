@@ -66,4 +66,7 @@ public class User {
 		this.tokenExpirationTime = refreshTokenExpireTime;
 	}
 
+	public void expireRefreshToken(LocalDateTime now) {
+		this.tokenExpirationTime = now;
+	}
 }

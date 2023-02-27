@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
@@ -43,7 +44,7 @@ class AuthenticationServiceTest {
 		.accessTokenExpireTime(new Date())
 		.refreshTokenExpireTime(new Date())
 		.build();
-	private OAuth2User oAuth2User = new DefaultOAuth2User(null, new HashMap<>() {{
+	private static final OAuth2User oAuth2User = new DefaultOAuth2User(null, new HashMap<>() {{
 		put("name", NAME);
 		put("email", EMAIL);
 		put("userType", KAKAO.toString().toLowerCase());
@@ -64,7 +65,7 @@ class AuthenticationServiceTest {
 		given(jwtUtil.createJwtDto(EMAIL, ROLE)).willReturn(JWT_DTO);
 		given(userService.getOptionalUserByEmail(EMAIL)).willReturn(Optional.empty());
 		given(userService.registerUser(any())).willReturn(ID);
-		given(userService.findById(ID)).willReturn(USER);
+		given(userService.getById(ID)).willReturn(USER);
 
 		//when
 		JwtDto jwtDto = authenticationService.oauthLogin(oAuth2User);
@@ -95,4 +96,19 @@ class AuthenticationServiceTest {
 			jwtDto.getRefreshTokenExpireTime());
 	}
 
+	@Test
+	@DisplayName("로그아웃시 User의 토큰 만료시간이 변경된다.")
+	public void given_User_When_Logout_Then_Error() {
+		//given
+		User user = User.builder()
+			.tokenExpirationTime(LocalDateTime.now().plusWeeks(1))
+			.build();
+		given(userService.getByEmail(EMAIL)).willReturn(user);
+
+		//when
+		authenticationService.logout(EMAIL);
+
+		//then
+		assertThat(user.getTokenExpirationTime()).isEqualToIgnoringSeconds(LocalDateTime.now());
+	}
 }

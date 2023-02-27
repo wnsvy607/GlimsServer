@@ -1,6 +1,6 @@
 package com.glimps.glimpsserver.session.application;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,11 +50,6 @@ public class AuthenticationService {
 		return new UserAuthentication(email, List.of(new SimpleGrantedAuthority(role)));
 	}
 
-	// TODO 삭제 필요
-	public List<User> getRoles(String email) {
-		return userService.getAllByEmail(email);
-	}
-
 	@Transactional
 	public JwtDto oauthLogin(OAuth2User oauth2User) {
 		OAuthUserVo oauthUserVo = OAuthUserVo.from(oauth2User);
@@ -62,7 +57,7 @@ public class AuthenticationService {
 
 		User user = optionalUser.orElseGet(() -> {
 			Long id = userService.registerUser(oauthUserVo);
-			return userService.findById(id);
+			return userService.getById(id);
 		});
 
 		return issueJwt(user);
@@ -87,6 +82,13 @@ public class AuthenticationService {
 
 		return jwtUtil.createAccessTokenDto(user.getEmail(), user.getRole());
 
+	}
+
+	@Transactional
+	public Long logout(String email) {
+		User user = userService.getByEmail(email);
+		user.expireRefreshToken(LocalDateTime.now());
+		return user.getId();
 	}
 
 
