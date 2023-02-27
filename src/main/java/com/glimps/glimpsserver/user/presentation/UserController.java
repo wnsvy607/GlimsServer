@@ -2,6 +2,7 @@ package com.glimps.glimpsserver.user.presentation;
 
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +26,8 @@ public class UserController {
 
 	@Tag(name = "User")
 	@Operation(summary = "유저 정보 조회 API", description = "자신의 계정 조회 - 인증 필요")
-	@PostMapping("/users")
-	public UserInfoDto logout(UserAuthentication userAuthentication) {
+	@GetMapping("/users")
+	public UserInfoDto getSignedUserInfo(UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
 		return userInfoService.getUserInfo(email);
 	}
