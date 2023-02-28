@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,12 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final AuthenticationService authenticationService;
 	private final ObjectMapper mapper;
 
-	private final List<RequestMatcher> matcher;
+	private final List<RequestMatcher> matchers;
 
 	// private final RequestMatcher matcher;
 
@@ -41,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		IOException,
 		ServletException {
 
-		if (!requiresAuthentication(request, matcher)) {
+		if (!requiresAuthentication(request, matchers) || SecurityContextHolder.getContext().getAuthentication() != null) {
 			chain.doFilter(request, response);
 		} else {
 			String authorizationHeader = request.getHeader("Authorization");
