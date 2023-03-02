@@ -11,7 +11,7 @@ plugins {
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
-group = 'com.glims'
+group = 'com.glimps'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -51,9 +51,6 @@ dependencies {
     implementation 'com.github.dozermapper:dozer-core:6.5.2'
 
     implementation 'com.navercorp.lucy:lucy-xss-servlet:2.0.1'
-
-    implementation 'com.google.guava:guava:11.0.2'
-
 }
 
 tasks.named('test') {
