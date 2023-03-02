@@ -3,20 +3,16 @@ package com.glimps.glimpsserver.review.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-<<<<<<< HEAD
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-=======
->>>>>>> d782e52 (Test: add review create test for ReviewService)
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-<<<<<<< HEAD
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,9 +20,6 @@ import org.springframework.data.domain.Pageable;
 
 import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
-=======
-
->>>>>>> d782e52 (Test: add review create test for ReviewService)
 import com.glimps.glimpsserver.perfume.application.PerfumeService;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
@@ -41,7 +34,6 @@ class ReviewServiceTest {
 	private static final String TITLE = "제목입니다.";
 	private static final String BODY = "본문입니다.";
 	private static final String EXISTS_EMAIL = "exists@email.com";
-<<<<<<< HEAD
 	private static final String NOT_EXISTS_EMAIL = "notexists@email.com";
 	private static final Long EXISTS_PERFUME_ID = 3L;
 	private static final Long NOT_EXISTS_PERFUME_ID = 200L;
@@ -61,10 +53,6 @@ class ReviewServiceTest {
 		.sillageRating(3)
 		.build();
 
-=======
-	private static final Long EXISTS_PERFUME_ID = 3L;
-	private static final Long NEW_REVIEW_ID = 1L;
->>>>>>> d782e52 (Test: add review create test for ReviewService)
 	private static final User EXISTS_USER = User.builder()
 		.id(1L)
 		.email(EXISTS_EMAIL)
@@ -92,31 +80,20 @@ class ReviewServiceTest {
 	}
 
 	@Nested
-<<<<<<< HEAD
 	@DisplayName("createReview 메소드는")
-=======
-	@DisplayName("createReview 메서드는")
->>>>>>> d782e52 (Test: add review create test for ReviewService)
 	class Describe_createReview {
 		@Nested
 		@DisplayName("사용자가 존재하고, 향수가 존재할 때")
 		class Context_when_user_exists_and_perfume_exists {
 			@BeforeEach
 			void setUp() {
-<<<<<<< HEAD
-=======
-
->>>>>>> d782e52 (Test: add review create test for ReviewService)
 				given(userService.getUser(EXISTS_EMAIL)).willReturn(EXISTS_USER);
 				given(perfumeService.getPerfume(EXISTS_PERFUME_ID)).willReturn(EXISTS_PERFUME);
 				given(reviewRepository.save(any(Review.class))).will(invocation -> {
 					Review source = invocation.getArgument(0);
 					return Review.builder()
 						.id(NEW_REVIEW_ID)
-<<<<<<< HEAD
 						.uuid(NEW_REVIEW_UUID)
-=======
->>>>>>> d782e52 (Test: add review create test for ReviewService)
 						.title(source.getTitle())
 						.body(source.getBody())
 						.overallRating(source.getOverallRating())
@@ -144,17 +121,13 @@ class ReviewServiceTest {
 
 				assertThat(review.getTitle()).isEqualTo(TITLE);
 				assertThat(review.getBody()).isEqualTo(BODY);
-<<<<<<< HEAD
 				assertThat(review.getUuid()).isEqualTo(NEW_REVIEW_UUID);
-=======
->>>>>>> d782e52 (Test: add review create test for ReviewService)
 				assertThat(review.getOverallRating()).isEqualTo(5.0);
 				assertThat(review.getLongevityRating()).isEqualTo(4.5);
 				assertThat(review.getSillageRating()).isEqualTo(4.0);
 				assertThat(review.getUser()).isEqualTo(EXISTS_USER);
 			}
 		}
-<<<<<<< HEAD
 
 		@Nested
 		@DisplayName("사용자가 존재하지 않고, 향수가 존재할 때")
@@ -411,7 +384,5 @@ class ReviewServiceTest {
 				verify(reviewRepository).findTop10ByOrderByCreatedAtDesc();
 			}
 		}
-=======
->>>>>>> d782e52 (Test: add review create test for ReviewService)
 	}
 }
