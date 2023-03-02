@@ -53,6 +53,7 @@ dependencies {
     implementation 'com.navercorp.lucy:lucy-xss-servlet:2.0.1'
 
     implementation 'com.google.guava:guava:11.0.2'
+    implementation 'com.fasterxml.uuid:java-uuid-generator:4.1.0'
 
 }
 

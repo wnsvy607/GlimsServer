@@ -1,6 +1,5 @@
 package com.glimps.glimpsserver.review.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,10 +14,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.uuid.Generators;
 import com.glimps.glimpsserver.common.domain.BaseTimeEntity;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
 import com.glimps.glimpsserver.user.domain.User;
+import com.google.common.collect.Lists;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,7 @@ public class Review extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "uuid", nullable = false, columnDefinition = "BINARY(16)")
 	private UUID uuid;
 
 	@Column(name = "title")
@@ -55,7 +57,7 @@ public class Review extends BaseTimeEntity {
 
 	@Builder.Default
 	@OneToMany(mappedBy = "review")
-	private List<ReviewPhoto> reviewPhotos = new ArrayList<>();
+	private List<ReviewPhoto> reviewPhotos = Lists.newArrayList();
 
 	@Column(name = "hearts_cnt")
 	private int heartsCnt;
@@ -69,7 +71,7 @@ public class Review extends BaseTimeEntity {
 	public static Review createReview(ReviewCreateRequest reviewCreateRequest, User user, Perfume perfume) {
 		user.addReviewCnt();
 		return Review.builder()
-			.uuid(UUID.randomUUID())
+			.uuid(Generators.timeBasedGenerator().generate())
 			.title(reviewCreateRequest.getTitle())
 			.body(reviewCreateRequest.getBody())
 			.user(user)

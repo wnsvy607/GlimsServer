@@ -2,6 +2,7 @@ package com.glimps.glimpsserver.perfume.domain;
 
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class Perfume {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "uuid", nullable = false, columnDefinition = "BINARY(16)")
 	private UUID uuid;
 
 	private String brand;
@@ -37,7 +39,7 @@ public class Perfume {
 
 	private int reviewCnt;
 
-public static Perfume createPerfume(String brand, String perfumeName) {
+	public static Perfume createPerfume(String brand, String perfumeName) {
 		return Perfume.builder()
 			.uuid(UUID.randomUUID())
 			.brand(brand)
