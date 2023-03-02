@@ -36,8 +36,6 @@ class ReviewCustomRepositoryImplTest {
 	private static final String TITLE = "제목입니다.";
 	private static final String BODY = "본문입니다.";
 	private static final String EXISTS_EMAIL = "exists@email.com";
-	private static final String NOT_EXISTS_EMAIL = "notexists@email.com";
-	private static final Long EXISTS_PERFUME_ID = 3L;
 	private static final Long NOT_EXISTS_USER_ID = 200L;
 	private static final UUID EXISTS_REVIEW_UUID = UUID.randomUUID();
 
@@ -75,6 +73,18 @@ class ReviewCustomRepositoryImplTest {
 		.longevityRating(3)
 		.sillageRating(3)
 		.heartsCnt(10)
+		.perfume(EXISTS_PERFUME)
+		.user(EXISTS_USER)
+		.build();
+
+	private final Review THIRD_REVIEW = Review.builder()
+		.title(TITLE + "3")
+		.body(BODY)
+		.uuid(Generators.timeBasedGenerator().generate())
+		.overallRating(5)
+		.longevityRating(3)
+		.sillageRating(3)
+		.heartsCnt(7)
 		.perfume(EXISTS_PERFUME)
 		.user(EXISTS_USER)
 		.build();
@@ -307,9 +317,60 @@ class ReviewCustomRepositoryImplTest {
 
 				//then
 				assertThat(reviews.getContent()).isEmpty();
-				assertThat(reviews.getTotalPages()).isEqualTo(0);
+				assertThat(reviews.getTotalPages()).isZero();
 			}
 		}
 	}
 
+	@Nested
+	@DisplayName("findAllByOrder 메서드는")
+	class Describe_findAllByOrder {
+		@Nested
+		@DisplayName("페이지 정보를 전달하면")
+		class Context_when_page_info {
+			@Test
+			@DisplayName("페이지 정보에 맞는 리뷰를 반환한다.")
+			void it_returns_reviews() {
+				//given
+				perfumeRepository.save(EXISTS_PERFUME);
+				userRepository.save(EXISTS_USER);
+				reviewRepository.save(EXISTS_REVIEW);
+				reviewRepository.save(SECOND_REVIEW);
+				reviewRepository.save(THIRD_REVIEW);
+
+				//when
+				Pageable pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "createdAt");
+				CustomPage<Review> reviews = reviewCustomRepository.findAllByOrder(pageRequest);
+
+				//then
+				assertThat(reviews.getContent()).hasSize(3);
+				assertThat(reviews.getTotalPages()).isEqualTo(1);
+			}
+		}
+	}
+
+	@Nested
+	@DisplayName("findTop10ByOrderByCreatedAtDesc 메서드는")
+	class Describe_findTop10ByOrderByCreatedAtDesc {
+		@Nested
+		@DisplayName("최신 리뷰 10개를 조회하면")
+		class Context_when_find_top_10 {
+			@Test
+			@DisplayName("최신 리뷰 10개를 반환한다.")
+			void it_returns_top_10_reviews() {
+				//given
+				perfumeRepository.save(EXISTS_PERFUME);
+				userRepository.save(EXISTS_USER);
+				reviewRepository.save(EXISTS_REVIEW);
+				reviewRepository.save(SECOND_REVIEW);
+				reviewRepository.save(THIRD_REVIEW);
+
+				//when
+				List<Review> reviews = reviewCustomRepository.findTop10ByOrderByCreatedAtDesc();
+
+				//then
+				assertThat(reviews).hasSize(3);
+			}
+		}
+	}
 }

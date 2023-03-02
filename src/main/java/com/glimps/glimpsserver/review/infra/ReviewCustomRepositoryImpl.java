@@ -32,12 +32,12 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	@Override
 	public List<Review> findTop10ByOrderByCreatedAtDesc() {
 		return jpaQueryFactory.selectFrom(review)
-			.fetchJoin().leftJoin(reviewPhoto)
-			.on(reviewPhoto.review.id.eq(review.id))
-			.fetchJoin().leftJoin(user)
+			.innerJoin(user).fetchJoin()
 			.on(user.id.eq(review.user.id))
-			.fetchJoin().leftJoin(perfume)
+			.innerJoin(perfume).fetchJoin()
 			.on(perfume.id.eq(review.perfume.id))
+			.leftJoin(reviewPhoto).fetchJoin()
+			.on(reviewPhoto.review.id.eq(review.id))
 			.orderBy(review.createdAt.desc())
 			.limit(10)
 			.stream().collect(Collectors.toList());
@@ -46,12 +46,12 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	@Override
 	public CustomPage<Review> findAllByOrder(Pageable pageRequest) {
 		JPAQuery<Review> joinQuery = jpaQueryFactory.selectFrom(review)
-			.fetchJoin().leftJoin(reviewPhoto)
-			.on(reviewPhoto.review.id.eq(review.id))
-			.fetchJoin().leftJoin(user)
+			.innerJoin(user).fetchJoin()
 			.on(user.id.eq(review.user.id))
-			.fetchJoin().leftJoin(perfume)
-			.on(perfume.id.eq(review.perfume.id));
+			.innerJoin(perfume).fetchJoin()
+			.on(perfume.id.eq(review.perfume.id))
+			.leftJoin(reviewPhoto).fetchJoin()
+			.on(reviewPhoto.review.id.eq(review.id));
 
 		long totalElements = joinQuery.stream().count();
 
@@ -66,14 +66,14 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
-	public CustomPage<Review> findAllByUser(Long userId, Pageable pageRequest) {
+	public CustomPage<Review> findAllByUserId(Long userId, Pageable pageRequest) {
 		JPAQuery<Review> joinQuery = jpaQueryFactory.selectFrom(review)
-			.fetchJoin().leftJoin(reviewPhoto)
-			.on(reviewPhoto.review.id.eq(review.id))
-			.fetchJoin().leftJoin(user)
+			.innerJoin(user).fetchJoin()
 			.on(user.id.eq(review.user.id))
-			.fetchJoin().leftJoin(perfume)
+			.innerJoin(perfume).fetchJoin()
 			.on(perfume.id.eq(review.perfume.id))
+			.leftJoin(reviewPhoto).fetchJoin()
+			.on(reviewPhoto.review.id.eq(review.id))
 			.where(review.user.id.eq(userId));
 
 		long totalElements = joinQuery.stream().count();
@@ -88,27 +88,28 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
-	public List<Review> findAllByPerfumeId(UUID perfumeId) {
+	public List<Review> findAllByPerfumeId(UUID perfumeUuid) {
 		return jpaQueryFactory.selectFrom(review)
-			.fetchJoin().leftJoin(reviewPhoto)
-			.on(reviewPhoto.review.id.eq(review.id))
-			.fetchJoin().leftJoin(user)
-			.on(user.id.eq(review.user.id))
-			.fetchJoin().leftJoin(perfume)
+			.innerJoin(perfume).fetchJoin()
 			.on(perfume.id.eq(review.perfume.id))
-			.where(review.perfume.uuid.eq(perfumeId))
+			.innerJoin(user).fetchJoin()
+			.on(user.id.eq(review.user.id))
+			.leftJoin(reviewPhoto).fetchJoin()
+			.on(reviewPhoto.review.id.eq(review.id))
+			.orderBy(getSort(Pageable.unpaged()))
+			.where(perfume.uuid.eq(perfumeUuid))
 			.stream().collect(Collectors.toList());
 	}
 
 	@Override
 	public List<Review> findBestReviewByAmount(int amountOfBestReview) {
 		return jpaQueryFactory.selectFrom(review)
-			.fetchJoin().leftJoin(reviewPhoto)
-			.on(reviewPhoto.review.id.eq(review.id))
-			.fetchJoin().leftJoin(user)
+			.innerJoin(user).fetchJoin()
 			.on(user.id.eq(review.user.id))
-			.fetchJoin().leftJoin(perfume)
+			.innerJoin(perfume).fetchJoin()
 			.on(perfume.id.eq(review.perfume.id))
+			.leftJoin(reviewPhoto).fetchJoin()
+			.on(reviewPhoto.review.id.eq(review.id))
 			.orderBy(review.heartsCnt.desc())
 			.limit(amountOfBestReview)
 			.stream()
@@ -125,18 +126,22 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 					return new OrderSpecifier<>(direction, review.createdAt);
 			}
 		}
+		if (pageRequest.isUnpaged()) {
+			return new OrderSpecifier<>(Order.DESC, review.createdAt);
+		}
 		return null;
 	}
 
 	@Override
 	public Optional<Review> findByUuid(UUID uuid) {
 		return jpaQueryFactory.selectFrom(review)
-			.fetchJoin().leftJoin(reviewPhoto)
-			.on(reviewPhoto.review.id.eq(review.id))
-			.fetchJoin().leftJoin(user)
+			.distinct()
+			.innerJoin(user).fetchJoin()
 			.on(user.id.eq(review.user.id))
-			.fetchJoin().leftJoin(perfume)
+			.innerJoin(perfume).fetchJoin()
 			.on(perfume.id.eq(review.perfume.id))
+			.leftJoin(reviewPhoto).fetchJoin()
+			.on(reviewPhoto.review.id.eq(review.id))
 			.where(review.uuid.eq(uuid))
 			.stream()
 			.findFirst();

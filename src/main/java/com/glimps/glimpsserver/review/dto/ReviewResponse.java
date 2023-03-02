@@ -1,12 +1,12 @@
 package com.glimps.glimpsserver.review.dto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
+import com.google.common.collect.Lists;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class ReviewResponse {
 	private String body;
 	private String nickname;
 	@Builder.Default
-	private List<String> photoUrls = new ArrayList<>();
+	private List<String> photoUrls = Lists.newArrayList();
 	private String perfumeName;
 	private String perfumeBrand;
 	private int heartCnt;

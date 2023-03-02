@@ -45,8 +45,8 @@ public class ReviewService {
 	@Transactional
 	public Review createReview(ReviewCreateRequest reviewCreateRequest, String email) {
 		User user = userService.getUserByEmail(email);
-		Long perfumeId = reviewCreateRequest.getPerfumeId();
-		Perfume perfume = perfumeService.getPerfumeById(perfumeId);
+		UUID perfumeUuid = reviewCreateRequest.getPerfumeUuid();
+		Perfume perfume = perfumeService.getPerfumeById(perfumeUuid);
 
 		Review review = Review.createReview(reviewCreateRequest, user, perfume);
 
@@ -58,8 +58,7 @@ public class ReviewService {
 	}
 
 	public Review getReviewById(UUID uuid) {
-		return reviewCustomRepository.findByUuid(uuid)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, uuid));
+		return findReview(uuid);
 	}
 
 	public CustomPage<Review> getMyReviews(ReviewPageParam reviewPageParam, String email) {
@@ -73,7 +72,7 @@ public class ReviewService {
 
 		User user = userService.getUserByEmail(email);
 
-		return reviewCustomRepository.findAllByUser(user.getId(), pageRequest);
+		return reviewCustomRepository.findAllByUserId(user.getId(), pageRequest);
 	}
 
 	public List<Review> getRecentReviews() {
@@ -95,7 +94,7 @@ public class ReviewService {
 
 	@Transactional
 	public Review createHeart(UUID reviewId, String existsEmail) {
-		Review review = getReviewById(reviewId);
+		Review review = findReview(reviewId);
 		User user = userService.getUserByEmail(existsEmail);
 		reviewHeartService.createReviewHeart(review, user);
 
@@ -104,7 +103,7 @@ public class ReviewService {
 
 	@Transactional
 	public Review cancelHeart(UUID uuid, String email) {
-		Review review = getReviewById(uuid);
+		Review review = findReview(uuid);
 		User user = userService.getUserByEmail(email);
 		reviewHeartService.cancelReviewHeart(review, user);
 		return review;
@@ -116,5 +115,10 @@ public class ReviewService {
 
 	public List<Review> getBestReviews(int amountOfBestReview) {
 		return reviewCustomRepository.findBestReviewByAmount(amountOfBestReview);
+	}
+
+	private Review findReview(UUID uuid) {
+		return reviewCustomRepository.findByUuid(uuid)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, uuid));
 	}
 }

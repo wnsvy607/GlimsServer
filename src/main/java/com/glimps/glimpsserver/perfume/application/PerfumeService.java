@@ -1,5 +1,7 @@
 package com.glimps.glimpsserver.perfume.application;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +26,12 @@ public class PerfumeService {
 			reviewCreateRequest.getSillageRatings());
 	}
 
-	public Perfume getPerfumeById(Long perfumeId) {
-		return findPerfume(perfumeId);
+	public Perfume getPerfumeById(UUID uuid) {
+		return findPerfume(uuid);
 	}
 
-	private Perfume findPerfume(Long perfumeId) {
-		return perfumeRepository.findById(perfumeId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.PERFUME_NOT_FOUND, perfumeId));
+	private Perfume findPerfume(UUID perfumeUuid) {
+		return perfumeRepository.findByUuid(perfumeUuid)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.PERFUME_NOT_FOUND, perfumeUuid));
 	}
 }

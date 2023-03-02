@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +18,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.ActiveProfiles;
 
+import com.fasterxml.uuid.Generators;
 import com.glimps.glimpsserver.common.domain.CustomPage;
 import com.glimps.glimpsserver.common.domain.CustomPageImpl;
 import com.glimps.glimpsserver.common.error.CustomException;
@@ -33,6 +37,8 @@ import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 
+@ActiveProfiles("test")
+@Transactional
 @SpringBootTest
 class ReviewServiceTest {
 	private static final String TITLE = "제목입니다.";
@@ -40,7 +46,8 @@ class ReviewServiceTest {
 	private static final String EXISTS_EMAIL = "exists@email.com";
 	private static final String NOT_EXISTS_EMAIL = "notexists@email.com";
 	private static final Long EXISTS_PERFUME_ID = 3L;
-	private static final Long NOT_EXISTS_PERFUME_ID = 200L;
+	private static final UUID EXISTS_PERFUME_UUID = Generators.timeBasedGenerator().generate();
+	private static final UUID NOT_EXISTS_PERFUME_ID = Generators.timeBasedGenerator().generate();
 	private static final Long NEW_REVIEW_ID = 1L;
 	private static final UUID NEW_REVIEW_UUID = UUID.randomUUID();
 	private static final Long EXISTS_REVIEW_ID = 3L;
@@ -50,7 +57,7 @@ class ReviewServiceTest {
 
 	private static final Perfume EXISTS_PERFUME = Perfume.builder()
 		.id(EXISTS_PERFUME_ID)
-		.uuid(UUID.randomUUID())
+		.uuid(EXISTS_PERFUME_UUID)
 		.perfumeName("향수 이름")
 		.brand("향수 브랜드")
 		.build();
@@ -88,8 +95,7 @@ class ReviewServiceTest {
 	@BeforeEach
 	void setUp() {
 		reviewService = new ReviewService(reviewCustomRepository, reviewRepository, userService, reviewPhotoService,
-			perfumeService,
-			reviewHeartService);
+			perfumeService, reviewHeartService);
 	}
 
 	@Nested
@@ -101,7 +107,7 @@ class ReviewServiceTest {
 			@BeforeEach
 			void setUp() {
 				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(perfumeService.getPerfumeById(EXISTS_PERFUME_ID)).willReturn(EXISTS_PERFUME);
+				given(perfumeService.getPerfumeById(EXISTS_PERFUME_UUID)).willReturn(EXISTS_PERFUME);
 				given(reviewRepository.save(any(Review.class))).will(invocation -> {
 					Review source = invocation.getArgument(0);
 					return Review.builder()
@@ -157,7 +163,7 @@ class ReviewServiceTest {
 					ReviewCreateRequest.builder()
 						.title(TITLE)
 						.body(BODY)
-						.perfumeId(EXISTS_PERFUME_ID)
+						.perfumeUuid(EXISTS_PERFUME_UUID)
 						.overallRatings(5.0)
 						.longevityRatings(4.5)
 						.sillageRatings(4.0)
@@ -185,7 +191,7 @@ class ReviewServiceTest {
 					ReviewCreateRequest.builder()
 						.title(TITLE)
 						.body(BODY)
-						.perfumeId(NOT_EXISTS_PERFUME_ID)
+						.perfumeUuid(NOT_EXISTS_PERFUME_ID)
 						.overallRatings(5.0)
 						.longevityRatings(4.5)
 						.sillageRatings(4.0)
@@ -282,7 +288,7 @@ class ReviewServiceTest {
 				CustomPageImpl<Review> customPage = new CustomPageImpl<>(
 					List.of(EXISTS_REVIEW, element1, element2, element3), 0, 2, 4);
 				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(reviewCustomRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(customPage);
+				given(reviewCustomRepository.findAllByUserId(EXISTS_USER.getId(), pageable)).willReturn(customPage);
 			}
 
 			@Test
@@ -302,7 +308,7 @@ class ReviewServiceTest {
 			@BeforeEach
 			void setUp() {
 				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
-				given(reviewCustomRepository.findAllByUser(EXISTS_USER.getId(), pageable)).willReturn(
+				given(reviewCustomRepository.findAllByUserId(EXISTS_USER.getId(), pageable)).willReturn(
 					CustomPage.empty());
 			}
 
@@ -560,21 +566,21 @@ class ReviewServiceTest {
 		@Nested
 		@DisplayName("리뷰가 존재할 때")
 		class Context_when_review_exists {
-			private Review review1 = Review.builder()
+			private final Review review1 = Review.builder()
 				.id(1L)
 				.perfume(EXISTS_PERFUME)
 				.user(EXISTS_USER)
 				.heartsCnt(10)
 				.build();
 
-			private Review review2 = Review.builder()
+			private final Review review2 = Review.builder()
 				.id(2L)
 				.perfume(EXISTS_PERFUME)
 				.user(EXISTS_USER)
 				.heartsCnt(5)
 				.build();
 
-			private Review review3 = Review.builder()
+			private final Review review3 = Review.builder()
 				.id(3L)
 				.perfume(EXISTS_PERFUME)
 				.user(EXISTS_USER)

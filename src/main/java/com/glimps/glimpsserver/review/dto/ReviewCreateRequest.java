@@ -1,12 +1,14 @@
 package com.glimps.glimpsserver.review.dto;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
+
+import com.google.common.collect.Lists;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,13 +34,10 @@ public class ReviewCreateRequest {
 	@Positive
 	private double sillageRatings;
 	@NotNull
-	private Long perfumeId;
+	private UUID perfumeUuid;
 
 	@Builder.Default
 	@NotNull
-	private List<String> photoUrls = new ArrayList<>();
+	private List<String> photoUrls = Lists.newArrayList();
 
-	@Builder.Default
-	@NotNull
-	private List<Long> hashTagsIds = new ArrayList<>();
 }
