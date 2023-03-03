@@ -3,9 +3,7 @@ package com.glimps.glimpsserver.user.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import java.time.LocalDateTime;
-
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,7 +38,8 @@ class UserInfoServiceTest {
 	private UserInfoService userInfoService;
 
 	@Test
-	void given_Email_WhenGetUserInfo_Then_EqualToUser() throws Exception {
+	@DisplayName("회원정보 조회시 유효한 값 반환")
+	void given_Email_When_GetUserInfo_Then_EqualToUser() throws Exception {
 	    //given
 		given(userService.getByEmail(EMAIL)).willReturn(USER);
 

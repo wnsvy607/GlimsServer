@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.InvalidTokenException;
@@ -87,6 +86,13 @@ public class UserService {
 			throw new InvalidTokenException(ErrorCode.REFRESH_TOKEN_EXPIRED, refreshToken);
 		}
 		return user;
+	}
+
+	@Transactional
+	public Long updateUser(String email, String nickname) {
+		User user = getByEmail(email);
+		user.updateNickname(nickname);
+		return user.getId();
 	}
 
 }

@@ -19,10 +19,10 @@ import lombok.Getter;
 public class UserInfoDto {
 
 
-	@Schema(description = "email", example = "kim12345@naver.com", required = true)
+	@Schema(description = "이메일", example = "kim12345@naver.com", required = true)
 	private String email;
 
-	@Schema(description = "nickname", example = "닉네임", required = true)
+	@Schema(description = "닉네임", example = "홍길동", required = true)
 	private String nickname;
 	@Schema(description = "리뷰 카운트", example = "8", required = true)
 	private int reviewCnt;
