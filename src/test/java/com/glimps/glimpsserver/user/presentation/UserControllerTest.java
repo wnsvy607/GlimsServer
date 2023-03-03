@@ -72,4 +72,26 @@ class UserControllerTest {
 
 	}
 
+	@WithMockCustomUser
+	@Test
+	void given_No_When_FindByEmail_Then_Return() throws Exception {
+		//given
+		given(userInfoService.getUserInfo(EMAIL)).willReturn(USER_INFO_DTO);
+
+		//when
+		mockMvc.perform(get("/api/v1/users/" + EMAIL))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.email").value(EMAIL))
+			.andExpect(jsonPath("$.nickname").value(nickname))
+			.andExpect(jsonPath("$.reviewCnt").value(REVIEW_CNT))
+			.andExpect(jsonPath("$.role").value(ROLE))
+			.andExpect(jsonPath("$.userType").value(USER_TYPE))
+			.andExpect(jsonPath("$.createdAt").exists())
+			.andDo(print());
+
+		//then
+		verify(userInfoService).getUserInfo(EMAIL);
+
+	}
+
 }
