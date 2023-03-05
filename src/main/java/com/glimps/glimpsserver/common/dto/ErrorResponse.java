@@ -2,11 +2,9 @@ package com.glimps.glimpsserver.common.dto;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import com.glimps.glimpsserver.common.error.ErrorCode;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,15 +13,18 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorResponse {
-	private String message;
-	private HttpStatus status;
+	private String errorCode;
+	private String errorMessage;
 
-	public static ErrorResponse of(HttpStatus status, String message) {
-		return new ErrorResponse(message, ErrorCode.valueOf(status.name()).getStatus());
+	// TODO 타임스탬프 추가
+	// private LocalDateTime timeStamp;
+
+	public static ErrorResponse of(String errorCode, String errorMessage) {
+		return new ErrorResponse(errorCode, errorMessage);
 	}
 
-	public static ErrorResponse of(HttpStatus status, BindingResult bindingResult) {
-		return new ErrorResponse(createErrorMessage(bindingResult), ErrorCode.valueOf(status.name()).getStatus());
+	public static ErrorResponse of(String errorCode, BindingResult bindingResult) {
+		return new ErrorResponse(errorCode, createErrorMessage(bindingResult));
 	}
 
 	private static String createErrorMessage(BindingResult bindingResult) {

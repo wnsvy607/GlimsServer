@@ -27,4 +27,12 @@ public class ReviewPhotoService {
 		return reviewPhotoRepository.saveAll(photos);
 	}
 
+	public List<ReviewPhoto> updateReviewPhotos(Review review, List<String> photoUrls) {
+		review.getReviewPhotos().clear();
+		return createReviewPhotos(review, photoUrls);
+	}
+
+	public void deleteReviewPhotos(Review review) {
+		reviewPhotoRepository.deleteAll(review.getReviewPhotos());
+	}
 }

@@ -47,9 +47,9 @@ public class ReviewPageResponse {
 				.collect(Collectors.toList()))
 			.perfumeName(review.getPerfume().getPerfumeName())
 			.perfumeBrand(review.getPerfume().getBrand())
-			.overallRating(review.getOverallRating())
-			.longevityRating(review.getLongevityRating())
-			.sillageRating(review.getSillageRating())
+			.overallRating(review.getOverallRatings())
+			.longevityRating(review.getLongevityRatings())
+			.sillageRating(review.getSillageRatings())
 			.totalElements(totalElements)
 			.totalPages(totalPages)
 			.build();

@@ -44,9 +44,9 @@ class ReviewPageResponseTest {
 		.title(TEST_TITLE)
 		.body(TEST_BODY)
 		.user(USER)
-		.overallRating(5.0)
-		.longevityRating(4.5)
-		.sillageRating(4.0)
+		.overallRatings(5.0)
+		.longevityRatings(4.5)
+		.sillageRatings(4.0)
 		.perfume(PERFUME)
 		.build();
 

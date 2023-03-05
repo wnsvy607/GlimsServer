@@ -16,8 +16,13 @@ class ReviewTest {
 	private static final double LONGEVITY_RATING = 4.5;
 	private static final double SILLAGE_RATING = 4.0;
 
-	private static final User user =
-		new User(5L, "nickname", "email", 0, RoleType.USER);
+	private static final User user = User.builder()
+		.id(5L)
+		.nickname("nickname")
+		.email("email")
+		.reviewCnt(0)
+		.role(RoleType.USER)
+		.build();
 
 	private static final Perfume perfume = Perfume.createPerfume("channel", "No.5");
 
@@ -38,8 +43,8 @@ class ReviewTest {
 		assertThat(review.getHeartsCnt()).isZero();
 		assertThat(review.getPerfume().getPerfumeName()).isEqualTo("No.5");
 		assertThat(review.getPerfume().getBrand()).isEqualTo("channel");
-		assertThat(review.getOverallRating()).isEqualTo(OVERALL_RATING);
-		assertThat(review.getSillageRating()).isEqualTo(SILLAGE_RATING);
-		assertThat(review.getLongevityRating()).isEqualTo(LONGEVITY_RATING);
+		assertThat(review.getOverallRatings()).isEqualTo(OVERALL_RATING);
+		assertThat(review.getSillageRatings()).isEqualTo(SILLAGE_RATING);
+		assertThat(review.getLongevityRatings()).isEqualTo(LONGEVITY_RATING);
 	}
 }
