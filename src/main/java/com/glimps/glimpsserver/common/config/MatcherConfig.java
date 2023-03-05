@@ -18,11 +18,11 @@ public class MatcherConfig {
 	public List<RequestMatcher> matcher() {
 
 		List<RequestMatcher> result = authURL.stream()
-			.map(a -> new AntPathRequestMatcher(a))
+			.map(AntPathRequestMatcher::new)
 			.collect(Collectors.toList());
 
 		result.addAll(adminURL.stream()
-			.map(a -> new AntPathRequestMatcher(a))
+			.map(AntPathRequestMatcher::new)
 			.collect(Collectors.toList()));
 
 		return result;

@@ -4,9 +4,9 @@ import com.glimps.glimpsserver.user.domain.UserType;
 
 public interface SignUpRequest {
 
-	public String getName();
+	String getName();
 
-	public String getEmail();
+	String getEmail();
 
-	public UserType getUserType();
+	UserType getUserType();
 }

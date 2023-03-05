@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class UserDuplicationException extends CustomException {
-	private UserType userType;
+	private final UserType userType;
 
 	public UserDuplicationException(ErrorCode errorCode, UserType userType) {
 		super(errorCode);

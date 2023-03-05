@@ -1,6 +1,5 @@
 package com.glimps.glimpsserver.session.application;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,7 +58,6 @@ public class AuthenticationService {
 	public JwtDto oauthLogin(OAuth2User oauth2User) {
 		OAuthUserVo oauthUserVo = OAuthUserVo.from(oauth2User);
 		Optional<User> optionalUser = userService.getOptionalUserByEmail(oauthUserVo.getEmail());
-
 		User user = optionalUser.orElseGet(() -> {
 			Long id = userService.registerUser(oauthUserVo);
 			return userService.findById(id);

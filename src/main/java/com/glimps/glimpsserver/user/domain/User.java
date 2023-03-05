@@ -19,6 +19,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,7 +31,7 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "nick_name")
+	@Column(name = "nickname")
 	private String nickname;
 
 	@Column(name = "email")
@@ -66,4 +67,11 @@ public class User {
 		this.tokenExpirationTime = refreshTokenExpireTime;
 	}
 
+	public void addReviewCnt() {
+		this.reviewCnt++;
+	}
+
+	public void deleteReviewCnt() {
+		this.reviewCnt--;
+	}
 }

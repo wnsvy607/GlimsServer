@@ -1,11 +1,9 @@
 package com.glimps.glimpsserver.common.authentication;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import lombok.Getter;
 

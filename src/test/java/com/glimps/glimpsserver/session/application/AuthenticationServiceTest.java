@@ -43,7 +43,7 @@ class AuthenticationServiceTest {
 		.accessTokenExpireTime(new Date())
 		.refreshTokenExpireTime(new Date())
 		.build();
-	private OAuth2User oAuth2User = new DefaultOAuth2User(null, new HashMap<>() {{
+	private final OAuth2User oAuth2User = new DefaultOAuth2User(null, new HashMap<>() {{
 		put("name", NAME);
 		put("email", EMAIL);
 		put("userType", KAKAO.toString().toLowerCase());

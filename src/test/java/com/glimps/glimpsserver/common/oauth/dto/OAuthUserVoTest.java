@@ -17,7 +17,7 @@ class OAuthUserVoTest {
 	private static final String NAME = "장광남";
 	private static final UserType KAKAO = UserType.KAKAO;
 
-	private OAuth2User oAuth2User = new DefaultOAuth2User(null, new HashMap<>() {{
+	private final OAuth2User oAuth2User = new DefaultOAuth2User(null, new HashMap<>() {{
 		put("name", NAME);
 		put("email", EMAIL);
 		put("userType", KAKAO.toString().toLowerCase());
@@ -25,7 +25,7 @@ class OAuthUserVoTest {
 
 	@Test
 	@DisplayName("OAuthUserVO 객체 생성")
-	void createOAuthUserVO() throws Exception {
+	void createOAuthUserVO() {
 		//given
 
 		//when

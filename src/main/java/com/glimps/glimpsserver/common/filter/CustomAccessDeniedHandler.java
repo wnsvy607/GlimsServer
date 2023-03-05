@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glimps.glimpsserver.common.dto.ErrorResponse;
-import com.glimps.glimpsserver.common.error.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,7 +35,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
-		ErrorResponse of = ErrorResponse.of(NOT_AUTHORIZED.getCode(), NOT_AUTHORIZED.getMessage() );
+		ErrorResponse of = ErrorResponse.of(NO_AUTHORITY.getCode(), NO_AUTHORITY.getMessage() );
 		String convertedError = mapper.writeValueAsString(of);
 
 		writer.write(convertedError);

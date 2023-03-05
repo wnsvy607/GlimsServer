@@ -18,15 +18,22 @@ import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 import com.glimps.glimpsserver.user.infra.UserRepository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class UserService {
 	private final UserRepository userRepository;
+
+	public UserService(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+
+	public User getUserByEmail(String email) {
+		return userRepository.findByEmail(email)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, email));
+	}
 
 	public Optional<User> getOptionalUserByEmail(String email) {
 		return userRepository.findByEmail(email);

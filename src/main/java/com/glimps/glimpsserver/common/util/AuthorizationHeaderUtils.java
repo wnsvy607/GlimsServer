@@ -6,6 +6,8 @@ import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 
 public class AuthorizationHeaderUtils {
+	private AuthorizationHeaderUtils() {
+	}
 
 	public static void validateAuthorization(String authorizationHeader) {
 
