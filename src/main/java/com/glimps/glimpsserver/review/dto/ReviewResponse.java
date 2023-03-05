@@ -27,9 +27,9 @@ public class ReviewResponse {
 	private String perfumeName;
 	private String perfumeBrand;
 	private int heartCnt;
-	private double overallRating;
-	private double longevityRating;
-	private double sillageRating;
+	private double overallRatings;
+	private double longevityRatings;
+	private double sillageRatings;
 
 	private LocalDateTime createdAt;
 
@@ -44,9 +44,9 @@ public class ReviewResponse {
 			.perfumeName(review.getPerfume().getPerfumeName())
 			.heartCnt(review.getHeartsCnt())
 			.perfumeBrand(review.getPerfume().getBrand())
-			.overallRating(review.getOverallRating())
-			.longevityRating(review.getLongevityRating())
-			.sillageRating(review.getSillageRating())
+			.overallRatings(review.getOverallRatings())
+			.longevityRatings(review.getLongevityRatings())
+			.sillageRatings(review.getSillageRatings())
 			.createdAt(review.getCreatedAt())
 			.build();
 	}

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewHeart;
@@ -21,7 +20,6 @@ import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 
 @SpringBootTest
-@Transactional
 class ReviewHeartServiceTest {
 	private static final String TITLE = "제목입니다.";
 	private static final String BODY = "본문입니다.";
@@ -29,15 +27,26 @@ class ReviewHeartServiceTest {
 	private static final Long EXISTS_REVIEW_ID = 3L;
 	private static final Long EXISTS_USER_ID = 3L;
 	private static final UUID EXISTS_REVIEW_UUID = UUID.randomUUID();
-	private static final Review EXISTS_REVIEW = Review.builder()
+	private static final Review EXISTS_REVIEW1 = Review.builder()
 		.id(EXISTS_REVIEW_ID)
 		.uuid(EXISTS_REVIEW_UUID)
 		.title(TITLE)
 		.body(BODY)
 		.heartsCnt(5)
-		.overallRating(3)
-		.longevityRating(3)
-		.sillageRating(3)
+		.overallRatings(3)
+		.longevityRatings(3)
+		.sillageRatings(3)
+		.build();
+
+	private static final Review EXISTS_REVIEW2 = Review.builder()
+		.id(EXISTS_REVIEW_ID)
+		.uuid(EXISTS_REVIEW_UUID)
+		.title(TITLE)
+		.body(BODY)
+		.heartsCnt(5)
+		.overallRatings(3)
+		.longevityRatings(3)
+		.sillageRatings(3)
 		.build();
 
 	private static final User EXISTS_USER = User.builder()
@@ -66,7 +75,7 @@ class ReviewHeartServiceTest {
 			void setUp() {
 				given(reviewHeartRepository.save(any(ReviewHeart.class)))
 					.willReturn(ReviewHeart.builder()
-						.review(EXISTS_REVIEW)
+						.review(EXISTS_REVIEW1)
 						.user(EXISTS_USER)
 						.build());
 			}
@@ -74,11 +83,11 @@ class ReviewHeartServiceTest {
 			@Test
 			@DisplayName("리뷰 하트를 생성한다")
 			void It_creates_review_heart() {
-				ReviewHeart reviewHeart = reviewHeartService.createReviewHeart(EXISTS_REVIEW, EXISTS_USER);
+				ReviewHeart reviewHeart = reviewHeartService.createReviewHeart(EXISTS_REVIEW1, EXISTS_USER);
 
 				assertThat(reviewHeart.getReview().getTitle()).isEqualTo(TITLE);
 				assertThat(reviewHeart.getUser().getEmail()).isEqualTo(EXISTS_EMAIL);
-				assertThat(EXISTS_REVIEW.getHeartsCnt()).isEqualTo(6);
+				assertThat(EXISTS_REVIEW1.getHeartsCnt()).isEqualTo(6);
 			}
 		}
 	}
@@ -90,7 +99,7 @@ class ReviewHeartServiceTest {
 		@DisplayName("리뷰 하트가 존재하면")
 		class Context_with_valid_review_heart {
 			private final ReviewHeart reviewHeart = ReviewHeart.builder()
-				.review(EXISTS_REVIEW)
+				.review(EXISTS_REVIEW2)
 				.user(EXISTS_USER)
 				.build();
 
@@ -103,9 +112,9 @@ class ReviewHeartServiceTest {
 			@Test
 			@DisplayName("리뷰 하트를 취소한다")
 			void It_cancels_review_heart() {
-				reviewHeartService.cancelReviewHeart(EXISTS_REVIEW, EXISTS_USER);
+				reviewHeartService.cancelReviewHeart(EXISTS_REVIEW2, EXISTS_USER);
 
-				assertThat(EXISTS_REVIEW.getHeartsCnt()).isEqualTo(4);
+				assertThat(EXISTS_REVIEW2.getHeartsCnt()).isEqualTo(4);
 			}
 		}
 	}

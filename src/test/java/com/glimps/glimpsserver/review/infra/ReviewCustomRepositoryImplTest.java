@@ -9,14 +9,11 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.uuid.Generators;
@@ -29,15 +26,13 @@ import com.glimps.glimpsserver.user.domain.User;
 import com.glimps.glimpsserver.user.infra.UserRepository;
 
 @SpringBootTest
-@ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
 @Transactional
 class ReviewCustomRepositoryImplTest {
 	private static final String TITLE = "제목입니다.";
 	private static final String BODY = "본문입니다.";
 	private static final String EXISTS_EMAIL = "exists@email.com";
 	private static final Long NOT_EXISTS_USER_ID = 200L;
-	private static final UUID EXISTS_REVIEW_UUID = UUID.randomUUID();
+	private static final UUID EXISTS_REVIEW_UUID = Generators.timeBasedGenerator().generate();
 
 	private static final UUID NOT_EXISTS_REVIEW_UUID = UUID.randomUUID();
 	private static final UUID NOT_EXISTS_PERFUME_UUID = UUID.randomUUID();
@@ -56,10 +51,10 @@ class ReviewCustomRepositoryImplTest {
 	private final Review EXISTS_REVIEW = Review.builder()
 		.title(TITLE)
 		.body(BODY)
-		.uuid(Generators.timeBasedGenerator().generate())
-		.overallRating(5)
-		.longevityRating(3)
-		.sillageRating(3)
+		.uuid(EXISTS_REVIEW_UUID)
+		.overallRatings(5)
+		.longevityRatings(3)
+		.sillageRatings(3)
 		.heartsCnt(5)
 		.perfume(EXISTS_PERFUME)
 		.user(EXISTS_USER)
@@ -69,9 +64,9 @@ class ReviewCustomRepositoryImplTest {
 		.title(TITLE + "2")
 		.body(BODY)
 		.uuid(Generators.timeBasedGenerator().generate())
-		.overallRating(5)
-		.longevityRating(3)
-		.sillageRating(3)
+		.overallRatings(5)
+		.longevityRatings(3)
+		.sillageRatings(3)
 		.heartsCnt(10)
 		.perfume(EXISTS_PERFUME)
 		.user(EXISTS_USER)
@@ -81,9 +76,9 @@ class ReviewCustomRepositoryImplTest {
 		.title(TITLE + "3")
 		.body(BODY)
 		.uuid(Generators.timeBasedGenerator().generate())
-		.overallRating(5)
-		.longevityRating(3)
-		.sillageRating(3)
+		.overallRatings(5)
+		.longevityRatings(3)
+		.sillageRatings(3)
 		.heartsCnt(7)
 		.perfume(EXISTS_PERFUME)
 		.user(EXISTS_USER)
@@ -107,7 +102,7 @@ class ReviewCustomRepositoryImplTest {
 			@Test
 			@DisplayName("해당 리뷰를 반환한다.")
 			void it_returns_review() {
-				//given
+				// given
 				perfumeRepository.save(EXISTS_PERFUME);
 				userRepository.save(EXISTS_USER);
 				reviewRepository.save(EXISTS_REVIEW);
@@ -130,10 +125,6 @@ class ReviewCustomRepositoryImplTest {
 			@Test
 			@DisplayName("빈 값을 반환한다.")
 			void it_returns_empty() {
-				//given
-				perfumeRepository.save(EXISTS_PERFUME);
-				userRepository.save(EXISTS_USER);
-				reviewRepository.save(EXISTS_REVIEW);
 
 				//when
 				Optional<Review> r = reviewCustomRepository.findByUuid(NOT_EXISTS_REVIEW_UUID);
@@ -147,6 +138,7 @@ class ReviewCustomRepositoryImplTest {
 	@Nested
 	@DisplayName("findBestReviewByAmount 메서드는")
 	class Describe_findBestReviewByAmount {
+
 		@Nested
 		@DisplayName("리뷰가 존재하면")
 		class Context_when_review_exists {
@@ -157,33 +149,8 @@ class ReviewCustomRepositoryImplTest {
 				perfumeRepository.save(EXISTS_PERFUME);
 				userRepository.save(EXISTS_USER);
 				reviewRepository.save(EXISTS_REVIEW);
-
-				Review secondReview = Review.builder()
-					.title(TITLE)
-					.body(BODY)
-					.uuid(Generators.timeBasedGenerator().generate())
-					.overallRating(5)
-					.longevityRating(3)
-					.sillageRating(3)
-					.heartsCnt(10)
-					.perfume(EXISTS_PERFUME)
-					.user(EXISTS_USER)
-					.build();
-
-				Review thirdReview = Review.builder()
-					.title(TITLE)
-					.body(BODY)
-					.uuid(Generators.timeBasedGenerator().generate())
-					.overallRating(5)
-					.longevityRating(3)
-					.sillageRating(3)
-					.heartsCnt(1)
-					.perfume(EXISTS_PERFUME)
-					.user(EXISTS_USER)
-					.build();
-
-				reviewRepository.save(secondReview);
-				reviewRepository.save(thirdReview);
+				reviewRepository.save(SECOND_REVIEW);
+				reviewRepository.save(THIRD_REVIEW);
 
 				//when
 				List<Review> reviews = reviewCustomRepository.findBestReviewByAmount(2);
@@ -191,7 +158,7 @@ class ReviewCustomRepositoryImplTest {
 				//then
 				assertThat(reviews).hasSize(2);
 				assertThat(reviews.get(0).getHeartsCnt()).isEqualTo(10);
-				assertThat(reviews.get(1).getHeartsCnt()).isEqualTo(5);
+				assertThat(reviews.get(1).getHeartsCnt()).isEqualTo(7);
 			}
 		}
 
@@ -227,20 +194,7 @@ class ReviewCustomRepositoryImplTest {
 				Perfume perfume = perfumeRepository.save(EXISTS_PERFUME);
 				userRepository.save(EXISTS_USER);
 				reviewRepository.save(EXISTS_REVIEW);
-
-				Review secondReview = Review.builder()
-					.title(TITLE + "2")
-					.body(BODY)
-					.uuid(Generators.timeBasedGenerator().generate())
-					.overallRating(5)
-					.longevityRating(3)
-					.sillageRating(3)
-					.heartsCnt(10)
-					.perfume(EXISTS_PERFUME)
-					.user(EXISTS_USER)
-					.build();
-
-				reviewRepository.save(secondReview);
+				reviewRepository.save(SECOND_REVIEW);
 
 				//when
 				List<Review> reviews = reviewCustomRepository.findAllByPerfumeId(perfume.getUuid());

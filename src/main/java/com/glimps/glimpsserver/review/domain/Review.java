@@ -18,6 +18,7 @@ import com.fasterxml.uuid.Generators;
 import com.glimps.glimpsserver.common.domain.BaseTimeEntity;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
+import com.glimps.glimpsserver.review.dto.ReviewUpdateRequest;
 import com.glimps.glimpsserver.user.domain.User;
 import com.google.common.collect.Lists;
 
@@ -62,11 +63,11 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "hearts_cnt")
 	private int heartsCnt;
 
-	private double overallRating;
+	private double overallRatings;
 
-	private double longevityRating;
+	private double longevityRatings;
 
-	private double sillageRating;
+	private double sillageRatings;
 
 	public static Review createReview(ReviewCreateRequest reviewCreateRequest, User user, Perfume perfume) {
 		user.addReviewCnt();
@@ -76,9 +77,9 @@ public class Review extends BaseTimeEntity {
 			.body(reviewCreateRequest.getBody())
 			.user(user)
 			.perfume(perfume)
-			.overallRating(reviewCreateRequest.getOverallRatings())
-			.longevityRating(reviewCreateRequest.getLongevityRatings())
-			.sillageRating(reviewCreateRequest.getSillageRatings())
+			.overallRatings(reviewCreateRequest.getOverallRatings())
+			.longevityRatings(reviewCreateRequest.getLongevityRatings())
+			.sillageRatings(reviewCreateRequest.getSillageRatings())
 			.build();
 	}
 
@@ -96,5 +97,21 @@ public class Review extends BaseTimeEntity {
 		if (this.heartsCnt != 0) {
 			this.heartsCnt--;
 		}
+	}
+
+	public boolean authorize(User user) {
+		return this.user.getEmail().equals(user.getEmail());
+	}
+
+	public void updateReview(ReviewUpdateRequest reviewUpdateRequest) {
+		this.title = reviewUpdateRequest.getTitle() == null ? this.title : reviewUpdateRequest.getTitle();
+		this.body = reviewUpdateRequest.getBody() == null ? this.body : reviewUpdateRequest.getBody();
+		this.overallRatings = reviewUpdateRequest.getOverallRatings() == null ? this.overallRatings :
+			reviewUpdateRequest.getOverallRatings();
+		this.longevityRatings =
+			reviewUpdateRequest.getLongevityRatings() == null ? this.longevityRatings : reviewUpdateRequest
+				.getLongevityRatings();
+		this.sillageRatings = reviewUpdateRequest.getSillageRatings() == null ? this.sillageRatings : reviewUpdateRequest
+			.getSillageRatings();
 	}
 }

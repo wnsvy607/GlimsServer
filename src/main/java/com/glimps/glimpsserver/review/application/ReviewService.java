@@ -11,13 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.glimps.glimpsserver.common.domain.CustomPage;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
+import com.glimps.glimpsserver.common.error.ReviewAuthorityException;
 import com.glimps.glimpsserver.perfume.application.PerfumeService;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
 import com.glimps.glimpsserver.review.dto.ReviewPageParam;
+import com.glimps.glimpsserver.review.dto.ReviewUpdateRequest;
 import com.glimps.glimpsserver.review.infra.ReviewCustomRepository;
 import com.glimps.glimpsserver.review.infra.ReviewRepository;
+import com.glimps.glimpsserver.review.vo.ReviewRatings;
 import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.User;
 
@@ -120,5 +123,41 @@ public class ReviewService {
 	private Review findReview(UUID uuid) {
 		return reviewCustomRepository.findByUuid(uuid)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, uuid));
+	}
+
+	public Review updateReview(UUID uuid, ReviewUpdateRequest reviewUpdateRequest, String email) {
+		Review review = findReview(uuid);
+		User user = userService.getUserByEmail(email);
+		if (!review.authorize(user)) {
+			throw new ReviewAuthorityException(ErrorCode.NO_AUTHORITY, email);
+		}
+
+		Perfume perfume = review.getPerfume();
+
+		if (reviewUpdateRequest.getOverallRatings() != null && reviewUpdateRequest.getLongevityRatings() != null
+			&& reviewUpdateRequest.getSillageRatings() != null) {
+			ReviewRatings reviewRatings = new ReviewRatings(reviewUpdateRequest.getOverallRatings(),
+				reviewUpdateRequest.getLongevityRatings(), reviewUpdateRequest.getSillageRatings());
+			perfumeService.updateRatings(perfume, reviewUpdateRequest, reviewRatings);
+		}
+
+		reviewPhotoService.updateReviewPhotos(review,
+			reviewUpdateRequest.getPhotoUrls());
+		review.updateReview(reviewUpdateRequest);
+		return review;
+	}
+
+	public Review deleteReview(UUID uuid, String email) {
+		Review review = findReview(uuid);
+		User user = userService.getUserByEmail(email);
+		if (!review.authorize(user)) {
+			throw new ReviewAuthorityException(ErrorCode.NO_AUTHORITY, email);
+		}
+		ReviewRatings reviewRatings = new ReviewRatings(review.getOverallRatings(), review.getLongevityRatings(),
+			review.getSillageRatings());
+		perfumeService.updateRatings(review.getPerfume(), reviewRatings);
+		reviewPhotoService.deleteReviewPhotos(review);
+		reviewRepository.delete(review);
+		return review;
 	}
 }

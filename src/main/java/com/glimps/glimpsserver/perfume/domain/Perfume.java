@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.glimps.glimpsserver.review.vo.ReviewRatings;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,6 +57,32 @@ public class Perfume {
 		this.overallRatings = (this.overallRatings * reviewCnt + overallRatings) / (reviewCnt + 1);
 		this.longevityRatings = (this.longevityRatings * reviewCnt + longevityRatings) / (reviewCnt + 1);
 		this.sillageRatings = (this.sillageRatings * reviewCnt + sillageRatings) / (reviewCnt + 1);
-		reviewCnt += 1;
+		increaseReviewCount();
+	}
+
+	public void updateRatings(double overallRatings, double longevityRatings, double sillageRatings,
+		ReviewRatings reviewRatings) {
+		this.overallRatings =
+			(this.overallRatings * reviewCnt + overallRatings - reviewRatings.getOverallRatings()) / reviewCnt;
+		this.longevityRatings =
+			(this.longevityRatings * reviewCnt + longevityRatings - reviewRatings.getLongevityRatings()) / reviewCnt;
+		this.sillageRatings =
+			(this.sillageRatings * reviewCnt + sillageRatings - reviewRatings.getSillageRatings()) / reviewCnt;
+	}
+
+	public void updateRatings(ReviewRatings reviewRatings) {
+		this.overallRatings = (this.overallRatings * reviewCnt - reviewRatings.getOverallRatings()) / (reviewCnt - 1);
+		this.longevityRatings =
+			(this.longevityRatings * reviewCnt - reviewRatings.getLongevityRatings()) / (reviewCnt - 1);
+		this.sillageRatings = (this.sillageRatings * reviewCnt - reviewRatings.getSillageRatings()) / (reviewCnt - 1);
+		decreaseReviewCount();
+	}
+
+	private void increaseReviewCount() {
+		this.reviewCnt++;
+	}
+
+	private void decreaseReviewCount() {
+		this.reviewCnt--;
 	}
 }

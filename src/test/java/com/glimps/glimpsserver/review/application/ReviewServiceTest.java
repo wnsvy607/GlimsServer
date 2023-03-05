@@ -18,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.fasterxml.uuid.Generators;
 import com.glimps.glimpsserver.common.domain.CustomPage;
@@ -37,7 +36,7 @@ import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 
-@ActiveProfiles("test")
+
 @Transactional
 @SpringBootTest
 class ReviewServiceTest {
@@ -69,9 +68,9 @@ class ReviewServiceTest {
 		.body(BODY)
 		.perfume(EXISTS_PERFUME)
 		.heartsCnt(5)
-		.overallRating(3)
-		.longevityRating(3)
-		.sillageRating(3)
+		.overallRatings(3)
+		.longevityRatings(3)
+		.sillageRatings(3)
 		.build();
 
 	private static final User EXISTS_USER = User.builder()
@@ -115,9 +114,9 @@ class ReviewServiceTest {
 						.uuid(NEW_REVIEW_UUID)
 						.title(source.getTitle())
 						.body(source.getBody())
-						.overallRating(source.getOverallRating())
-						.longevityRating(source.getLongevityRating())
-						.sillageRating(source.getSillageRating())
+						.overallRatings(source.getOverallRatings())
+						.longevityRatings(source.getLongevityRatings())
+						.sillageRatings(source.getSillageRatings())
 						.user(source.getUser())
 						.perfume(source.getPerfume())
 						.build();
@@ -141,9 +140,9 @@ class ReviewServiceTest {
 				assertThat(review.getTitle()).isEqualTo(TITLE);
 				assertThat(review.getBody()).isEqualTo(BODY);
 				assertThat(review.getUuid()).isEqualTo(NEW_REVIEW_UUID);
-				assertThat(review.getOverallRating()).isEqualTo(5.0);
-				assertThat(review.getLongevityRating()).isEqualTo(4.5);
-				assertThat(review.getSillageRating()).isEqualTo(4.0);
+				assertThat(review.getOverallRatings()).isEqualTo(5.0);
+				assertThat(review.getLongevityRatings()).isEqualTo(4.5);
+				assertThat(review.getSillageRatings()).isEqualTo(4.0);
 				assertThat(review.getUser()).isEqualTo(EXISTS_USER);
 			}
 		}
@@ -223,9 +222,9 @@ class ReviewServiceTest {
 				assertThat(review.getUuid()).isEqualTo(EXISTS_REVIEW_UUID);
 				assertThat(review.getTitle()).isEqualTo(TITLE);
 				assertThat(review.getBody()).isEqualTo(BODY);
-				assertThat(review.getLongevityRating()).isEqualTo(3);
-				assertThat(review.getSillageRating()).isEqualTo(3);
-				assertThat(review.getOverallRating()).isEqualTo(3);
+				assertThat(review.getLongevityRatings()).isEqualTo(3);
+				assertThat(review.getSillageRatings()).isEqualTo(3);
+				assertThat(review.getOverallRatings()).isEqualTo(3);
 
 			}
 		}

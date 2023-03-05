@@ -41,9 +41,9 @@ class ReviewResponseTest {
 		.title(TEST_TITLE)
 		.body(TEST_BODY)
 		.user(USER)
-		.overallRating(5.0)
-		.longevityRating(4.5)
-		.sillageRating(4.0)
+		.overallRatings(5.0)
+		.longevityRatings(4.5)
+		.sillageRatings(4.0)
 		.perfume(PERFUME)
 		.build();
 	
@@ -61,9 +61,9 @@ class ReviewResponseTest {
 		assertThat(reviewResponse.getPhotoUrls()).contains(TEST_PHOTO_URL1,TEST_PHOTO_URL2,TEST_PHOTO_URL3);
 		assertThat(reviewResponse.getTitle()).isEqualTo(TEST_TITLE);
 		assertThat(reviewResponse.getBody()).isEqualTo(TEST_BODY);
-		assertThat(reviewResponse.getOverallRating()).isEqualTo(5.0);
-		assertThat(reviewResponse.getLongevityRating()).isEqualTo(4.5);
-		assertThat(reviewResponse.getSillageRating()).isEqualTo(4.0);
+		assertThat(reviewResponse.getOverallRatings()).isEqualTo(5.0);
+		assertThat(reviewResponse.getLongevityRatings()).isEqualTo(4.5);
+		assertThat(reviewResponse.getSillageRatings()).isEqualTo(4.0);
 		assertThat(reviewResponse.getPerfumeName()).isEqualTo(TEST_PERFUME_NAME);
 		assertThat(reviewResponse.getPerfumeBrand()).isEqualTo(TEST_BRAND);
 		assertThat(reviewResponse.getNickname()).isEqualTo(TEST_NICKNAME);

@@ -10,6 +10,8 @@ import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.perfume.infra.PerfumeRepository;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
+import com.glimps.glimpsserver.review.dto.ReviewUpdateRequest;
+import com.glimps.glimpsserver.review.vo.ReviewRatings;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,6 +26,17 @@ public class PerfumeService {
 	public void updateRatings(Perfume perfume, ReviewCreateRequest reviewCreateRequest) {
 		perfume.updateRatings(reviewCreateRequest.getOverallRatings(), reviewCreateRequest.getLongevityRatings(),
 			reviewCreateRequest.getSillageRatings());
+	}
+
+	@Transactional
+	public void updateRatings(Perfume perfume, ReviewUpdateRequest reviewUpdateRequest, ReviewRatings reviewRatings) {
+		perfume.updateRatings(reviewUpdateRequest.getOverallRatings(), reviewUpdateRequest.getLongevityRatings(),
+			reviewUpdateRequest.getSillageRatings(), reviewRatings);
+	}
+
+	@Transactional
+	public void updateRatings(Perfume perfume, ReviewRatings reviewRatings) {
+		perfume.updateRatings(reviewRatings);
 	}
 
 	public Perfume getPerfumeById(UUID uuid) {
