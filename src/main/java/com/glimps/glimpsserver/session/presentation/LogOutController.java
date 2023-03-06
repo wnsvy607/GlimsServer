@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.glimps.glimpsserver.common.authentication.UserAuthentication;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
-import com.glimps.glimpsserver.user.application.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -12,7 +12,6 @@ import javax.persistence.Table;
 
 import com.glimps.glimpsserver.user.domain.User;
 
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glimps.glimpsserver.common.dto.ErrorResponse;
-import com.glimps.glimpsserver.common.error.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 

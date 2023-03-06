@@ -3,7 +3,6 @@ package com.glimps.glimpsserver.common.util;
 import org.springframework.util.StringUtils;
 
 import com.glimps.glimpsserver.common.error.AuthenticationException;
-import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 
 public class AuthorizationHeaderUtils {
