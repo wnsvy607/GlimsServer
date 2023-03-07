@@ -1,4 +1,4 @@
-package com.glimps.glimpsserver.testconfig;
+package com.glimps.glimpsserver.config;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
