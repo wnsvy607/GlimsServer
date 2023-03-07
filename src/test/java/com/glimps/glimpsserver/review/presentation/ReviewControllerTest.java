@@ -39,7 +39,9 @@ import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.application.ReviewService;
 import com.glimps.glimpsserver.review.domain.Review;
+import com.glimps.glimpsserver.review.dto.ReviewPageParam;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
+import com.glimps.glimpsserver.config.WithMockCustomUser;
 import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 
@@ -398,6 +400,69 @@ class ReviewControllerTest {
 			void It_responds_200_and_empty_list() throws Exception {
 				mvc.perform(createGetRequest("/reviews/bestReviews")
 						.param("amountOfBestReview", "3")
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(content().string(containsString("[]")))
+					.andExpect(status().isOk())
+					.andDo(print());
+			}
+		}
+	}
+
+	// 인증이 필요한 로직
+
+	@Nested
+	@WithMockCustomUser
+	@DisplayName("GET /api/v1/reviews/myReviews?offset={offset}&limit={limit}&orderStandard={orderStandard}&sortType={sortType}")
+	class Describe_myReviews {
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재한다면")
+		class Context_when_user_exists_and_review_exists {
+			@BeforeEach
+			void setUp() {
+				List<Review> reviews = List.of(EXISTS_REVIEW, SECOND_REVIEW, THIRD_REVIEW);
+				CustomPage<Review> results = new CustomPageImpl<>(reviews, 0, 3, 3);
+				given(reviewService.getMyReviews(any(ReviewPageParam.class), any())).willReturn(results);
+			}
+
+			@Test
+			@DisplayName("상태코드 200과 리뷰를 페이지로 나누어 반환한다.")
+			void It_responds_200_and_reviews_by_pagination() throws Exception {
+				mvc.perform(createGetRequest("/reviews/myReviews")
+						.param("offset", "0")
+						.param("limit", "3")
+						.param("orderStandard", "DATE")
+						.param("sortType", "DESC")
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(content().string(containsString("10")))
+					.andExpect(content().string(containsString("7")))
+					.andExpect(content().string(containsString("5")))
+					.andExpect(status().isOk())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재하지 않는다면")
+		class Context_when_user_exists_and_review_not_exists {
+			@BeforeEach
+			void setUp() {
+				List<Review> reviews = List.of();
+				CustomPage<Review> results = new CustomPageImpl<>(reviews, 0, 3, 0);
+				given(reviewService.getMyReviews(any(ReviewPageParam.class), any())).willReturn(results);
+			}
+
+			@Test
+			@DisplayName("상태코드 200과 빈 목록을 응답한다.")
+			void It_responds_200_and_empty_list() throws Exception {
+				mvc.perform(createGetRequest("/reviews/myReviews")
+						.param("offset", "0")
+						.param("limit", "3")
+						.param("orderStandard", "DATE")
+						.param("sortType", "DESC")
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
 					)

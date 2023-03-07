@@ -41,7 +41,7 @@ public class ReviewController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
 	public ReviewResponse create(@RequestBody @Valid ReviewCreateRequest reviewCreateRequest,
 		UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
@@ -56,7 +56,7 @@ public class ReviewController {
 	}
 
 	@GetMapping("/myReviews")
-	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
 	public List<ReviewPageResponse> myReviews(ReviewPageParam reviewPageParam, UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
 		CustomPage<Review> reviews = reviewService.getMyReviews(reviewPageParam, email);
@@ -78,7 +78,7 @@ public class ReviewController {
 
 	@PostMapping("/{id}/heart")
 	@ResponseStatus(HttpStatus.CREATED)
-	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
 	public ReviewResponse createHeart(@PathVariable UUID id, UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
 		Review review = reviewService.createHeart(id, email);
@@ -87,7 +87,7 @@ public class ReviewController {
 
 	@DeleteMapping("/{id}/heart")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
 	public ReviewResponse cancelHeart(@PathVariable UUID id, UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
 		Review review = reviewService.cancelHeart(id, email);
@@ -107,7 +107,7 @@ public class ReviewController {
 	}
 
 	@PatchMapping("/{uuid}")
-	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
 	public ReviewResponse update(@PathVariable UUID uuid, @RequestBody @Valid ReviewUpdateRequest reviewUpdateRequest,
 		UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
@@ -116,7 +116,7 @@ public class ReviewController {
 	}
 
 	@DeleteMapping("/{uuid}")
-	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
 	public void delete(@PathVariable UUID uuid, UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
 		reviewService.deleteReview(uuid, email);
