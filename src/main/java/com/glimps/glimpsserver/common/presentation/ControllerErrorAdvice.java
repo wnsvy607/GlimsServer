@@ -1,12 +1,14 @@
 package com.glimps.glimpsserver.common.presentation;
 
-import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.*;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.glimps.glimpsserver.common.dto.ErrorResponse;
 import com.glimps.glimpsserver.common.error.CustomException;
@@ -22,8 +24,8 @@ public class ControllerErrorAdvice {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception e) {
 		log.error("Exception occurs: {}", e.getMessage());
-		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.toString(), e.getMessage());
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+		ErrorResponse errorResponse = ErrorResponse.of(INTERNAL_SERVER_ERROR.toString(), e.getMessage());
+		return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(errorResponse);
 	}
 
 	@ExceptionHandler(CustomException.class)
@@ -36,8 +38,8 @@ public class ControllerErrorAdvice {
 	@ExceptionHandler(BindException.class)
 	public ResponseEntity<ErrorResponse> handleBindException(BindException e) {
 		log.error("Exception occurs: {}", e.getMessage());
-		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getBindingResult());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+		ErrorResponse errorResponse = ErrorResponse.of(BAD_REQUEST.toString(), e.getBindingResult());
+		return ResponseEntity.status(BAD_REQUEST).body(errorResponse);
 	}
 
 	/**
@@ -78,15 +80,22 @@ public class ControllerErrorAdvice {
 	@ExceptionHandler(AuthenticationException.class)
 	public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException e) {
 		log.error("Exception occurs: {}", e.getMessage());
-		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.UNAUTHORIZED.toString(), e.getMessage());
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+		ErrorResponse errorResponse = ErrorResponse.of(UNAUTHORIZED.toString(), e.getMessage());
+		return ResponseEntity.status(UNAUTHORIZED).body(errorResponse);
 	}
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ErrorResponse> handlerAccessDeniedException(AccessDeniedException e) {
 		log.error("Exception occurs: {}", e.getMessage());
-		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.FORBIDDEN.toString(), e.getMessage());
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+		ErrorResponse errorResponse = ErrorResponse.of(FORBIDDEN.toString(), e.getMessage());
+		return ResponseEntity.status(FORBIDDEN).body(errorResponse);
+	}
+
+	@ExceptionHandler(NoHandlerFoundException.class)
+	public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(NoHandlerFoundException e) {
+		log.error("Exception occurs: {}", e.getMessage());
+		ErrorResponse errorResponse = ErrorResponse.of(NOT_FOUND.toString(), e.getMessage());
+		return ResponseEntity.status(NOT_FOUND).body(errorResponse);
 	}
 
 }

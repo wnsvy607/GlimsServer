@@ -18,8 +18,8 @@ public class TestController {
 	@GetMapping("/test")
 	public String test(UserAuthentication userAuthentication) {
 		if (userAuthentication == null) {
-			return "userAuthentication 이 빈 값(null)입니다.";
+			return "userAuthentication is null";
 		}
-		return userAuthentication.getEmail() + "가 인증되었습니다.";
+		return userAuthentication.getEmail() + "has been authenticated.";
 	}
 }

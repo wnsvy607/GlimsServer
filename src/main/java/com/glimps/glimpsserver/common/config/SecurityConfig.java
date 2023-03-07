@@ -1,32 +1,39 @@
 package com.glimps.glimpsserver.common.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glimps.glimpsserver.common.filter.CustomAccessDeniedHandler;
 import com.glimps.glimpsserver.common.filter.CustomAuthenticationEntryPoint;
 import com.glimps.glimpsserver.common.filter.JwtAuthenticationFilter;
 import com.glimps.glimpsserver.common.oauth.handler.OAuth2SuccessHandler;
 import com.glimps.glimpsserver.common.oauth.service.CustomOAuth2UserService;
+import com.glimps.glimpsserver.session.application.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableWebSecurity
 public class SecurityConfig {
 
 	private final OAuth2SuccessHandler successHandler;
 	private final CustomOAuth2UserService oAuth2UserService;
-
-	private final JwtAuthenticationFilter jwtFilter;
-
 	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 	private final CustomAccessDeniedHandler accessDeniedHandler;
+	private final AuthenticationService authenticationService;
+	private final ObjectMapper mapper;
+	private final List<RequestMatcher> matchers;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -57,7 +64,8 @@ public class SecurityConfig {
 			.antMatchers(MatcherConfig.getAdminURL().toArray(new String[0])).hasRole("ADMIN")
 			.anyRequest().permitAll();
 
-		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new JwtAuthenticationFilter(authenticationService, mapper, matchers),
+			UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
