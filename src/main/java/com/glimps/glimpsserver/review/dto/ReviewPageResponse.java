@@ -32,6 +32,9 @@ public class ReviewPageResponse {
 	private long totalPages;
 
 	public static List<ReviewPageResponse> of(CustomPage<Review> reviews) {
+		if(reviews.getContent().isEmpty()) {
+			return List.of();
+		}
 		return reviews.getContent().stream()
 			.map(getFunction(reviews.getTotalElements(), reviews.getTotalPages()))
 			.collect(Collectors.toList());

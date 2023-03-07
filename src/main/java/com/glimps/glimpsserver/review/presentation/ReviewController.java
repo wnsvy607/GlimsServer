@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.glimps.glimpsserver.common.authentication.UserAuthentication;
 import com.glimps.glimpsserver.common.domain.CustomPage;
-
 import com.glimps.glimpsserver.review.application.ReviewService;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
@@ -42,7 +41,7 @@ public class ReviewController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
 	public ReviewResponse create(@RequestBody @Valid ReviewCreateRequest reviewCreateRequest,
 		UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
@@ -50,9 +49,9 @@ public class ReviewController {
 		return ReviewResponse.of(review);
 	}
 
-	@GetMapping("/{id}")
-	public ReviewResponse detail(@PathVariable UUID id) {
-		Review review = reviewService.getReviewById(id);
+	@GetMapping("/{uuid}")
+	public ReviewResponse detail(@PathVariable UUID uuid) {
+		Review review = reviewService.getReviewById(uuid);
 		return ReviewResponse.of(review);
 	}
 
@@ -71,6 +70,7 @@ public class ReviewController {
 	}
 
 	@GetMapping
+	@ResponseStatus(HttpStatus.OK)
 	public List<ReviewPageResponse> list(ReviewPageParam reviewPageParam) {
 		CustomPage<Review> reviews = reviewService.getReviews(reviewPageParam);
 		return ReviewPageResponse.of(reviews);
@@ -78,6 +78,7 @@ public class ReviewController {
 
 	@PostMapping("/{id}/heart")
 	@ResponseStatus(HttpStatus.CREATED)
+	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
 	public ReviewResponse createHeart(@PathVariable UUID id, UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
 		Review review = reviewService.createHeart(id, email);
@@ -86,6 +87,7 @@ public class ReviewController {
 
 	@DeleteMapping("/{id}/heart")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
 	public ReviewResponse cancelHeart(@PathVariable UUID id, UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
 		Review review = reviewService.cancelHeart(id, email);
@@ -93,8 +95,8 @@ public class ReviewController {
 	}
 
 	@GetMapping("/perfumeReviews")
-	public List<ReviewResponse> perfumeReviews(@RequestParam UUID perfumeId) {
-		List<Review> reviews = reviewService.getPerfumeReviews(perfumeId);
+	public List<ReviewResponse> perfumeReviews(@RequestParam UUID perfumeUuid) {
+		List<Review> reviews = reviewService.getPerfumeReviews(perfumeUuid);
 		return ReviewResponse.of(reviews);
 	}
 

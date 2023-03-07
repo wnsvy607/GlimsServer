@@ -10,12 +10,7 @@ import lombok.Getter;
 @Getter
 public class UserAuthentication extends AbstractAuthenticationToken {
 
-	private String email;
-
-	private UserAuthentication(Collection<? extends GrantedAuthority> authorities) {
-		super(authorities);
-		super.setAuthenticated(false);
-	}
+	private final String email;
 
 	public UserAuthentication(
 		String email,
@@ -25,9 +20,6 @@ public class UserAuthentication extends AbstractAuthenticationToken {
 		super.setAuthenticated(true);
 	}
 
-	// public static UserAuthentication getAnonymous() {
-	// 	return new UserAuthentication(List.of(new SimpleGrantedAuthority("ROLE_UNKNOWN")));
-	// }
 
 	@Override
 	public Object getCredentials() {

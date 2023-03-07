@@ -19,13 +19,7 @@ public class ReviewPageParam {
 	private final ReviewOrderStandard orderStandard;
 	@Enumerated(value = EnumType.STRING)
 	private final SortType sortType;
-	private Integer offset;
-
-	public ReviewPageParam(int limit, ReviewOrderStandard orderStandard, SortType sortType) {
-		this.limit = limit;
-		this.orderStandard = Objects.requireNonNullElse(orderStandard, ReviewOrderStandard.DATE);
-		this.sortType = Objects.requireNonNullElse(sortType, SortType.DESC);
-	}
+	private final Integer offset;
 
 	public ReviewPageParam(Integer offset, int limit, ReviewOrderStandard orderStandard, SortType sortType) {
 		this.offset = offset;
