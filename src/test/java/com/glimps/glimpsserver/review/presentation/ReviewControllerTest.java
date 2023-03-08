@@ -23,6 +23,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,12 +37,12 @@ import com.glimps.glimpsserver.common.domain.CustomPage;
 import com.glimps.glimpsserver.common.domain.CustomPageImpl;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
+import com.glimps.glimpsserver.config.WithMockCustomUser;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.application.ReviewService;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.dto.ReviewPageParam;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
-import com.glimps.glimpsserver.config.WithMockCustomUser;
 import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 
@@ -56,7 +57,6 @@ class ReviewControllerTest {
 	private static final String TITLE = "제목입니다.";
 	private static final String BODY = "본문입니다.";
 	private static final String EXISTS_EMAIL = "exists@email.com";
-	private static final Long NOT_EXISTS_USER_ID = 200L;
 	private static final UUID EXISTS_REVIEW_UUID = Generators.timeBasedGenerator().generate();
 	private static final UUID EXISTS_PERFUME_UUID = Generators.timeBasedGenerator().generate();
 	private static final UUID NOT_EXISTS_REVIEW_UUID = Generators.timeBasedGenerator().generate();
@@ -129,6 +129,10 @@ class ReviewControllerTest {
 
 	protected MockHttpServletRequestBuilder createGetRequest(String request) {
 		return get(contextPath + request).contextPath(contextPath);
+	}
+
+	protected MockHttpServletRequestBuilder createPostRequest(String request) {
+		return post(contextPath + request).contextPath(contextPath);
 	}
 
 	// GET 요청 테스트
@@ -411,12 +415,11 @@ class ReviewControllerTest {
 	}
 
 	// 인증이 필요한 로직
-
 	@Nested
-	@WithMockCustomUser
 	@DisplayName("GET /api/v1/reviews/myReviews?offset={offset}&limit={limit}&orderStandard={orderStandard}&sortType={sortType}")
 	class Describe_myReviews {
 		@Nested
+		@WithMockCustomUser
 		@DisplayName("사용자가 존재하고 리뷰가 존재한다면")
 		class Context_when_user_exists_and_review_exists {
 			@BeforeEach
@@ -446,6 +449,7 @@ class ReviewControllerTest {
 		}
 
 		@Nested
+		@WithMockCustomUser
 		@DisplayName("사용자가 존재하고 리뷰가 존재하지 않는다면")
 		class Context_when_user_exists_and_review_not_exists {
 			@BeforeEach
@@ -468,6 +472,26 @@ class ReviewControllerTest {
 					)
 					.andExpect(content().string(containsString("[]")))
 					.andExpect(status().isOk())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@WithAnonymousUser
+		@DisplayName("인증된 사용자가 아니라면")
+		class Context_when_user_not_authenticated {
+			@Test
+			@DisplayName("상태코드 401을 응답한다.")
+			void It_responds_401() throws Exception {
+				mvc.perform(createGetRequest("/reviews/myReviews")
+						.param("offset", "0")
+						.param("limit", "3")
+						.param("orderStandard", "DATE")
+						.param("sortType", "DESC")
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isUnauthorized())
 					.andDo(print());
 			}
 		}
