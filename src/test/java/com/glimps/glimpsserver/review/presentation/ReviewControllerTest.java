@@ -32,6 +32,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.uuid.Generators;
 import com.glimps.glimpsserver.common.config.SecurityConfig;
 import com.glimps.glimpsserver.common.domain.CustomPage;
@@ -42,6 +43,7 @@ import com.glimps.glimpsserver.config.WithMockCustomUser;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.application.ReviewService;
 import com.glimps.glimpsserver.review.domain.Review;
+import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
 import com.glimps.glimpsserver.review.dto.ReviewPageParam;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
 import com.glimps.glimpsserver.user.domain.RoleType;
@@ -119,6 +121,8 @@ class ReviewControllerTest {
 
 	@MockBean
 	private AuthenticationService authenticationService;
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Value("${spring.mvc.servlet.path}")
 	private String contextPath;
@@ -654,6 +658,92 @@ class ReviewControllerTest {
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 					)
 					.andExpect(status().isNotFound());
+			}
+		}
+	}
+
+	@Nested
+	@WithMockCustomUser
+	@DisplayName("POST /api/v1/reviews")
+	class Describe_create {
+		private final ReviewCreateRequest validCreateRequest = ReviewCreateRequest.builder()
+			.title(TITLE)
+			.body(BODY)
+			.overallRatings(5)
+			.longevityRatings(3)
+			.sillageRatings(3)
+			.perfumeUuid(EXISTS_PERFUME_UUID)
+			.build();
+
+		@Nested
+		@DisplayName("사용자가 존재하고 올바른 요청일 때")
+		class Context_when_user_exists_and_review_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.createReview(any(), any())).willReturn(EXISTS_REVIEW);
+			}
+
+			@Test
+			@DisplayName("리뷰를 생성하고 상태코드 201과 리뷰를 응답한다.")
+			void It_responds_201_and_review() throws Exception {
+				mvc.perform(createPostRequest("/reviews")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(validCreateRequest))
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isCreated())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@DisplayName("사용자가 존재하고 올바르지 않은 요청일 때")
+		class Context_when_user_exists_and_review_not_exists {
+			private final ReviewCreateRequest invalidCreateRequest = ReviewCreateRequest.builder()
+				.title(TITLE + "12312312312312312")
+				.body(BODY)
+				.overallRatings(5)
+				.longevityRatings(3)
+				.sillageRatings(3)
+				.perfumeUuid(EXISTS_PERFUME_UUID)
+				.build();
+
+			@Test
+			@DisplayName("상태코드 400을 응답한다.")
+			void It_responds_400() throws Exception {
+				mvc.perform(createPostRequest("/reviews")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(invalidCreateRequest))
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isBadRequest())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@DisplayName("사용자가 존재하지 않을 때")
+		class Context_when_user_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.createReview(any(), any())).willThrow(
+					new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, NOT_EXISTS_EMAIL)
+				);
+			}
+
+			@Test
+			@DisplayName("상태코드 404를 응답한다.")
+			void It_responds_404() throws Exception {
+				mvc.perform(createPostRequest("/reviews")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(validCreateRequest))
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isNotFound())
+					.andDo(print());
 			}
 		}
 	}

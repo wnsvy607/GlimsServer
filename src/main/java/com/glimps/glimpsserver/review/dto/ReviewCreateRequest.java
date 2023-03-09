@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-import com.glimps.glimpsserver.review.domain.Uuid;
 import com.google.common.collect.Lists;
 
 import lombok.AllArgsConstructor;
@@ -35,7 +34,6 @@ public class ReviewCreateRequest {
 	@Positive
 	private double sillageRatings;
 	@NotNull
-	@Uuid
 	private UUID perfumeUuid;
 
 	@Builder.Default
