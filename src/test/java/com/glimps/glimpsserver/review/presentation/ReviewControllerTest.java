@@ -25,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -57,6 +58,7 @@ class ReviewControllerTest {
 	private static final String TITLE = "제목입니다.";
 	private static final String BODY = "본문입니다.";
 	private static final String EXISTS_EMAIL = "exists@email.com";
+	private static final String NOT_EXISTS_EMAIL = "noteixsts@email.com";
 	private static final UUID EXISTS_REVIEW_UUID = Generators.timeBasedGenerator().generate();
 	private static final UUID EXISTS_PERFUME_UUID = Generators.timeBasedGenerator().generate();
 	private static final UUID NOT_EXISTS_REVIEW_UUID = Generators.timeBasedGenerator().generate();
@@ -477,6 +479,32 @@ class ReviewControllerTest {
 		}
 
 		@Nested
+		@WithMockCustomUser(userName = NOT_EXISTS_EMAIL)
+		@DisplayName("사용자가 존재하지 않을 때")
+		class Context_when_user_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.getMyReviews(any(ReviewPageParam.class), eq(NOT_EXISTS_EMAIL)))
+					.willThrow(new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, NOT_EXISTS_EMAIL));
+			}
+
+			@Test
+			@DisplayName("상태코드 404를 응답한다.")
+			void It_responds_404() throws Exception {
+				mvc.perform(createGetRequest("/reviews/myReviews")
+						.param("offset", "0")
+						.param("limit", "3")
+						.param("orderStandard", "DATE")
+						.param("sortType", "DESC")
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isNotFound())
+					.andDo(print());
+			}
+		}
+
+		@Nested
 		@WithAnonymousUser
 		@DisplayName("인증된 사용자가 아니라면")
 		class Context_when_user_not_authenticated {
@@ -493,6 +521,71 @@ class ReviewControllerTest {
 					)
 					.andExpect(status().isUnauthorized())
 					.andDo(print());
+			}
+		}
+	}
+
+	@Nested
+	@WithMockCustomUser
+	@DisplayName("POST /api/v1/{uuid}/reviews")
+	class Describe_createHeart {
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재할 때")
+		class Context_when_user_exists_and_review_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.createHeart(eq(EXISTS_REVIEW_UUID), any()))
+					.willReturn(EXISTS_REVIEW);
+			}
+
+			@Test
+			@DisplayName("좋아요를 생성하고 상태코드 201과 리뷰를 응답한다.")
+			void It_responds_201_and_review() throws Exception {
+				mvc.perform(createPostRequest("/reviews/" + EXISTS_REVIEW_UUID + "/heart")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+					)
+					.andExpect(status().isCreated())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재하지 않을 때")
+		class Context_when_user_exists_and_review_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.createHeart(eq(NOT_EXISTS_REVIEW_UUID), any())).willThrow(
+					new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, EXISTS_REVIEW_UUID)
+				);
+			}
+
+			@Test
+			@DisplayName("상태코드 404를 응답한다.")
+			void It_responds_404() throws Exception {
+				mvc.perform(createPostRequest("/reviews/" +NOT_EXISTS_REVIEW_UUID + "/heart")
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+				)
+					.andExpect(status().isNotFound());
+			}
+		}
+
+		@Nested
+		@WithMockCustomUser(userName = NOT_EXISTS_EMAIL)
+		@DisplayName("사용자가 존재하지 않을 때")
+		class Context_when_user_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.createHeart(any(), eq(NOT_EXISTS_EMAIL)))
+					.willThrow(new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, NOT_EXISTS_EMAIL));
+			}
+
+			@Test
+			@DisplayName("상태코드 404를 응답한다.")
+			void It_responds_404() throws Exception {
+				mvc.perform(createPostRequest("/reviews/" + EXISTS_REVIEW_UUID + "/heart")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+					)
+					.andExpect(status().isNotFound());
 			}
 		}
 	}

@@ -11,13 +11,14 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 @Configuration
 public class MatcherConfig {
 
-	private static final List<String> authURL = List.of("/api/v1/user/**", "/api/v1/logout", "/test", "/api/v1/reviews/");
+	private static final List<String> authURL = List.of("/user/**", "/logout", "/test", "/reviews/**", "reviews/myReviews");
 	private static final List<String> adminURL = List.of("/admin/**");
 
 	@Bean
 	public List<RequestMatcher> matcher() {
 
 		List<RequestMatcher> result = authURL.stream()
+			.map(url -> "/api/v1" +url)
 			.map(AntPathRequestMatcher::new)
 			.collect(Collectors.toList());
 

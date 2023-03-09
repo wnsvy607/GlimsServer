@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,7 +29,6 @@ import com.glimps.glimpsserver.review.dto.ReviewResponse;
 import com.glimps.glimpsserver.review.dto.ReviewUpdateRequest;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/reviews")
 public class ReviewController {
 	private final ReviewService reviewService;
@@ -76,12 +74,12 @@ public class ReviewController {
 		return ReviewPageResponse.of(reviews);
 	}
 
-	@PostMapping("/{id}/heart")
+	@PostMapping("/{uuid}/heart")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
-	public ReviewResponse createHeart(@PathVariable UUID id, UserAuthentication userAuthentication) {
+	public ReviewResponse createHeart(@PathVariable UUID uuid, UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
-		Review review = reviewService.createHeart(id, email);
+		Review review = reviewService.createHeart(uuid, email);
 		return ReviewResponse.of(review);
 	}
 
