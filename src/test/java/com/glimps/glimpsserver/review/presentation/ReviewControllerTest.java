@@ -23,7 +23,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.TestPropertySource;
@@ -518,21 +517,19 @@ class ReviewControllerTest {
 		}
 
 		@Nested
-		@WithAnonymousUser
-		@DisplayName("인증된 사용자가 아니라면")
-		class Context_when_user_not_authenticated {
+		@WithMockCustomUser
+		@DisplayName("올바른 파라미터가 아니라면")
+		class Context_when_invalid_parameter {
 			@Test
-			@DisplayName("상태코드 401을 응답한다.")
-			void It_responds_401() throws Exception {
+			@DisplayName("상태코드 400을 응답한다.")
+			void It_responds_400() throws Exception {
 				mvc.perform(createGetRequest("/reviews/myReviews")
 						.param("offset", "0")
-						.param("limit", "3")
 						.param("orderStandard", "DATE")
-						.param("sortType", "DESC")
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
 					)
-					.andExpect(status().isUnauthorized())
+					.andExpect(status().isBadRequest())
 					.andDo(print());
 			}
 		}
@@ -682,7 +679,7 @@ class ReviewControllerTest {
 
 		@Nested
 		@DisplayName("사용자가 존재하고 올바른 요청일 때")
-		class Context_when_user_exists_and_review_exists {
+		class Context_when_user_exists_and_review_exists_with_valid_request {
 			@BeforeEach
 			void setUp() {
 				given(reviewService.createReview(any(), any())).willReturn(EXISTS_REVIEW);
@@ -703,12 +700,38 @@ class ReviewControllerTest {
 		}
 
 		@Nested
-		@DisplayName("사용자가 존재하고 올바르지 않은 요청일 때")
-		class Context_when_user_exists_and_review_not_exists {
+		@DisplayName("사용자가 존재하고 올바르지 않은 제목이 있을 때")
+		class Context_when_user_exists_and_review_exists_with_invalid_title {
 			private final ReviewCreateRequest invalidCreateRequest = ReviewCreateRequest.builder()
 				.title(TITLE + "12312312312312312")
 				.body(BODY)
 				.overallRatings(5)
+				.longevityRatings(3)
+				.sillageRatings(3)
+				.perfumeUuid(EXISTS_PERFUME_UUID)
+				.build();
+
+			@Test
+			@DisplayName("상태코드 400을 응답한다.")
+			void It_responds_400() throws Exception {
+				mvc.perform(createPostRequest("/reviews")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(invalidCreateRequest))
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isBadRequest())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@DisplayName("사용자가 존재하고 올바르지 않은 요청일 때")
+		class Context_when_user_exists_and_review_exists_and_invalid_point {
+			private final ReviewCreateRequest invalidCreateRequest = ReviewCreateRequest.builder()
+				.title(TITLE)
+				.body(BODY)
+				.overallRatings(6)
 				.longevityRatings(3)
 				.sillageRatings(3)
 				.perfumeUuid(EXISTS_PERFUME_UUID)

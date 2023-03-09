@@ -1,5 +1,7 @@
 spring:
   mvc:
+    servlet:
+      path: /api/v1
     pathmatch:
       matching-strategy: ant_path_matcher
   h2:

@@ -65,10 +65,7 @@ public class ReviewService {
 	}
 
 	public CustomPage<Review> getMyReviews(ReviewPageParam reviewPageParam, String email) {
-		Integer offset = reviewPageParam.getOffset();
-		if (offset == null) {
-			offset = 0;
-		}
+		int offset = reviewPageParam.getOffset();
 
 		Pageable pageRequest = PageRequest.of(offset, reviewPageParam.getLimit(),
 			reviewPageParam.getSortType().getDirection(), reviewPageParam.getOrderStandard().getProperty());
@@ -83,11 +80,7 @@ public class ReviewService {
 	}
 
 	public CustomPage<Review> getReviews(ReviewPageParam reviewPageParam) {
-		Integer offset = reviewPageParam.getOffset();
-
-		if (offset == null) {
-			offset = 0;
-		}
+		int offset = reviewPageParam.getOffset();
 
 		Pageable pageRequest = PageRequest.of(offset, reviewPageParam.getLimit(),
 			reviewPageParam.getSortType().getDirection(),
