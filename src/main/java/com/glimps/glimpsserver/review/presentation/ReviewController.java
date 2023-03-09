@@ -83,12 +83,12 @@ public class ReviewController {
 		return ReviewResponse.of(review);
 	}
 
-	@DeleteMapping("/{id}/heart")
+	@DeleteMapping("/{uuid}/heart")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
-	public ReviewResponse cancelHeart(@PathVariable UUID id, UserAuthentication userAuthentication) {
+	public ReviewResponse cancelHeart(@PathVariable UUID uuid, UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
-		Review review = reviewService.cancelHeart(id, email);
+		Review review = reviewService.cancelHeart(uuid, email);
 		return ReviewResponse.of(review);
 	}
 

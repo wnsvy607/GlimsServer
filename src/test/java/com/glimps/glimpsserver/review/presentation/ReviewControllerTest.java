@@ -137,6 +137,10 @@ class ReviewControllerTest {
 		return post(contextPath + request).contextPath(contextPath);
 	}
 
+	protected MockHttpServletRequestBuilder createDeleteRequest(String request) {
+		return delete(contextPath + request).contextPath(contextPath);
+	}
+
 	// GET 요청 테스트
 
 	// 인증이 필요없는 로직
@@ -562,9 +566,9 @@ class ReviewControllerTest {
 			@Test
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
-				mvc.perform(createPostRequest("/reviews/" +NOT_EXISTS_REVIEW_UUID + "/heart")
-					.with(SecurityMockMvcRequestPostProcessors.csrf())
-				)
+				mvc.perform(createPostRequest("/reviews/" + NOT_EXISTS_REVIEW_UUID + "/heart")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+					)
 					.andExpect(status().isNotFound());
 			}
 		}
@@ -583,6 +587,70 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
 				mvc.perform(createPostRequest("/reviews/" + EXISTS_REVIEW_UUID + "/heart")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+					)
+					.andExpect(status().isNotFound());
+			}
+		}
+	}
+
+	@Nested
+	@WithMockCustomUser
+	@DisplayName("DELETE /api/v1/reviews/{uuid}/heart")
+	class Describe_cancelHeart {
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재할 때")
+		class Context_when_user_exists_and_review_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.cancelHeart(eq(EXISTS_REVIEW_UUID), any())).willReturn(EXISTS_REVIEW);
+			}
+
+			@Test
+			@DisplayName("좋아요를 취소하고 상태코드 204를 응답한다.")
+			void It_responds_204() throws Exception {
+				mvc.perform(createDeleteRequest("/reviews/" + EXISTS_REVIEW_UUID + "/heart")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+					)
+					.andExpect(status().isNoContent())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재하지 않을 때")
+		class Context_when_user_exists_and_review_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.cancelHeart(eq(NOT_EXISTS_REVIEW_UUID), any())).willThrow(
+					new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, EXISTS_REVIEW_UUID)
+				);
+			}
+
+			@Test
+			@DisplayName("상태코드 404를 응답한다.")
+			void It_responds_404() throws Exception {
+				mvc.perform(createDeleteRequest("/reviews/" + NOT_EXISTS_REVIEW_UUID + "/heart")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+					)
+					.andExpect(status().isNotFound());
+			}
+		}
+
+		@Nested
+		@WithMockCustomUser(userName = NOT_EXISTS_EMAIL)
+		@DisplayName("사용자가 존재하지 않을 때")
+		class Context_when_user_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.cancelHeart(any(), eq(NOT_EXISTS_EMAIL)))
+					.willThrow(new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, NOT_EXISTS_EMAIL));
+			}
+
+			@Test
+			@DisplayName("상태코드 404를 응답한다.")
+			void It_responds_404() throws Exception {
+				mvc.perform(createDeleteRequest("/reviews/" + EXISTS_REVIEW_UUID + "/heart")
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 					)
 					.andExpect(status().isNotFound());
