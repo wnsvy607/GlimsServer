@@ -114,6 +114,7 @@ public class ReviewController {
 	}
 
 	@DeleteMapping("/{uuid}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
 	public void delete(@PathVariable UUID uuid, UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();

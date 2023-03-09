@@ -45,6 +45,7 @@ import com.glimps.glimpsserver.review.application.ReviewService;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
 import com.glimps.glimpsserver.review.dto.ReviewPageParam;
+import com.glimps.glimpsserver.review.dto.ReviewUpdateRequest;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
 import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
@@ -139,6 +140,10 @@ class ReviewControllerTest {
 
 	protected MockHttpServletRequestBuilder createPostRequest(String request) {
 		return post(contextPath + request).contextPath(contextPath);
+	}
+
+	protected MockHttpServletRequestBuilder createPatchRequest(String request) {
+		return patch(contextPath + request).contextPath(contextPath);
 	}
 
 	protected MockHttpServletRequestBuilder createDeleteRequest(String request) {
@@ -739,6 +744,204 @@ class ReviewControllerTest {
 				mvc.perform(createPostRequest("/reviews")
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.content(objectMapper.writeValueAsString(validCreateRequest))
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isNotFound())
+					.andDo(print());
+			}
+		}
+	}
+
+	@Nested
+	@WithMockCustomUser
+	@DisplayName("PATCH /api/v1/reviews/{reviewId}")
+	class Describe_update {
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재하고 올바른 요청일 때")
+		class Context_when_user_exists_and_review_exists_and_valid_request {
+			private final ReviewUpdateRequest validUpdateRequest = ReviewUpdateRequest.builder()
+				.title(TITLE)
+				.body(BODY)
+				.overallRatings(5.0)
+				.longevityRatings(3.0)
+				.sillageRatings(3.0)
+				.build();
+
+			@BeforeEach
+			void setUp() {
+				given(reviewService.updateReview(any(), any(ReviewUpdateRequest.class), any())).willReturn(EXISTS_REVIEW);
+			}
+
+			@Test
+			@DisplayName("리뷰를 수정하고 상태코드 200과 리뷰를 응답한다.")
+			void It_responds_200_and_review() throws Exception {
+				mvc.perform(createPatchRequest("/reviews/" + EXISTS_REVIEW_UUID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(validUpdateRequest))
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isOk())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재하고 올바르지 않은 요청일 때")
+		class Context_when_user_exists_and_review_exists_and_invalid_request {
+			private final ReviewUpdateRequest invalidUpdateRequest = ReviewUpdateRequest.builder()
+				.title(TITLE)
+				.body(BODY)
+				.overallRatings(-5.0)
+				.longevityRatings(3.0)
+				.sillageRatings(3.0)
+				.build();
+
+			@Test
+			@DisplayName("상태코드 400을 응답한다.")
+			void It_responds_400() throws Exception {
+				mvc.perform(createPatchRequest("/reviews/" + EXISTS_REVIEW_UUID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(invalidUpdateRequest))
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isBadRequest())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재하지 않을 때")
+		class Context_when_user_exists_and_review_not_exists {
+			private final ReviewUpdateRequest validUpdateRequest = ReviewUpdateRequest.builder()
+				.title(TITLE)
+				.body(BODY)
+				.overallRatings(5.0)
+				.longevityRatings(3.0)
+				.sillageRatings(3.0)
+				.build();
+
+			@BeforeEach
+			void setUp() {
+				given(reviewService.updateReview(any(), any(ReviewUpdateRequest.class), any())).willThrow(
+					new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, NOT_EXISTS_REVIEW_UUID)
+				);
+			}
+
+			@Test
+			@DisplayName("상태코드 404를 응답한다.")
+			void It_responds_404() throws Exception {
+				mvc.perform(createPatchRequest("/reviews/" + NOT_EXISTS_REVIEW_UUID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(validUpdateRequest))
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isNotFound())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@WithMockCustomUser(userName = NOT_EXISTS_EMAIL)
+		@DisplayName("사용자가 존재하지 않을 때")
+		class Context_when_user_not_exists {
+			private final ReviewUpdateRequest validUpdateRequest = ReviewUpdateRequest.builder()
+				.title(TITLE)
+				.body(BODY)
+				.overallRatings(5.0)
+				.longevityRatings(3.0)
+				.sillageRatings(3.0)
+				.build();
+
+			@BeforeEach
+			void setUp() {
+				given(reviewService.updateReview(any(), any(ReviewUpdateRequest.class), eq(NOT_EXISTS_EMAIL))).willThrow(
+					new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, NOT_EXISTS_EMAIL)
+				);
+			}
+
+			@Test
+			@DisplayName("상태코드 404를 응답한다.")
+			void It_responds_404() throws Exception {
+				mvc.perform(createPatchRequest("/reviews/" + EXISTS_REVIEW_UUID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(validUpdateRequest))
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isNotFound())
+					.andDo(print());
+			}
+		}
+	}
+
+	@Nested
+	@WithMockCustomUser
+	@DisplayName("DELETE /api/v1/reviews/{reviewId}")
+	class Describe_delete {
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재할 때")
+		class Context_when_user_exists_and_review_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.deleteReview(any(), any())).willReturn(EXISTS_REVIEW);
+			}
+
+			@Test
+			@DisplayName("리뷰를 삭제하고 상태코드 204를 응답한다.")
+			void It_responds_204() throws Exception {
+				mvc.perform(createDeleteRequest("/reviews/" + EXISTS_REVIEW_UUID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isNoContent())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@DisplayName("사용자가 존재하고 리뷰가 존재하지 않을 때")
+		class Context_when_user_exists_and_review_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.deleteReview(any(), any())).willThrow(
+					new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUND, NOT_EXISTS_REVIEW_UUID)
+				);
+			}
+
+			@Test
+			@DisplayName("상태코드 404를 응답한다.")
+			void It_responds_404() throws Exception {
+				mvc.perform(createDeleteRequest("/reviews/" + NOT_EXISTS_REVIEW_UUID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.accept(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
+					)
+					.andExpect(status().isNotFound())
+					.andDo(print());
+			}
+		}
+
+		@Nested
+		@WithMockCustomUser(userName = NOT_EXISTS_EMAIL)
+		@DisplayName("사용자가 존재하지 않을 때")
+		class Context_when_user_not_exists {
+			@BeforeEach
+			void setUp() {
+				given(reviewService.deleteReview(any(), eq(NOT_EXISTS_EMAIL))).willThrow(
+					new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, NOT_EXISTS_EMAIL)
+				);
+			}
+
+			@Test
+			@DisplayName("상태코드 404를 응답한다.")
+			void It_responds_404() throws Exception {
+				mvc.perform(createDeleteRequest("/reviews/" + EXISTS_REVIEW_UUID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
 					)
