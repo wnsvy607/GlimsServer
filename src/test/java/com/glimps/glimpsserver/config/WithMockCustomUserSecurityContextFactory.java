@@ -1,7 +1,6 @@
-package com.glimps.glimpsserver.testconfig;
+package com.glimps.glimpsserver.config;
 
 import java.util.List;
-import java.util.Stack;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;

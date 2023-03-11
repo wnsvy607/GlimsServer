@@ -37,7 +37,7 @@ class JwtUtilTest {
 
 	@Test
 	@DisplayName("JwtToken 발급")
-	void issueJWT() throws Exception {
+	void issueJWT() {
 		//when
 		JwtDto jwtDto = jwtUtil.createJwtDto(EMAIL, ROLE);
 
@@ -51,7 +51,7 @@ class JwtUtilTest {
 
 	@Test
 	@DisplayName("액세스 토큰 발급시 예외가 발생하지 않는다.")
-	void issueAccessToken() throws Exception {
+	void issueAccessToken() {
 		//when
 		AccessTokenDto accessTokenDto = jwtUtil.createAccessTokenDto(EMAIL, ROLE);
 
@@ -63,7 +63,7 @@ class JwtUtilTest {
 
 	@Test
 	@DisplayName("유효한 JWT를 Decode하면 Encode한 것과 동일한 Claim을 얻는다.")
-	void Given_ValidToken_When_DecodeToken_Then_GetEqualClaims() throws Exception {
+	void Given_ValidToken_When_DecodeToken_Then_GetEqualClaims() {
 		//given
 		JwtDto jwtDto = jwtUtil.createJwtDto(EMAIL, ROLE);
 
@@ -81,7 +81,7 @@ class JwtUtilTest {
 
 	@Test
 	@DisplayName("만료된 JWT를 Decode하면 에러 발생")
-	void Given_ExpiredToken_When_DecodeToken_Then_Error() throws Exception {
+	void Given_ExpiredToken_When_DecodeToken_Then_Error() {
 		//given
 		JwtDto jwtDto = jwtUtilExpired.createJwtDto(EMAIL, ROLE);
 
@@ -103,7 +103,7 @@ class JwtUtilTest {
 
 	@Test
 	@DisplayName("signature가 다른 JWT를 Decode하면 에러 발생")
-	void Given_DifferentSignatureToken_When_DecodeToken_Then_Error() throws Exception {
+	void Given_DifferentSignatureToken_When_DecodeToken_Then_Error() {
 		//given
 		JwtDto jwtDto = jwtUtilWithInvalidKey.createJwtDto(EMAIL, ROLE);
 

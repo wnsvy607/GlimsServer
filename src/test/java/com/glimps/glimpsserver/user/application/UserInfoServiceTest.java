@@ -39,7 +39,7 @@ class UserInfoServiceTest {
 
 	@Test
 	@DisplayName("회원정보 조회시 유효한 값 반환")
-	void given_Email_When_GetUserInfo_Then_EqualToUser() throws Exception {
+	void given_Email_When_GetUserInfo_Then_EqualToUser() {
 	    //given
 		given(userService.getByEmail(EMAIL)).willReturn(USER);
 
