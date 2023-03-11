@@ -5,35 +5,71 @@ import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
 public class MatcherConfig {
 
-	private static final List<String> authURL = List.of("/api/v1/users", "/api/v1/logout", "/test");
-	private static final List<String> adminURL = List.of("/admin/**");
+	private static final List<String> ALL_URL = List.of("/test");
+	private static final List<String> GET_URL = List.of("/api/v1/get", "/api/v1/logout");
+	private static final List<String> POST_URL = List.of("/api/v1/post", "/api/v1/logout");
+	private static final List<String> PATCH_URL = List.of("/api/v1/patch", "/api/v1/logout");
+	private static final List<String> DELETE_URL = List.of("/api/v1/delete", "/api/v1/logout");
+	private static final List<String> ADMIN_URL = List.of("/admin/**");
 
 	@Bean
-	public List<RequestMatcher> matcher() {
+	public List<AntPathRequestMatcher> matcher() {
 
-		List<RequestMatcher> result = authURL.stream()
+		List<AntPathRequestMatcher> result = ALL_URL.stream()
 			.map(AntPathRequestMatcher::new)
 			.collect(Collectors.toList());
 
-		result.addAll(adminURL.stream()
+		result.addAll(GET_URL.stream()
+			.map((pattern) -> new AntPathRequestMatcher(pattern, HttpMethod.GET.name()))
+			.collect(Collectors.toList()));
+
+		result.addAll(POST_URL.stream()
+			.map((pattern) -> new AntPathRequestMatcher(pattern, HttpMethod.POST.name()))
+			.collect(Collectors.toList()));
+
+		result.addAll(PATCH_URL.stream()
+			.map((pattern) -> new AntPathRequestMatcher(pattern, HttpMethod.PATCH.name()))
+			.collect(Collectors.toList()));
+
+		result.addAll(DELETE_URL.stream()
+			.map((pattern) -> new AntPathRequestMatcher(pattern, HttpMethod.DELETE.name()))
+			.collect(Collectors.toList()));
+
+		result.addAll(ADMIN_URL.stream()
 			.map(AntPathRequestMatcher::new)
 			.collect(Collectors.toList()));
 
 		return result;
 	}
 
-	public static List<String> getAuthURL() {
-		return authURL;
+	public static List<String> AuthURLs() {
+		return ALL_URL;
+	}
+
+	public static List<String> GetURLs() {
+		return GET_URL;
+	}
+
+	public static List<String> PostURLs() {
+		return POST_URL;
+	}
+
+	public static List<String> PatchURLs() {
+		return PATCH_URL;
+	}
+
+	public static List<String> DeleteURLs() {
+		return DELETE_URL;
 	}
 
 	public static List<String> getAdminURL() {
-		return adminURL;
+		return ADMIN_URL;
 	}
 
 }
