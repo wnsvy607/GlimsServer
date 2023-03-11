@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.glimps.glimpsserver.common.domain.CustomPage;
+import com.glimps.glimpsserver.perfume.domain.Brand;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
 
@@ -24,7 +25,7 @@ public class ReviewPageResponse {
 	private String nickname;
 	private List<String> photoUrl;
 	private String perfumeName;
-	private String perfumeBrand;
+	private Brand perfumeBrand;
 	private double overallRating;
 	private double longevityRating;
 	private double sillageRating;
@@ -46,6 +47,7 @@ public class ReviewPageResponse {
 				.map(ReviewPhoto::getUrl)
 				.collect(Collectors.toList()))
 			.perfumeName(review.getPerfume().getPerfumeName())
+			// TODO N+1 문제 발생 가능, FETCH JOIN 필요
 			.perfumeBrand(review.getPerfume().getBrand())
 			.overallRating(review.getOverallRatings())
 			.longevityRating(review.getLongevityRatings())

@@ -29,7 +29,7 @@ class TestControllerTest {
 
 		mockMvc.perform(get("/test")).andExpect(status().isOk())
 			.andExpect(status().isOk())
-			.andExpect(content().string(EMAIL + "has been authenticated."));
+			.andExpect(content().string(EMAIL + " has been authenticated."));
 
 	}
 
