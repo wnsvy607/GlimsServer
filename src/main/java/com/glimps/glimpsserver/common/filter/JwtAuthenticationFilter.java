@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -32,9 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final AuthenticationService authenticationService;
 	private final ObjectMapper mapper;
 
-	private final List<RequestMatcher> matcher;
-
-	// private final RequestMatcher matcher;
+	private final List<AntPathRequestMatcher> matcher;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws
@@ -71,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		response.getWriter().write(convertedErrorResponse);
 	}
 
-	private boolean requiresAuthentication(HttpServletRequest request, List<RequestMatcher> matcher) {
+	private boolean requiresAuthentication(HttpServletRequest request, List<AntPathRequestMatcher> matcher) {
 		return matcher.stream().anyMatch(m -> m.matches(request));
 	}
 
