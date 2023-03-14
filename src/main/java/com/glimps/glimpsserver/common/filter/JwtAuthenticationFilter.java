@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final AuthenticationService authenticationService;
 	private final ObjectMapper mapper;
-	private final List<AntPathRequestMatcher> matcher;
+	private final List<AntPathRequestMatcher> matchers;
 
 
 	@Override
