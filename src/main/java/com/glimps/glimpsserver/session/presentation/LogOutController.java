@@ -7,20 +7,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.glimps.glimpsserver.common.authentication.UserAuthentication;
+import com.glimps.glimpsserver.session.application.AuthenticationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
-@Tag(name = "authentication", description = "로그아웃/토큰재발급 API")
+@Tag(name = "Authentication", description = "로그아웃/토큰재발급 API")
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1")
 public class LogOutController {
 
-	@Tag(name = "authentication")
+	private final AuthenticationService authenticationService;
+
+	@Tag(name = "Authentication")
 	@Operation(summary = "로그아웃 API", description = "로그아웃시 서버 DB 내부 refresh token 만료 처리")
 	@PostMapping("/logout")
 	public Map<String, String> logout(UserAuthentication userAuthentication) {
 
-		return Map.of("result", "Logout succeeded");
+		String email = userAuthentication.getEmail();
+		authenticationService.logout(email);
+
+		return Map.of("result", "User(" + email +") have successfully logged out.");
 	}
 }

@@ -13,14 +13,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "health check", description = "서버 상태 체크 API")
+@Tag(name = "Health check", description = "서버 상태 체크 API")
 @RestController
 @RequiredArgsConstructor
 public class HealthCheckController {
 
 	private final Environment environment;
 
-	@Tag(name = "health check")
+	@Tag(name = "Health check")
 	@GetMapping("/health")
 	@Operation(summary = "서버 Health Check API", description = "현재 서버가 정상적으로 기동이 된 상태인지 검사하는 API")
 	public HealthCheckResponse healthCheck() {

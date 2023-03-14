@@ -20,7 +20,6 @@ public class UserAuthentication extends AbstractAuthenticationToken {
 		super.setAuthenticated(true);
 	}
 
-
 	@Override
 	public Object getCredentials() {
 		return null;

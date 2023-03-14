@@ -24,4 +24,3 @@ public class BaseTimeEntity {
 	private LocalDateTime updatedAt;
 
 }
-

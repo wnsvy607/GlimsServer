@@ -76,7 +76,7 @@ public class JwtUtil {
 			.build();
 	}
 
-	private String createAccessToken(String email, RoleType role, Date expirationTime) {
+	public String createAccessToken(String email, RoleType role, Date expirationTime) {
 		return Jwts.builder()
 			.setHeaderParam("typ", "jwt")
 			.setSubject(email)

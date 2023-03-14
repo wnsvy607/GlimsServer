@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-@EnableJpaAuditing
 @Configuration
 public class QueryDslConfig {
 

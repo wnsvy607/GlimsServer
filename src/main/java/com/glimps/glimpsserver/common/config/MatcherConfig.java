@@ -11,6 +11,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class MatcherConfig {
 
+
 	private static final List<String> ALL_URL = List.of("/test");
 	private static final List<String> GET_URL = List.of("/api/v1/get", "/api/v1/logout");
 	private static final List<String> POST_URL = List.of("/api/v1/post", "/api/v1/logout");
