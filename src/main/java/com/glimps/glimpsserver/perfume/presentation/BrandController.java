@@ -1,0 +1,27 @@
+package com.glimps.glimpsserver.perfume.presentation;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.glimps.glimpsserver.perfume.application.BrandService;
+import com.glimps.glimpsserver.perfume.dto.BrandResponse;
+
+@RestController
+public class BrandController {
+
+	private final BrandService brandService;
+
+	public BrandController(BrandService brandService) {
+		this.brandService = brandService;
+	}
+
+
+	@GetMapping("/api/v1/brands")
+	public List<BrandResponse> getAllBrands() {
+		return brandService.getAllBrands();
+	}
+
+
+}

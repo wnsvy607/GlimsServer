@@ -25,10 +25,7 @@ public class Brand {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-
 	@Column(name = "brand_name")
 	private String brandName;
-
-
 
 }
