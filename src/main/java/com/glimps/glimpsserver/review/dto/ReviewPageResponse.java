@@ -28,10 +28,14 @@ public class ReviewPageResponse {
 	private double overallRating;
 	private double longevityRating;
 	private double sillageRating;
+	private int heartsCnt;
 	private long totalElements;
 	private long totalPages;
 
 	public static List<ReviewPageResponse> of(CustomPage<Review> reviews) {
+		if(reviews.getContent().isEmpty()) {
+			return List.of();
+		}
 		return reviews.getContent().stream()
 			.map(getFunction(reviews.getTotalElements(), reviews.getTotalPages()))
 			.collect(Collectors.toList());
@@ -50,6 +54,7 @@ public class ReviewPageResponse {
 			.overallRating(review.getOverallRatings())
 			.longevityRating(review.getLongevityRatings())
 			.sillageRating(review.getSillageRatings())
+			.heartsCnt(review.getHeartsCnt())
 			.totalElements(totalElements)
 			.totalPages(totalPages)
 			.build();

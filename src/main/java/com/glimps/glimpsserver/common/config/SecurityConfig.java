@@ -3,6 +3,7 @@ package com.glimps.glimpsserver.common.config;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,7 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
-import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glimps.glimpsserver.common.filter.CustomAccessDeniedHandler;
@@ -33,7 +35,7 @@ public class SecurityConfig {
 	private final CustomAccessDeniedHandler accessDeniedHandler;
 	private final AuthenticationService authenticationService;
 	private final ObjectMapper mapper;
-	private final List<RequestMatcher> matchers;
+	private final List<AntPathRequestMatcher> matchers;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,7 +62,11 @@ public class SecurityConfig {
 			.userService(oAuth2UserService);
 
 		http.authorizeRequests()
-			.antMatchers(MatcherConfig.getAuthURL().toArray(new String[0])).authenticated()
+			.antMatchers(MatcherConfig.authURLS().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.GET,MatcherConfig.getURLS().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.POST,MatcherConfig.postURLS().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.PATCH,MatcherConfig.patchURLs().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.DELETE,MatcherConfig.deleteURLs().toArray(new String[0])).authenticated()
 			.antMatchers(MatcherConfig.getAdminURL().toArray(new String[0])).hasRole("ADMIN")
 			.anyRequest().permitAll();
 
