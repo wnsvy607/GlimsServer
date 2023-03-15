@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Validated
 @RestController
-@RequestMapping("/api/v1")
 public class UserController {
 
 	private final UserInfoService userInfoService;
