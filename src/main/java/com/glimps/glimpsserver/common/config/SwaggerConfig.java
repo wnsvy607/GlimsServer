@@ -34,6 +34,7 @@ public class SwaggerConfig {
 			.useDefaultResponseMessages(false)  // swagger 에서 제공하는 기본 응답 코드 설명 제거
 			.securityContexts(Arrays.asList(securityContext()))
 			.securitySchemes(Arrays.asList(apiKey()))
+			.pathMapping("/api/v1")
 			.ignoredParameterTypes(UserAuthentication.class);
 	}
 
