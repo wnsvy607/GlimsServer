@@ -3,12 +3,12 @@ package com.glimps.glimpsserver.review.application;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.glimps.glimpsserver.common.domain.CustomPage;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.common.error.ReviewAuthorityException;
@@ -64,7 +64,7 @@ public class ReviewService {
 		return findReview(uuid);
 	}
 
-	public CustomPage<Review> getMyReviews(ReviewPageParam reviewPageParam, String email) {
+	public Page<Review> getMyReviews(ReviewPageParam reviewPageParam, String email) {
 		int offset = reviewPageParam.getOffset();
 
 		Pageable pageRequest = PageRequest.of(offset, reviewPageParam.getLimit(),
@@ -79,7 +79,7 @@ public class ReviewService {
 		return reviewCustomRepository.findTop10ByOrderByCreatedAtDesc();
 	}
 
-	public CustomPage<Review> getReviews(ReviewPageParam reviewPageParam) {
+	public Page<Review> getReviews(ReviewPageParam reviewPageParam) {
 		int offset = reviewPageParam.getOffset();
 
 		Pageable pageRequest = PageRequest.of(offset, reviewPageParam.getLimit(),

@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.uuid.Generators;
-import com.glimps.glimpsserver.common.domain.CustomPage;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.perfume.infra.PerfumeRepository;
 import com.glimps.glimpsserver.review.domain.Review;
@@ -245,7 +245,7 @@ class ReviewCustomRepositoryImplTest {
 
 				//when
 				Pageable pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "createdAt");
-				CustomPage<Review> reviews = reviewCustomRepository.findAllByUserId(EXISTS_USER.getId(), pageRequest);
+				Page<Review> reviews = reviewCustomRepository.findAllByUserId(EXISTS_USER.getId(), pageRequest);
 
 				//then
 				assertThat(reviews.getContent()).hasSize(2);
@@ -267,7 +267,7 @@ class ReviewCustomRepositoryImplTest {
 
 				//when
 				Pageable pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "createdAt");
-				CustomPage<Review> reviews = reviewCustomRepository.findAllByUserId(NOT_EXISTS_USER_ID, pageRequest);
+				Page<Review> reviews = reviewCustomRepository.findAllByUserId(NOT_EXISTS_USER_ID, pageRequest);
 
 				//then
 				assertThat(reviews.getContent()).isEmpty();
@@ -294,7 +294,7 @@ class ReviewCustomRepositoryImplTest {
 
 				//when
 				Pageable pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "createdAt");
-				CustomPage<Review> reviews = reviewCustomRepository.findAllByOrder(pageRequest);
+				Page<Review> reviews = reviewCustomRepository.findAllByOrder(pageRequest);
 
 				//then
 				assertThat(reviews.getContent()).hasSize(3);

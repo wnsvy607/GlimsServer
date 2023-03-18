@@ -21,6 +21,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -34,8 +39,6 @@ import org.springframework.util.MultiValueMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.uuid.Generators;
 import com.glimps.glimpsserver.common.config.SecurityConfig;
-import com.glimps.glimpsserver.common.domain.CustomPage;
-import com.glimps.glimpsserver.common.domain.CustomPageImpl;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.config.WithMockCustomUser;
@@ -65,6 +68,7 @@ class ReviewControllerTest {
 	private static final UUID EXISTS_PERFUME_UUID = Generators.timeBasedGenerator().generate();
 	private static final UUID NOT_EXISTS_REVIEW_UUID = Generators.timeBasedGenerator().generate();
 	private static final UUID NOT_EXISTS_PERFUME_UUID = UUID.randomUUID();
+	private static final Pageable PAGEABLE = PageRequest.of(0, 2, Sort.Direction.DESC, "createdAt");
 	private static final Perfume EXISTS_PERFUME = Perfume.builder()
 		.uuid(Generators.timeBasedGenerator().generate())
 		.perfumeName("향수 이름")
@@ -162,7 +166,7 @@ class ReviewControllerTest {
 			@BeforeEach
 			void setUp() {
 				List<Review> reviews = List.of(EXISTS_REVIEW, SECOND_REVIEW, THIRD_REVIEW);
-				CustomPage<Review> results = new CustomPageImpl<>(reviews, 1, 10, 3);
+				Page<Review> results = new PageImpl<>(reviews, PAGEABLE, 3);
 				given(reviewService.getReviews(any())).willReturn(results);
 			}
 
@@ -190,7 +194,7 @@ class ReviewControllerTest {
 			@BeforeEach
 			void setUp() {
 				List<Review> reviews = List.of();
-				CustomPage<Review> results = new CustomPageImpl<>(reviews, 1, 10, 0);
+				Page<Review> results = new PageImpl<>(reviews, PAGEABLE, 0);
 				given(reviewService.getReviews(any())).willReturn(results);
 			}
 
@@ -439,7 +443,7 @@ class ReviewControllerTest {
 			@BeforeEach
 			void setUp() {
 				List<Review> reviews = List.of(EXISTS_REVIEW, SECOND_REVIEW, THIRD_REVIEW);
-				CustomPage<Review> results = new CustomPageImpl<>(reviews, 0, 3, 3);
+				Page<Review> results = new PageImpl<>(reviews, PAGEABLE, 3);
 				given(reviewService.getMyReviews(any(ReviewPageParam.class), any())).willReturn(results);
 			}
 
@@ -469,7 +473,7 @@ class ReviewControllerTest {
 			@BeforeEach
 			void setUp() {
 				List<Review> reviews = List.of();
-				CustomPage<Review> results = new CustomPageImpl<>(reviews, 0, 3, 0);
+				Page<Review> results = new PageImpl<>(reviews, PAGEABLE, 0);
 				given(reviewService.getMyReviews(any(ReviewPageParam.class), any())).willReturn(results);
 			}
 

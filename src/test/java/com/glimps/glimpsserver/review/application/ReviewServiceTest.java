@@ -15,13 +15,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.fasterxml.uuid.Generators;
-import com.glimps.glimpsserver.common.domain.CustomPage;
-import com.glimps.glimpsserver.common.domain.CustomPageImpl;
 import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.perfume.application.PerfumeService;
@@ -284,8 +284,8 @@ class ReviewServiceTest {
 		class Context_when_user_exists_and_review_exists {
 			@BeforeEach
 			void setUp() {
-				CustomPageImpl<Review> customPage = new CustomPageImpl<>(
-					List.of(EXISTS_REVIEW, element1, element2, element3), 0, 2, 4);
+				PageImpl<Review> customPage = new PageImpl<>(
+					List.of(EXISTS_REVIEW, element1, element2, element3), pageable, 4);
 				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
 				given(reviewCustomRepository.findAllByUserId(EXISTS_USER.getId(), pageable)).willReturn(customPage);
 			}
@@ -293,7 +293,7 @@ class ReviewServiceTest {
 			@Test
 			@DisplayName("사용자가 작성한 리뷰 목록을 반환한다.")
 			void It_returns_review_list() {
-				CustomPage<Review> reviews = reviewService.getMyReviews(reviewPageParam, EXISTS_EMAIL);
+				Page<Review> reviews = reviewService.getMyReviews(reviewPageParam, EXISTS_EMAIL);
 
 				assertThat(reviews.getTotalElements()).isEqualTo(4);
 				assertThat(reviews.getContent()).contains(EXISTS_REVIEW, element1, element2, element3);
@@ -308,13 +308,13 @@ class ReviewServiceTest {
 			void setUp() {
 				given(userService.getUserByEmail(EXISTS_EMAIL)).willReturn(EXISTS_USER);
 				given(reviewCustomRepository.findAllByUserId(EXISTS_USER.getId(), pageable)).willReturn(
-					CustomPage.empty());
+					Page.empty());
 			}
 
 			@Test
 			@DisplayName("빈 페이지를 반환한다.")
 			void It_returns_empty_list() {
-				CustomPage<Review> reviews = reviewService.getMyReviews(reviewPageParam, EXISTS_EMAIL);
+				Page<Review> reviews = reviewService.getMyReviews(reviewPageParam, EXISTS_EMAIL);
 
 				assertThat(reviews.getContent()).isEmpty();
 			}

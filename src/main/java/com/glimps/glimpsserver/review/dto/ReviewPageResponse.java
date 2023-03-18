@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.glimps.glimpsserver.common.domain.CustomPage;
+import org.springframework.data.domain.Page;
+
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
 
@@ -32,7 +33,7 @@ public class ReviewPageResponse {
 	private long totalElements;
 	private long totalPages;
 
-	public static List<ReviewPageResponse> of(CustomPage<Review> reviews) {
+	public static List<ReviewPageResponse> of(Page<Review> reviews) {
 		if(reviews.getContent().isEmpty()) {
 			return List.of();
 		}

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.glimps.glimpsserver.common.authentication.UserAuthentication;
-import com.glimps.glimpsserver.common.domain.CustomPage;
 import com.glimps.glimpsserver.review.application.ReviewService;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.dto.ReviewCreateRequest;
@@ -69,7 +69,7 @@ public class ReviewController {
 	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
 	public List<ReviewPageResponse> myReviews(ReviewPageParam reviewPageParam, UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
-		CustomPage<Review> reviews = reviewService.getMyReviews(reviewPageParam, email);
+		Page<Review> reviews = reviewService.getMyReviews(reviewPageParam, email);
 		return ReviewPageResponse.of(reviews);
 	}
 
@@ -90,7 +90,7 @@ public class ReviewController {
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public List<ReviewPageResponse> list(ReviewPageParam reviewPageParam) {
-		CustomPage<Review> reviews = reviewService.getReviews(reviewPageParam);
+		Page<Review> reviews = reviewService.getReviews(reviewPageParam);
 		return ReviewPageResponse.of(reviews);
 	}
 
