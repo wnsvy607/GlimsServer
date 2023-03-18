@@ -32,17 +32,19 @@ public class ReviewPageResponse {
 	private int heartsCnt;
 	private long totalElements;
 	private long totalPages;
+	private boolean hasNext;
 
 	public static List<ReviewPageResponse> of(Page<Review> reviews) {
-		if(reviews.getContent().isEmpty()) {
+		if (reviews.getContent().isEmpty()) {
 			return List.of();
 		}
 		return reviews.getContent().stream()
-			.map(getFunction(reviews.getTotalElements(), reviews.getTotalPages()))
+			.map(getFunction(reviews.getTotalElements(), reviews.getTotalPages(), reviews.hasNext()))
 			.collect(Collectors.toList());
 	}
 
-	private static Function<Review, ReviewPageResponse> getFunction(long totalElements, long totalPages) {
+	private static Function<Review, ReviewPageResponse> getFunction(long totalElements, long totalPages,
+		boolean hasNext) {
 		return review -> ReviewPageResponse.builder()
 			.title(review.getTitle())
 			.body(review.getBody())
@@ -58,6 +60,7 @@ public class ReviewPageResponse {
 			.heartsCnt(review.getHeartsCnt())
 			.totalElements(totalElements)
 			.totalPages(totalPages)
+			.hasNext(hasNext)
 			.build();
 
 	}
