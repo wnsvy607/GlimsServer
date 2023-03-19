@@ -13,7 +13,7 @@ public class MatcherConfig {
 
 
 	private static final List<String> ALL_URL = List.of("/test");
-	private static final List<String> GET_URL = List.of("/api/v1/get", "/api/v1/logout");
+	private static final List<String> GET_URL = List.of("${demo.api}/get", "/api/v1/logout");
 	private static final List<String> POST_URL = List.of("/api/v1/post", "/api/v1/logout");
 	private static final List<String> PATCH_URL = List.of("/api/v1/patch", "/api/v1/logout");
 	private static final List<String> DELETE_URL = List.of("/api/v1/delete", "/api/v1/logout");
@@ -49,15 +49,15 @@ public class MatcherConfig {
 		return result;
 	}
 
-	public static List<String> authURLS() {
+	public static List<String> authURLs() {
 		return ALL_URL;
 	}
 
-	public static List<String> getURLS() {
+	public static List<String> getURLs() {
 		return GET_URL;
 	}
 
-	public static List<String> postURLS() {
+	public static List<String> postURLs() {
 		return POST_URL;
 	}
 

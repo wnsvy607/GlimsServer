@@ -11,13 +11,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
-
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glimps.glimpsserver.common.filter.CustomAccessDeniedHandler;
 import com.glimps.glimpsserver.common.filter.CustomAuthenticationEntryPoint;
 import com.glimps.glimpsserver.common.filter.JwtAuthenticationFilter;
+import com.glimps.glimpsserver.common.oauth.handler.OAuth2FailureHandler;
 import com.glimps.glimpsserver.common.oauth.handler.OAuth2SuccessHandler;
 import com.glimps.glimpsserver.common.oauth.service.CustomOAuth2UserService;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
@@ -36,9 +36,14 @@ public class SecurityConfig {
 	private final AuthenticationService authenticationService;
 	private final ObjectMapper mapper;
 	private final List<AntPathRequestMatcher> matchers;
+	private final OAuth2FailureHandler oAuth2FailureHandler;
+
 
 	@Bean
+
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+		http.cors();
 
 		http.csrf()
 			.disable();
@@ -57,16 +62,18 @@ public class SecurityConfig {
 			.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN));
 
 		http.oauth2Login()
+			.failureHandler(oAuth2FailureHandler)
+
 			.successHandler(successHandler)
 			.userInfoEndpoint()
 			.userService(oAuth2UserService);
 
 		http.authorizeRequests()
-			.antMatchers(MatcherConfig.authURLS().toArray(new String[0])).authenticated()
-			.antMatchers(HttpMethod.GET,MatcherConfig.getURLS().toArray(new String[0])).authenticated()
-			.antMatchers(HttpMethod.POST,MatcherConfig.postURLS().toArray(new String[0])).authenticated()
-			.antMatchers(HttpMethod.PATCH,MatcherConfig.patchURLs().toArray(new String[0])).authenticated()
-			.antMatchers(HttpMethod.DELETE,MatcherConfig.deleteURLs().toArray(new String[0])).authenticated()
+			.antMatchers(MatcherConfig.authURLs().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.GET, MatcherConfig.getURLs().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.POST, MatcherConfig.postURLs().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.PATCH, MatcherConfig.patchURLs().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.DELETE, MatcherConfig.deleteURLs().toArray(new String[0])).authenticated()
 			.antMatchers(MatcherConfig.getAdminURL().toArray(new String[0])).hasRole("ADMIN")
 			.anyRequest().permitAll();
 

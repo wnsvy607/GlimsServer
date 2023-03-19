@@ -5,8 +5,6 @@ spring:
     include: oauth
 
   mvc:
-    servlet:
-      path: /api/v1
     path match:
       matching-strategy: ant_path_matcher
 
