@@ -18,7 +18,7 @@ public class BrandController {
 	}
 
 
-	@GetMapping("/api/v1/brands")
+	@GetMapping("/brands")
 	public List<BrandResponse> getAllBrands() {
 		return brandService.getAllBrands();
 	}
