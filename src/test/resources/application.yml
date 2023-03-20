@@ -1,9 +1,15 @@
 spring:
   config:
     use-legacy-processing: true
+  profiles:
+    include: oauth
+    
   mvc:
-    path match:
+    servlet:
+      path: /api/v1
+    pathmatch:
       matching-strategy: ant_path_matcher
+      
   h2:
     console:
       path: /h2-console
@@ -16,8 +22,6 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create-drop
-  profiles:
-    include: oauth
 
 token:
   secret: VMOYV9AlhmyO8quHcWwJUE3dEa2RblfL7QZW4GYzaNZo061ZiEJ8kx8ZWuvlC6Jcj # 64바이트 이상의 문자열

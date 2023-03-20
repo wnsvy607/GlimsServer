@@ -65,6 +65,7 @@ public class MatcherConfig {
 	}
 
 	public static List<String> DeleteURLs() {
+
 		return DELETE_URL;
 	}
 

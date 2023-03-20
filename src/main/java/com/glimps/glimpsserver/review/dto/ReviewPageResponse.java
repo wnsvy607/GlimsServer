@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.glimps.glimpsserver.common.domain.CustomPage;
 import com.glimps.glimpsserver.perfume.domain.Brand;
+import org.springframework.data.domain.Page;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
 
@@ -29,16 +29,22 @@ public class ReviewPageResponse {
 	private double overallRating;
 	private double longevityRating;
 	private double sillageRating;
+	private int heartsCnt;
 	private long totalElements;
 	private long totalPages;
+	private boolean hasNext;
 
-	public static List<ReviewPageResponse> of(CustomPage<Review> reviews) {
+	public static List<ReviewPageResponse> of(Page<Review> reviews) {
+		if (reviews.getContent().isEmpty()) {
+			return List.of();
+		}
 		return reviews.getContent().stream()
-			.map(getFunction(reviews.getTotalElements(), reviews.getTotalPages()))
+			.map(getFunction(reviews.getTotalElements(), reviews.getTotalPages(), reviews.hasNext()))
 			.collect(Collectors.toList());
 	}
 
-	private static Function<Review, ReviewPageResponse> getFunction(long totalElements, long totalPages) {
+	private static Function<Review, ReviewPageResponse> getFunction(long totalElements, long totalPages,
+		boolean hasNext) {
 		return review -> ReviewPageResponse.builder()
 			.title(review.getTitle())
 			.body(review.getBody())
@@ -52,8 +58,10 @@ public class ReviewPageResponse {
 			.overallRating(review.getOverallRatings())
 			.longevityRating(review.getLongevityRatings())
 			.sillageRating(review.getSillageRatings())
+			.heartsCnt(review.getHeartsCnt())
 			.totalElements(totalElements)
 			.totalPages(totalPages)
+			.hasNext(hasNext)
 			.build();
 
 	}

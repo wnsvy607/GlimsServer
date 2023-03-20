@@ -10,12 +10,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import com.glimps.glimpsserver.common.domain.CustomPage;
-import com.glimps.glimpsserver.common.domain.CustomPageImpl;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -44,7 +44,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 	}
 
 	@Override
-	public CustomPage<Review> findAllByOrder(Pageable pageRequest) {
+	public Page<Review> findAllByOrder(Pageable pageRequest) {
 		JPAQuery<Review> joinQuery = jpaQueryFactory.selectFrom(review)
 			.innerJoin(user).fetchJoin()
 			.on(user.id.eq(review.user.id))
@@ -61,12 +61,11 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			.orderBy(getSort(pageRequest))
 			.stream().collect(Collectors.toList());
 
-		return new CustomPageImpl<>(result, pageRequest.getOffset(), pageRequest.getPageSize(), totalElements);
-
+		return new PageImpl<>(result,pageRequest, totalElements);
 	}
 
 	@Override
-	public CustomPage<Review> findAllByUserId(Long userId, Pageable pageRequest) {
+	public Page<Review> findAllByUserId(Long userId, Pageable pageRequest) {
 		JPAQuery<Review> joinQuery = jpaQueryFactory.selectFrom(review)
 			.innerJoin(user).fetchJoin()
 			.on(user.id.eq(review.user.id))
@@ -83,8 +82,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 			.limit(pageRequest.getPageSize())
 			.orderBy(getSort(pageRequest))
 			.stream().collect(Collectors.toList());
-
-		return new CustomPageImpl<>(result, pageRequest.getOffset(), pageRequest.getPageSize(), totalElements);
+		return new PageImpl<>(result, pageRequest, totalElements);
 	}
 
 	@Override

@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Authentication", description = "로그아웃/토큰재발급 API")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1")
 public class LogOutController {
 
 	private final AuthenticationService authenticationService;
