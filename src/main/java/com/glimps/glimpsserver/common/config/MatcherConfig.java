@@ -11,7 +11,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class MatcherConfig {
 
-
 	private static final List<String> ALL_URL = List.of("/test");
 	private static final List<String> GET_URL = List.of("/api/v1/get", "/api/v1/logout");
 	private static final List<String> POST_URL = List.of("/api/v1/post", "/api/v1/logout");
@@ -27,19 +26,19 @@ public class MatcherConfig {
 			.collect(Collectors.toList());
 
 		result.addAll(GET_URL.stream()
-			.map(pattern -> new AntPathRequestMatcher(pattern, HttpMethod.GET.name()))
+			.map((pattern) -> new AntPathRequestMatcher(pattern, HttpMethod.GET.name()))
 			.collect(Collectors.toList()));
 
 		result.addAll(POST_URL.stream()
-			.map(pattern -> new AntPathRequestMatcher(pattern, HttpMethod.POST.name()))
+			.map((pattern) -> new AntPathRequestMatcher(pattern, HttpMethod.POST.name()))
 			.collect(Collectors.toList()));
 
 		result.addAll(PATCH_URL.stream()
-			.map(pattern -> new AntPathRequestMatcher(pattern, HttpMethod.PATCH.name()))
+			.map((pattern) -> new AntPathRequestMatcher(pattern, HttpMethod.PATCH.name()))
 			.collect(Collectors.toList()));
 
 		result.addAll(DELETE_URL.stream()
-			.map(pattern -> new AntPathRequestMatcher(pattern, HttpMethod.DELETE.name()))
+			.map((pattern) -> new AntPathRequestMatcher(pattern, HttpMethod.DELETE.name()))
 			.collect(Collectors.toList()));
 
 		result.addAll(ADMIN_URL.stream()
@@ -49,23 +48,24 @@ public class MatcherConfig {
 		return result;
 	}
 
-	public static List<String> authURLS() {
+	public static List<String> AuthURLs() {
 		return ALL_URL;
 	}
 
-	public static List<String> getURLS() {
+	public static List<String> GetURLs() {
 		return GET_URL;
 	}
 
-	public static List<String> postURLS() {
+	public static List<String> PostURLs() {
 		return POST_URL;
 	}
 
-	public static List<String> patchURLs() {
+	public static List<String> PatchURLs() {
 		return PATCH_URL;
 	}
 
-	public static List<String> deleteURLs() {
+	public static List<String> DeleteURLs() {
+
 		return DELETE_URL;
 	}
 

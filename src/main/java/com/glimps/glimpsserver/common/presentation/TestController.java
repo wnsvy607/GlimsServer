@@ -20,6 +20,6 @@ public class TestController {
 		if (userAuthentication == null) {
 			return "userAuthentication is null";
 		}
-		return userAuthentication.getEmail() + "has been authenticated.";
+		return userAuthentication.getEmail() + " has been authenticated.";
 	}
 }

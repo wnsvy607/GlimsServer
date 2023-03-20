@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.glimps.glimpsserver.common.config.SecurityConfig;
-import com.glimps.glimpsserver.testconfig.WithMockCustomUser;
+import com.glimps.glimpsserver.config.WithMockCustomUser;
 
 @WebMvcTest(controllers = HealthCheckController.class,
 	excludeFilters = {

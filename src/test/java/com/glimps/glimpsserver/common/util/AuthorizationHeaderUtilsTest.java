@@ -7,13 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import com.glimps.glimpsserver.common.error.AuthenticationException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
-import com.glimps.glimpsserver.common.error.InvalidTokenException;
 
 class AuthorizationHeaderUtilsTest {
 
 	@Test
 	@DisplayName("검증하려는 Header 가 Null 이면 에러 발생")
-	void given_HeaderNull_When_Validate_Then_Error() throws Exception {
+	void given_HeaderNull_When_Validate_Then_Error() {
 		//given
 		final String NULL_HEADER = null;
 
@@ -27,7 +26,7 @@ class AuthorizationHeaderUtilsTest {
 
 	@Test
 	@DisplayName("검증하려는 Header 가 빈 문자열 이면 에러 발생")
-	void given_HeaderBlank_When_Validate_Then_Error() throws Exception {
+	void given_HeaderBlank_When_Validate_Then_Error() {
 		//given
 		final String BLANK_HEADER = "";
 
@@ -41,7 +40,7 @@ class AuthorizationHeaderUtilsTest {
 
 	@Test
 	@DisplayName("검증하려는 토큰의 타입이 Bearer가 아니면 에러 발생")
-	void given_TypeInvalid_When_Validate_Then_Error() throws Exception {
+	void given_TypeInvalid_When_Validate_Then_Error() {
 		//given
 		final String INVALID_TYPE_TOKEN =
 			"Basic eyJ0eXAiOiJqd3QiLCJhbGciOiJIUzUxMiJ9."
@@ -59,7 +58,7 @@ class AuthorizationHeaderUtilsTest {
 
 	@Test
 	@DisplayName("정상적인 입력은 에러를 발생시키지 않는다")
-	void given_ValidToken_When_Validate_Then_Pass() throws Exception {
+	void given_ValidToken_When_Validate_Then_Pass() {
 		//given
 		final String VALID_TOKEN =
 			"Bearer eyJ0eXAiOiJqd3QiLCJhbGciOiJIUzUxMiJ9."

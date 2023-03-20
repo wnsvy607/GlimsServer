@@ -31,13 +31,13 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 		AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
 		response.setStatus(403);
-		PrintWriter writer = response.getWriter();
 
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
 		ErrorResponse of = ErrorResponse.of(NO_AUTHORITY.getCode(), NO_AUTHORITY.getMessage() );
 		String convertedError = mapper.writeValueAsString(of);
 
+		PrintWriter writer = response.getWriter();
 		writer.write(convertedError);
 	}
 }

@@ -4,9 +4,12 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.glimps.glimpsserver.review.vo.ReviewRatings;
@@ -31,7 +34,9 @@ public class Perfume {
 	@Column(name = "uuid", nullable = false, columnDefinition = "BINARY(16)")
 	private UUID uuid;
 
-	private String brand;
+	@JoinColumn(name = "brand_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Brand brand;
 
 	private String perfumeName;
 
@@ -41,7 +46,7 @@ public class Perfume {
 
 	private int reviewCnt;
 
-	public static Perfume createPerfume(String brand, String perfumeName) {
+	public static Perfume createPerfume(Brand brand, String perfumeName) {
 		return Perfume.builder()
 			.uuid(UUID.randomUUID())
 			.brand(brand)
