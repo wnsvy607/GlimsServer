@@ -25,7 +25,10 @@ spring:
     resources:
       add-mappings: off
 
-
+server:
+  servlet:
+    session:
+      timeout: 60s
 
 token:
   secret: VMOYV9AlhmyO8quHcWwJUE3dEa2RblfL7QZW4GYzaNZo061ZiEJ8kx8ZWuvlC6Jcj # 64바이트 이상의 문자열
