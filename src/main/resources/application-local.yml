@@ -35,3 +35,5 @@ token:
   access-token-expiration-time: 90000000  # 1500분 100000(ms) x 60(s) x 15(m)
   refresh-token-expiration-time: 1209600000 # 2주 1000(ms) x 60 (s) x 60(m) x 24(h) x 14(d)
       
+api:
+  prefix: /api/v1

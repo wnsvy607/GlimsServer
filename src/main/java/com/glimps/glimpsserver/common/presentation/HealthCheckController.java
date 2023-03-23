@@ -14,8 +14,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Health check", description = "서버 상태 체크 API")
-@RestController
 @RequiredArgsConstructor
+@RestController
 public class HealthCheckController {
 
 	private final Environment environment;

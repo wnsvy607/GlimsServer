@@ -3,6 +3,7 @@ package com.glimps.glimpsserver.session.presentation;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.glimps.glimpsserver.common.authentication.UserAuthentication;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Authentication", description = "로그아웃/토큰재발급/인증 API")
 @RequiredArgsConstructor
+@RequestMapping("${api.prefix}")
 @RestController
 public class LogOutController {
 
