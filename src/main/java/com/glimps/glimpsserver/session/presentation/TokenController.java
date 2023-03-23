@@ -13,8 +13,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Authentication", description = "로그아웃/토큰재발급 API")
+@Tag(name = "Authentication", description = "로그아웃/토큰재발급/인증 API")
 @RequiredArgsConstructor
+@RequestMapping("${api.prefix}")
 @RestController
 public class TokenController {
 

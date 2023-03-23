@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glimps.glimpsserver.common.filter.CustomAccessDeniedHandler;
 import com.glimps.glimpsserver.common.filter.CustomAuthenticationEntryPoint;
 import com.glimps.glimpsserver.common.filter.JwtAuthenticationFilter;
+import com.glimps.glimpsserver.common.oauth.handler.OAuth2FailureHandler;
 import com.glimps.glimpsserver.common.oauth.handler.OAuth2SuccessHandler;
 import com.glimps.glimpsserver.common.oauth.service.CustomOAuth2UserService;
 import com.glimps.glimpsserver.session.application.AuthenticationService;
@@ -35,9 +36,14 @@ public class SecurityConfig {
 	private final AuthenticationService authenticationService;
 	private final ObjectMapper mapper;
 	private final List<AntPathRequestMatcher> matchers;
+	private final OAuth2FailureHandler oAuth2FailureHandler;
+
 
 	@Bean
+
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+		http.cors();
 
 		http.csrf()
 			.disable();
@@ -56,9 +62,11 @@ public class SecurityConfig {
 			.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN));
 
 		http.oauth2Login()
+			.failureHandler(oAuth2FailureHandler)
 			.successHandler(successHandler)
 			.userInfoEndpoint()
 			.userService(oAuth2UserService);
+
 
 		http.authorizeRequests()
 			.antMatchers(MatcherConfig.AuthURLs().toArray(new String[0])).authenticated()
