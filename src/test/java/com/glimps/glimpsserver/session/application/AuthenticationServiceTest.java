@@ -60,7 +60,7 @@ class AuthenticationServiceTest {
 
 	@Test
 	@DisplayName("신규 유저 OAuthLogin")
-	void whenNotSignedUserLogin() throws Exception {
+	void whenNotSignedUserLogin() {
 		//given
 		given(jwtUtil.createJwtDto(EMAIL, ROLE)).willReturn(JWT_DTO);
 		given(userService.getOptionalUserByEmail(EMAIL)).willReturn(Optional.empty());
@@ -80,7 +80,7 @@ class AuthenticationServiceTest {
 
 	@Test
 	@DisplayName("기존 유저 OAuthLogin")
-	void whenSignedUserLogin() throws Exception {
+	void whenSignedUserLogin() {
 		//given
 		given(jwtUtil.createJwtDto(EMAIL, ROLE)).willReturn(JWT_DTO);
 		given(userService.getOptionalUserByEmail(EMAIL)).willReturn(Optional.of(USER));

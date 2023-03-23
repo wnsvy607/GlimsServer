@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.glimps.glimpsserver.perfume.domain.Brand;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
 import com.google.common.collect.Lists;
@@ -25,7 +26,7 @@ public class ReviewResponse {
 	@Builder.Default
 	private List<String> photoUrls = Lists.newArrayList();
 	private String perfumeName;
-	private String perfumeBrand;
+	private Brand perfumeBrand;
 	private int heartCnt;
 	private double overallRatings;
 	private double longevityRatings;

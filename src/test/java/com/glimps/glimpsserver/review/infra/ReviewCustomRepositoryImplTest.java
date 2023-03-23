@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.uuid.Generators;
+import com.glimps.glimpsserver.perfume.domain.Brand;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.perfume.infra.PerfumeRepository;
 import com.glimps.glimpsserver.review.domain.Review;
@@ -33,13 +34,13 @@ class ReviewCustomRepositoryImplTest {
 	private static final String EXISTS_EMAIL = "exists@email.com";
 	private static final Long NOT_EXISTS_USER_ID = 200L;
 	private static final UUID EXISTS_REVIEW_UUID = Generators.timeBasedGenerator().generate();
-
 	private static final UUID NOT_EXISTS_REVIEW_UUID = UUID.randomUUID();
 	private static final UUID NOT_EXISTS_PERFUME_UUID = UUID.randomUUID();
+	private static final Brand TEST_BRAND = Brand.builder().brandName("chanel").build();
 	private static final Perfume EXISTS_PERFUME = Perfume.builder()
 		.uuid(Generators.timeBasedGenerator().generate())
 		.perfumeName("향수 이름")
-		.brand("향수 브랜드")
+		.brand(TEST_BRAND)
 		.build();
 
 	private static final User EXISTS_USER = User.builder()

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.glimps.glimpsserver.common.config.SecurityConfig;
-import com.glimps.glimpsserver.testconfig.WithMockCustomUser;
+import com.glimps.glimpsserver.config.WithMockCustomUser;
 
 @WebMvcTest(controllers = TestController.class,
 	excludeFilters = {
@@ -29,7 +29,7 @@ class TestControllerTest {
 
 		mockMvc.perform(get("/test")).andExpect(status().isOk())
 			.andExpect(status().isOk())
-			.andExpect(content().string(EMAIL + "has been authenticated."));
+			.andExpect(content().string(EMAIL + " has been authenticated."));
 
 	}
 

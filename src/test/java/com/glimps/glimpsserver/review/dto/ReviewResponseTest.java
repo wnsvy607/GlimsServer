@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 
 import org.junit.jupiter.api.Test;
 
+import com.glimps.glimpsserver.perfume.domain.Brand;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
@@ -11,7 +12,7 @@ import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 
 class ReviewResponseTest {
-	private static final String TEST_BRAND = "brand";
+	private static final Brand TEST_BRAND = Brand.builder().brandName("chanel").build();
 	private static final String TEST_PERFUME_NAME = "testPerfumeName";
 	private static final String TEST_NICKNAME = "testNickname";
 	private static final String TEST_EMAIL = "test@email.com";
@@ -20,7 +21,6 @@ class ReviewResponseTest {
 	private static final String TEST_PHOTO_URL1 = "testPhotoUrl1";
 	private static final String TEST_PHOTO_URL2 = "testPhotoUrl2";
 	private static final String TEST_PHOTO_URL3 = "testPhotoUrl3";
-
 
 	private static final Perfume PERFUME = Perfume.builder()
 		.id(1L)
@@ -46,7 +46,7 @@ class ReviewResponseTest {
 		.sillageRatings(4.0)
 		.perfume(PERFUME)
 		.build();
-	
+
 	private static final ReviewPhoto photo1 = ReviewPhoto.createReviewPhoto(REVIEW, TEST_PHOTO_URL1);
 	private static final ReviewPhoto photo2 = ReviewPhoto.createReviewPhoto(REVIEW, TEST_PHOTO_URL2);
 	private static final ReviewPhoto photo3 = ReviewPhoto.createReviewPhoto(REVIEW, TEST_PHOTO_URL3);
@@ -58,7 +58,7 @@ class ReviewResponseTest {
 		assertThat(REVIEW.getReviewPhotos()).isNotEmpty();
 		assertThat(REVIEW.getReviewPhotos()).hasSize(3);
 		assertThat(reviewResponse.getPhotoUrls()).hasSize(3);
-		assertThat(reviewResponse.getPhotoUrls()).contains(TEST_PHOTO_URL1,TEST_PHOTO_URL2,TEST_PHOTO_URL3);
+		assertThat(reviewResponse.getPhotoUrls()).contains(TEST_PHOTO_URL1, TEST_PHOTO_URL2, TEST_PHOTO_URL3);
 		assertThat(reviewResponse.getTitle()).isEqualTo(TEST_TITLE);
 		assertThat(reviewResponse.getBody()).isEqualTo(TEST_BODY);
 		assertThat(reviewResponse.getOverallRatings()).isEqualTo(5.0);

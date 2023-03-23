@@ -25,6 +25,7 @@ import com.fasterxml.uuid.Generators;
 import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.perfume.application.PerfumeService;
+import com.glimps.glimpsserver.perfume.domain.Brand;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewHeart;
@@ -53,12 +54,12 @@ class ReviewServiceTest {
 	private static final UUID EXISTS_REVIEW_UUID = UUID.randomUUID();
 	private static final UUID NOT_EXISTS_REVIEW_UUID = UUID.randomUUID();
 	private static final UUID NOT_EXISTS_PERFUME_UUID = UUID.randomUUID();
-
+	private static final Brand TEST_BRAND = Brand.builder().brandName("chanel").build();
 	private static final Perfume EXISTS_PERFUME = Perfume.builder()
 		.id(EXISTS_PERFUME_ID)
 		.uuid(EXISTS_PERFUME_UUID)
 		.perfumeName("향수 이름")
-		.brand("향수 브랜드")
+		.brand(TEST_BRAND)
 		.build();
 
 	private static final Review EXISTS_REVIEW = Review.builder()

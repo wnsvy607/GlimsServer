@@ -69,11 +69,11 @@ public class SecurityConfig {
 
 
 		http.authorizeRequests()
-			.antMatchers(MatcherConfig.authURLs().toArray(new String[0])).authenticated()
-			.antMatchers(HttpMethod.GET, MatcherConfig.getURLs().toArray(new String[0])).authenticated()
-			.antMatchers(HttpMethod.POST, MatcherConfig.postURLs().toArray(new String[0])).authenticated()
-			.antMatchers(HttpMethod.PATCH, MatcherConfig.patchURLs().toArray(new String[0])).authenticated()
-			.antMatchers(HttpMethod.DELETE, MatcherConfig.deleteURLs().toArray(new String[0])).authenticated()
+			.antMatchers(MatcherConfig.AuthURLs().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.GET,MatcherConfig.GetURLs().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.POST,MatcherConfig.PostURLs().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.PATCH,MatcherConfig.PatchURLs().toArray(new String[0])).authenticated()
+			.antMatchers(HttpMethod.DELETE,MatcherConfig.DeleteURLs().toArray(new String[0])).authenticated()
 			.antMatchers(MatcherConfig.getAdminURL().toArray(new String[0])).hasRole("ADMIN")
 			.anyRequest().permitAll();
 

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import com.glimps.glimpsserver.perfume.domain.Brand;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
@@ -16,7 +17,7 @@ import com.glimps.glimpsserver.user.domain.RoleType;
 import com.glimps.glimpsserver.user.domain.User;
 
 class ReviewPageResponseTest {
-	private static final String TEST_BRAND = "brand";
+	private static final Brand TEST_BRAND = Brand.builder().brandName("chanel").build();
 	private static final String TEST_PERFUME_NAME = "testPerfumeName";
 	private static final String TEST_NICKNAME = "testNickname";
 	private static final String TEST_EMAIL = "test@email.com";
