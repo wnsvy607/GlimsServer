@@ -13,7 +13,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.glimps.glimpsserver.common.config.SecurityConfig;
-import com.glimps.glimpsserver.testconfig.WithMockCustomUser;
+import com.glimps.glimpsserver.config.WithMockCustomUser;
 
 @WebMvcTest(controllers = SessionController.class,
 	excludeFilters = {
