@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.glimps.glimpsserver.perfume.domain.Brand;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,7 +73,7 @@ class ReviewControllerTest {
 	private static final Perfume EXISTS_PERFUME = Perfume.builder()
 		.uuid(Generators.timeBasedGenerator().generate())
 		.perfumeName("향수 이름")
-		.brand("향수 브랜드")
+		.brand(Brand.createBrand("브랜드 이름"))
 		.build();
 
 	private static final User EXISTS_USER = User.builder()
