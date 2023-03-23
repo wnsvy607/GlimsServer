@@ -687,7 +687,7 @@ class ReviewControllerTest {
 		class Context_when_user_exists_and_review_exists_with_valid_request {
 			@BeforeEach
 			void setUp() {
-				given(reviewService.createReview(any(), any())).willReturn(EXISTS_REVIEW);
+				given(reviewService.createReviewWithImage(any(), any())).willReturn(EXISTS_REVIEW);
 			}
 
 			@Test
@@ -761,7 +761,7 @@ class ReviewControllerTest {
 		class Context_when_user_not_exists {
 			@BeforeEach
 			void setUp() {
-				given(reviewService.createReview(any(), any())).willThrow(
+				given(reviewService.createReviewWithImage(any(), any())).willThrow(
 					new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, NOT_EXISTS_EMAIL)
 				);
 			}

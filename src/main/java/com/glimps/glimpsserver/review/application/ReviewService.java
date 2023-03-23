@@ -1,5 +1,9 @@
 package com.glimps.glimpsserver.review.application;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +27,7 @@ import com.glimps.glimpsserver.review.infra.ReviewRepository;
 import com.glimps.glimpsserver.review.vo.ReviewRatings;
 import com.glimps.glimpsserver.user.application.UserService;
 import com.glimps.glimpsserver.user.domain.User;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -46,7 +51,7 @@ public class ReviewService {
 	}
 
 	@Transactional
-	public Review createReview(ReviewCreateRequest reviewCreateRequest, String email) {
+	public Review createReviewWithImage(ReviewCreateRequest reviewCreateRequest, String email, MultipartFile file) {
 		User user = userService.getUserByEmail(email);
 		UUID perfumeUuid = reviewCreateRequest.getPerfumeUuid();
 		Perfume perfume = perfumeService.getPerfumeById(perfumeUuid);
@@ -55,7 +60,7 @@ public class ReviewService {
 
 		perfumeService.updateRatings(perfume, reviewCreateRequest);
 		reviewPhotoService.createReviewPhotos(review,
-			reviewCreateRequest.getPhotoUrls());
+			reviewCreateRequest.getPhotoUrls(), file);
 
 		return reviewRepository.save(review);
 	}
