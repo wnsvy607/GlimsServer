@@ -63,10 +63,10 @@ public class SecurityConfig {
 
 		http.oauth2Login()
 			.failureHandler(oAuth2FailureHandler)
-
 			.successHandler(successHandler)
 			.userInfoEndpoint()
 			.userService(oAuth2UserService);
+
 
 		http.authorizeRequests()
 			.antMatchers(MatcherConfig.authURLs().toArray(new String[0])).authenticated()
