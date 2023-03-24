@@ -42,6 +42,7 @@ import com.glimps.glimpsserver.common.config.SecurityConfig;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.config.WithMockCustomUser;
+import com.glimps.glimpsserver.perfume.domain.Brand;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.application.ReviewService;
 import com.glimps.glimpsserver.review.domain.Review;
@@ -72,7 +73,7 @@ class ReviewControllerTest {
 	private static final Perfume EXISTS_PERFUME = Perfume.builder()
 		.uuid(Generators.timeBasedGenerator().generate())
 		.perfumeName("향수 이름")
-		.brand("향수 브랜드")
+		.brand(Brand.builder().brandName("향수 브랜드").build())
 		.build();
 
 	private static final User EXISTS_USER = User.builder()
