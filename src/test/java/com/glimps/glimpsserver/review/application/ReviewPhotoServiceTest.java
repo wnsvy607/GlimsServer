@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
-import com.glimps.glimpsserver.review.infra.ReviewCustomRepository;
 import com.glimps.glimpsserver.review.infra.ReviewPhotoRepository;
 
 @SpringBootTest
