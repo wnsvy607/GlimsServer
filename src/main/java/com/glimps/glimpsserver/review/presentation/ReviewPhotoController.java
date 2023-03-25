@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@RequestMapping("/${api.v1}/reviews/photos")
+@RequestMapping("/${api.prefix}/reviews/photos")
 public class ReviewPhotoController {
 	private final ReviewService reviewService;
 	private final ReviewPhotoService reviewPhotoService;
