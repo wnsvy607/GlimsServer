@@ -1,6 +1,5 @@
 package com.glimps.glimpsserver.review.dto;
 
-import java.util.List;
 import java.util.UUID;
 
 import javax.validation.constraints.Max;
@@ -10,20 +9,20 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-import com.google.common.collect.Lists;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @ApiModel("리뷰 생성 요청")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
+@Setter
 public class ReviewCreateRequest{
 	@ApiModelProperty(value = "리뷰 제목 (15자 이하)", required = true, example = "이 향수 좋아요")
 	@NotEmpty
@@ -56,9 +55,4 @@ public class ReviewCreateRequest{
 	@ApiModelProperty(value = "향수 UUID", required = true, example = "5")
 	@NotNull
 	private UUID perfumeUuid;
-
-	@ApiModelProperty(value = "향수 사진 URL 리스트", example = "[\"https://www.google.com\", \"https://www.naver.com\"]")
-	@Builder.Default
-	@NotNull
-	private List<String> photoUrls = Lists.newArrayList();
 }
