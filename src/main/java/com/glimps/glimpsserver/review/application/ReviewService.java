@@ -54,8 +54,6 @@ public class ReviewService {
 		Review review = Review.createReview(reviewCreateRequest, user, perfume);
 
 		perfumeService.updateRatings(perfume, reviewCreateRequest);
-		reviewPhotoService.createReviewPhotos(review,
-			reviewCreateRequest.getPhotoUrls());
 
 		return reviewRepository.save(review);
 	}

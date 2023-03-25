@@ -2,6 +2,8 @@ package com.glimps.glimpsserver.common.presentation;
 
 import static org.springframework.http.HttpStatus.*;
 
+import java.io.IOException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.glimps.glimpsserver.common.dto.ErrorResponse;
 import com.glimps.glimpsserver.common.error.CustomException;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
@@ -96,6 +99,20 @@ public class ControllerErrorAdvice {
 		log.error("Exception occurs: {}", e.getMessage());
 		ErrorResponse errorResponse = ErrorResponse.of(NOT_FOUND.toString(), e.getMessage());
 		return ResponseEntity.status(NOT_FOUND).body(errorResponse);
+	}
+
+	@ExceptionHandler(IOException.class)
+	public ResponseEntity<ErrorResponse> handleIOException(IOException e) {
+		log.error("Exception occurs: {}", e.getMessage());
+		ErrorResponse errorResponse = ErrorResponse.of("[ERROR] S3가 응답하지 않습니다.", e.getMessage());
+		return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(errorResponse);
+	}
+
+	@ExceptionHandler(AmazonS3Exception.class)
+	public ResponseEntity<ErrorResponse> handleAmazonS3Exception(AmazonS3Exception e) {
+		log.error("Exception occurs: {}", e.getMessage());
+		ErrorResponse errorResponse = ErrorResponse.of("[ERROR] S3가 응답하지 않습니다.", e.getMessage());
+		return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(errorResponse);
 	}
 
 }

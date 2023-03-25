@@ -28,4 +28,9 @@ public class Brand {
 	@Column(name = "brand_name")
 	private String brandName;
 
+	public static Brand createBrand(String brandName) {
+		return Brand.builder()
+			.brandName(brandName)
+			.build();
+	}
 }

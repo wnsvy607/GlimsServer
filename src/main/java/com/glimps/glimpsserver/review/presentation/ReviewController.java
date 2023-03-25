@@ -35,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reviews")
+@RequestMapping("${api.prefix}/reviews")
 public class ReviewController {
 	private final ReviewService reviewService;
 
