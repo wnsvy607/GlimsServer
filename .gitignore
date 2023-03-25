@@ -39,3 +39,4 @@ out/
 ### OAuth ###
 application-oauth.yml
 application-local.yml
+application-s3.yml

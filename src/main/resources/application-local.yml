@@ -2,7 +2,9 @@ spring:
   config:
     use-legacy-processing: true
   profiles:
-    include: oauth
+    include:
+    - oauth
+    - s3
 
   mvc:
     path match:
