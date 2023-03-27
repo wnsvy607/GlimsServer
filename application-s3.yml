@@ -1,0 +1,6 @@
+cloud:
+  aws:
+    s3:
+      bucket: glimsbucket
+      accessKey: AKIAZPHNKSRWIQ4ENGNU
+      secretKey: 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
