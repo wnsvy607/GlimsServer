@@ -32,10 +32,12 @@ public class DevelopmentEnvMaker {
 	private final BrandRepository brandRepository;
 	private final ReviewRepository reviewRepository;
 
+
 	@PostConstruct
 	private void initDB() {
 		User user1 = getUser("이준표", "wnsvy607@naver.com", RoleType.USER);
 		User user2 = getUser("강시후", "gyeong0308@gmail.com", RoleType.USER);
+
 		userRepository.saveAll(List.of(user1, user2));
 
 		Brand brand = Brand.createBrand("Channel");
@@ -43,6 +45,7 @@ public class DevelopmentEnvMaker {
 		brandRepository.saveAll(List.of(brand, ck));
 
 		Perfume perfume1 = Perfume.createPerfume(brand, "NO.5");
+
 		perfumeRepository.save(perfume1);
 
 		Perfume perfume2 = Perfume.createPerfume(ck, "One");
