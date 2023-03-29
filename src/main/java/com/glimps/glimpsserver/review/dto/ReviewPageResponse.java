@@ -25,7 +25,7 @@ public class ReviewPageResponse {
 	private String nickname;
 	private List<String> photoUrl;
 	private String perfumeName;
-	private Brand perfumeBrand;
+	private String perfumeBrand;
 	private double overallRating;
 	private double longevityRating;
 	private double sillageRating;
@@ -54,7 +54,7 @@ public class ReviewPageResponse {
 				.collect(Collectors.toList()))
 			.perfumeName(review.getPerfume().getPerfumeName())
 			// TODO N+1 문제 발생 가능, FETCH JOIN 필요
-			.perfumeBrand(review.getPerfume().getBrand())
+			.perfumeBrand(review.getPerfume().getBrand().getBrandName())
 			.overallRating(review.getOverallRatings())
 			.longevityRating(review.getLongevityRatings())
 			.sillageRating(review.getSillageRatings())

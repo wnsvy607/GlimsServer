@@ -1,28 +1,26 @@
 package com.glimps.glimpsserver.review.infra;
 
-import static com.glimps.glimpsserver.perfume.domain.QPerfume.*;
-import static com.glimps.glimpsserver.review.domain.QReview.*;
-import static com.glimps.glimpsserver.review.domain.QReviewPhoto.*;
-import static com.glimps.glimpsserver.user.domain.QUser.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Repository;
+import static com.glimps.glimpsserver.perfume.domain.QBrand.brand;
+import static com.glimps.glimpsserver.perfume.domain.QPerfume.perfume;
+import static com.glimps.glimpsserver.review.domain.QReview.review;
+import static com.glimps.glimpsserver.review.domain.QReviewPhoto.reviewPhoto;
+import static com.glimps.glimpsserver.user.domain.QUser.user;
 
 import com.glimps.glimpsserver.review.domain.Review;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
