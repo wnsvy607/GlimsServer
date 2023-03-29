@@ -17,8 +17,10 @@ import com.glimps.glimpsserver.session.dto.OAuthStateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 @Tag(name = "Authentication", description = "로그아웃/토큰재발급/인증 API")
+@Slf4j
 @RequestMapping("${api.prefix}")
 @RestController
 public class SessionController {
@@ -47,6 +49,16 @@ public class SessionController {
 		// 요청을 임시 Session에 저장
 		oauth2Repository.saveAuthorizationRequest(oAuth2AuthorizationRequest, request,
 			response);
+
+		String id = request.getSession().getId();
+		String cookies = response.getHeader("Set-Cookie");
+		if(cookies != null && cookies.contains("JSESSIONID"))
+			response.setHeader("Set-Cookie", "JSESSIONID="+ id + "; Path=/; SameSite=None; Secure; HttpOnly");
+		else if(cookies != null) {
+			response.setHeader("Set-Cookie",  cookies+ "; SameSite=None; Secure");
+		}
+		log.info("id = {}", id);
+		log.info("Set-Cookie = {}", response.getHeader("Set-Cookie"));
 
 		// 반환된 state 값으로 클라이언트를 확인
 		return new OAuthStateResponse(oAuth2AuthorizationRequest.getState());
