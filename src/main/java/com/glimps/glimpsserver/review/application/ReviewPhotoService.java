@@ -39,7 +39,7 @@ public class ReviewPhotoService {
 		this.secretKey = secretKey;
 	}
 
-	private List<ReviewPhoto> createReviewPhotos(Review review, List<String> photoUrls) {
+	public List<ReviewPhoto> createReviewPhotos(Review review, List<String> photoUrls) {
 		List<ReviewPhoto> photos = new LinkedList<>();
 		for (String url : photoUrls) {
 			photos.add(ReviewPhoto.createReviewPhoto(review, url));
@@ -58,7 +58,7 @@ public class ReviewPhotoService {
 
 	public List<ReviewPhoto> addPhoto(final Review review, List<MultipartFile> files) throws IOException {
 		List<String> photoUrls = uploadFilesToS3(files);
-		
+
 		return createReviewPhotos(review, photoUrls);
 	}
 
@@ -70,7 +70,7 @@ public class ReviewPhotoService {
 			.withRegion(Regions.AP_NORTHEAST_2)
 			.withCredentials(new AWSStaticCredentialsProvider(credentials))
 			.build();
-		
+
 		for (MultipartFile file : files) {
 			String fileName = file.getOriginalFilename();
 			String key = UUID.randomUUID() + "/" + fileName;
