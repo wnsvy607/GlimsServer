@@ -40,7 +40,7 @@ public class DevelopmentEnvMaker {
 
 		Brand brand = Brand.createBrand("Channel");
 		Brand ck = Brand.createBrand("CK");
-		brandRepository.save(brand);
+		brandRepository.saveAll(List.of(brand, ck));
 
 		Perfume perfume1 = Perfume.createPerfume(brand, "NO.5");
 		perfumeRepository.save(perfume1);
