@@ -66,7 +66,7 @@ class UserControllerTest {
 		given(userInfoService.getUserInfo(EMAIL)).willReturn(USER_INFO_DTO);
 
 		//when
-		mockMvc.perform(get("/api/v1/users"))
+		mockMvc.perform(get("/users"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.email").value(EMAIL))
 			.andExpect(jsonPath("$.nickname").value(NICKNAME))
@@ -89,7 +89,7 @@ class UserControllerTest {
 		given(userInfoService.getUserInfo(EMAIL)).willReturn(USER_INFO_DTO);
 
 		//when
-		mockMvc.perform(get("/api/v1/users/" + EMAIL))
+		mockMvc.perform(get("/users/" + EMAIL))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.email").value(EMAIL))
 			.andExpect(jsonPath("$.nickname").value(NICKNAME))
@@ -113,7 +113,7 @@ class UserControllerTest {
 		String body = mapper.writeValueAsString(new UserPatchRequest(invalidNickname));
 
 		//when
-		mockMvc.perform(patch("/api/v1/users")
+		mockMvc.perform(patch("/users")
 				.with(SecurityMockMvcRequestPostProcessors.csrf())
 				.content(body)
 				.contentType(MediaType.APPLICATION_JSON))

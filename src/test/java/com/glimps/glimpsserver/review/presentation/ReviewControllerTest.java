@@ -4,11 +4,11 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.glimps.glimpsserver.perfume.domain.Brand;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +30,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -43,6 +42,7 @@ import com.glimps.glimpsserver.common.config.SecurityConfig;
 import com.glimps.glimpsserver.common.error.EntityNotFoundException;
 import com.glimps.glimpsserver.common.error.ErrorCode;
 import com.glimps.glimpsserver.config.WithMockCustomUser;
+import com.glimps.glimpsserver.perfume.domain.Brand;
 import com.glimps.glimpsserver.perfume.domain.Perfume;
 import com.glimps.glimpsserver.review.application.ReviewService;
 import com.glimps.glimpsserver.review.domain.Review;
@@ -73,7 +73,7 @@ class ReviewControllerTest {
 	private static final Perfume EXISTS_PERFUME = Perfume.builder()
 		.uuid(Generators.timeBasedGenerator().generate())
 		.perfumeName("향수 이름")
-		.brand(Brand.createBrand("브랜드 이름"))
+		.brand(Brand.builder().brandName("향수 브랜드").build())
 		.build();
 
 	private static final User EXISTS_USER = User.builder()
@@ -557,7 +557,7 @@ class ReviewControllerTest {
 			@DisplayName("좋아요를 생성하고 상태코드 201과 리뷰를 응답한다.")
 			void It_responds_201_and_review() throws Exception {
 				mvc.perform(createPostRequest("/reviews/" + EXISTS_REVIEW_UUID + "/heart")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 					)
 					.andExpect(status().isCreated())
 					.andDo(print());
@@ -578,7 +578,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
 				mvc.perform(createPostRequest("/reviews/" + NOT_EXISTS_REVIEW_UUID + "/heart")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 					)
 					.andExpect(status().isNotFound());
 			}
@@ -598,7 +598,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
 				mvc.perform(createPostRequest("/reviews/" + EXISTS_REVIEW_UUID + "/heart")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 					)
 					.andExpect(status().isNotFound());
 			}
@@ -621,7 +621,7 @@ class ReviewControllerTest {
 			@DisplayName("좋아요를 취소하고 상태코드 204를 응답한다.")
 			void It_responds_204() throws Exception {
 				mvc.perform(createDeleteRequest("/reviews/" + EXISTS_REVIEW_UUID + "/heart")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 					)
 					.andExpect(status().isNoContent())
 					.andDo(print());
@@ -642,7 +642,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
 				mvc.perform(createDeleteRequest("/reviews/" + NOT_EXISTS_REVIEW_UUID + "/heart")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 					)
 					.andExpect(status().isNotFound());
 			}
@@ -662,7 +662,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
 				mvc.perform(createDeleteRequest("/reviews/" + EXISTS_REVIEW_UUID + "/heart")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 					)
 					.andExpect(status().isNotFound());
 			}
@@ -687,14 +687,14 @@ class ReviewControllerTest {
 		class Context_when_user_exists_and_review_exists_with_valid_request {
 			@BeforeEach
 			void setUp() {
-				given(reviewService.createReviewWithImage(any(), any())).willReturn(EXISTS_REVIEW);
+				given(reviewService.createReview(any(), any())).willReturn(EXISTS_REVIEW);
 			}
 
 			@Test
 			@DisplayName("리뷰를 생성하고 상태코드 201과 리뷰를 응답한다.")
 			void It_responds_201_and_review() throws Exception {
 				mvc.perform(createPostRequest("/reviews")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.content(objectMapper.writeValueAsString(validCreateRequest))
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -720,7 +720,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 400을 응답한다.")
 			void It_responds_400() throws Exception {
 				mvc.perform(createPostRequest("/reviews")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.content(objectMapper.writeValueAsString(invalidCreateRequest))
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -746,7 +746,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 400을 응답한다.")
 			void It_responds_400() throws Exception {
 				mvc.perform(createPostRequest("/reviews")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.content(objectMapper.writeValueAsString(invalidCreateRequest))
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -761,7 +761,7 @@ class ReviewControllerTest {
 		class Context_when_user_not_exists {
 			@BeforeEach
 			void setUp() {
-				given(reviewService.createReviewWithImage(any(), any())).willThrow(
+				given(reviewService.createReview(any(), any())).willThrow(
 					new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, NOT_EXISTS_EMAIL)
 				);
 			}
@@ -770,7 +770,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
 				mvc.perform(createPostRequest("/reviews")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.content(objectMapper.writeValueAsString(validCreateRequest))
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -798,14 +798,15 @@ class ReviewControllerTest {
 
 			@BeforeEach
 			void setUp() {
-				given(reviewService.updateReview(any(), any(ReviewUpdateRequest.class), any())).willReturn(EXISTS_REVIEW);
+				given(reviewService.updateReview(any(), any(ReviewUpdateRequest.class), any())).willReturn(
+					EXISTS_REVIEW);
 			}
 
 			@Test
 			@DisplayName("리뷰를 수정하고 상태코드 200과 리뷰를 응답한다.")
 			void It_responds_200_and_review() throws Exception {
 				mvc.perform(createPatchRequest("/reviews/" + EXISTS_REVIEW_UUID)
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.content(objectMapper.writeValueAsString(validUpdateRequest))
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -830,7 +831,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 400을 응답한다.")
 			void It_responds_400() throws Exception {
 				mvc.perform(createPatchRequest("/reviews/" + EXISTS_REVIEW_UUID)
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.content(objectMapper.writeValueAsString(invalidUpdateRequest))
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -862,7 +863,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
 				mvc.perform(createPatchRequest("/reviews/" + NOT_EXISTS_REVIEW_UUID)
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.content(objectMapper.writeValueAsString(validUpdateRequest))
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -886,7 +887,8 @@ class ReviewControllerTest {
 
 			@BeforeEach
 			void setUp() {
-				given(reviewService.updateReview(any(), any(ReviewUpdateRequest.class), eq(NOT_EXISTS_EMAIL))).willThrow(
+				given(
+					reviewService.updateReview(any(), any(ReviewUpdateRequest.class), eq(NOT_EXISTS_EMAIL))).willThrow(
 					new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, NOT_EXISTS_EMAIL)
 				);
 			}
@@ -895,7 +897,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
 				mvc.perform(createPatchRequest("/reviews/" + EXISTS_REVIEW_UUID)
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.content(objectMapper.writeValueAsString(validUpdateRequest))
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -922,7 +924,7 @@ class ReviewControllerTest {
 			@DisplayName("리뷰를 삭제하고 상태코드 204를 응답한다.")
 			void It_responds_204() throws Exception {
 				mvc.perform(createDeleteRequest("/reviews/" + EXISTS_REVIEW_UUID)
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
 					)
@@ -945,7 +947,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
 				mvc.perform(createDeleteRequest("/reviews/" + NOT_EXISTS_REVIEW_UUID)
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
 					)
@@ -969,7 +971,7 @@ class ReviewControllerTest {
 			@DisplayName("상태코드 404를 응답한다.")
 			void It_responds_404() throws Exception {
 				mvc.perform(createDeleteRequest("/reviews/" + EXISTS_REVIEW_UUID)
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.with(csrf())
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
 					)

@@ -37,7 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reviews")
+@RequestMapping("${api.prefix}/reviews")
 public class ReviewController {
 	private final ReviewService reviewService;
 

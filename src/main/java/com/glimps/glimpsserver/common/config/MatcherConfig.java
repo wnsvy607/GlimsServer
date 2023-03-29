@@ -12,10 +12,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class MatcherConfig {
 
 	private static final List<String> ALL_URL = List.of("/test");
-	private static final List<String> GET_URL = List.of("/api/v1/get", "/api/v1/logout");
-	private static final List<String> POST_URL = List.of("/api/v1/post", "/api/v1/logout");
-	private static final List<String> PATCH_URL = List.of("/api/v1/patch", "/api/v1/logout");
-	private static final List<String> DELETE_URL = List.of("/api/v1/delete", "/api/v1/logout");
+	private static final List<String> GET_URL = List.of("${api.prefix}/users");
+	private static final List<String> POST_URL = List.of("${api.prefix}/logout");
+	private static final List<String> PATCH_URL = List.of("${api.prefix}/users");
+	private static final List<String> DELETE_URL = List.of("${api.prefix}/mock");
 	private static final List<String> ADMIN_URL = List.of("/admin/**");
 
 	@Bean
@@ -47,6 +47,7 @@ public class MatcherConfig {
 
 		return result;
 	}
+
 
 	public static List<String> AuthURLs() {
 		return ALL_URL;

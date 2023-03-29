@@ -32,7 +32,10 @@ public enum ErrorCode {
 	REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R-001", "[ERROR] 리뷰를 찾을 수 없습니다."),
 
 	// H-XXX - Error about Review Heart
-	REVIEW_HEART_NOT_FOUND(HttpStatus.NOT_FOUND, "H-002", "[ERROR] 리뷰 하트를 찾을 수 없습니다.");
+	REVIEW_HEART_NOT_FOUND(HttpStatus.NOT_FOUND, "H-002", "[ERROR] 리뷰 하트를 찾을 수 없습니다."),
+
+	// O-XXX - OAuth Login Fail
+	OAUTH_LOGIN_FAIL(HttpStatus.NOT_FOUND, "O-001", "소셜 로그인에 실패했습니다.");
 
 
 	private final HttpStatus status;
