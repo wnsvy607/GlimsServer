@@ -22,4 +22,6 @@ public class HealthCheckResponse {
 	@Schema(description = "현재 요청 서버 시간", example = "2023-01-23 16:31:04", required = true)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
 	private LocalDateTime currentTimeStamp;
+
+	private String redirectUri;
 }
