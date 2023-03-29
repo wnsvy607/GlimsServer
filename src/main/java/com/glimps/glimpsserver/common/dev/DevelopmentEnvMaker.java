@@ -40,11 +40,12 @@ public class DevelopmentEnvMaker {
 
 		userRepository.saveAll(List.of(user1, user2));
 
-		Brand Channel = Brand.createBrand("Channel");
+		Brand brand = Brand.createBrand("Channel");
 		Brand ck = Brand.createBrand("CK");
-		brandRepository.saveAll(List.of(Channel, ck));
+		brandRepository.saveAll(List.of(brand, ck));
 
-		Perfume perfume1 = Perfume.createPerfume(Channel, "NO.5");
+		Perfume perfume1 = Perfume.createPerfume(brand, "NO.5");
+
 		perfumeRepository.save(perfume1);
 
 		Perfume perfume2 = Perfume.createPerfume(ck, "One");
