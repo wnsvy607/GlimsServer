@@ -1,14 +1,11 @@
 package com.glimps.glimpsserver.review.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.glimps.glimpsserver.perfume.domain.Brand;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
 import com.google.common.collect.Lists;
-
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +23,7 @@ public class ReviewResponse {
 	@Builder.Default
 	private List<String> photoUrls = Lists.newArrayList();
 	private String perfumeName;
-	private Brand perfumeBrand;
+	private String perfumeBrand;
 	private int heartCnt;
 	private double overallRatings;
 	private double longevityRatings;
@@ -44,7 +41,7 @@ public class ReviewResponse {
 				.collect(Collectors.toList()))
 			.perfumeName(review.getPerfume().getPerfumeName())
 			.heartCnt(review.getHeartsCnt())
-			.perfumeBrand(review.getPerfume().getBrand())
+			.perfumeBrand(review.getPerfume().getBrand().getBrandName())
 			.overallRatings(review.getOverallRatings())
 			.longevityRatings(review.getLongevityRatings())
 			.sillageRatings(review.getSillageRatings())

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +32,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,11 +43,10 @@ public class ReviewController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
-	public ReviewResponse create(@RequestPart @Valid ReviewCreateRequest reviewCreateRequest,
-		@RequestPart MultipartFile file,
-		UserAuthentication userAuthentication) {
+	public ReviewResponse create(@RequestBody @Valid ReviewCreateRequest reviewCreateRequest,
+			UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
-		Review review = reviewService.createReviewWithImage(reviewCreateRequest, email, file);
+		Review review = reviewService.createReview(reviewCreateRequest, email);
 		return ReviewResponse.of(review);
 	}
 
@@ -63,10 +60,10 @@ public class ReviewController {
 
 	@ApiOperation(value = "마이 리뷰 조회", notes = "내가 작성한 리뷰를 조회합니다. (권한: ROLE_USER)")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "limit", value = "조회할 개수", readOnly = true, dataType = "int", paramType = "query"),
-		@ApiImplicitParam(name = "offset", value = "조회할 시작 위치", readOnly = true, dataType = "int", paramType = "query"),
-		@ApiImplicitParam(name = "sortType", value = "정렬 기준(ASC or DESC)", readOnly = true, dataType = "string", paramType = "query"),
-		@ApiImplicitParam(name = "orderStandard", value = "정렬 기준(DATE or HEARTS_COUNT)", readOnly = true, dataType = "string", paramType = "query")
+			@ApiImplicitParam(name = "limit", value = "조회할 개수", readOnly = true, dataType = "int", paramType = "query"),
+			@ApiImplicitParam(name = "offset", value = "조회할 시작 위치", readOnly = true, dataType = "int", paramType = "query"),
+			@ApiImplicitParam(name = "sortType", value = "정렬 기준(ASC or DESC)", readOnly = true, dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "orderStandard", value = "정렬 기준(DATE or HEARTS_COUNT)", readOnly = true, dataType = "string", paramType = "query")
 	})
 	@GetMapping("/myReviews")
 	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
@@ -85,10 +82,10 @@ public class ReviewController {
 
 	@ApiOperation(value = "모든 리뷰 조회", notes = "모든 리뷰를 조회합니다.")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "limit", value = "조회할 개수", readOnly = true, dataType = "int", paramType = "query"),
-		@ApiImplicitParam(name = "offset", value = "조회할 시작 위치", readOnly = true, dataType = "int", paramType = "query"),
-		@ApiImplicitParam(name = "sortType", value = "정렬 기준(ASC or DESC)", readOnly = true, dataType = "string", paramType = "query"),
-		@ApiImplicitParam(name = "orderStandard", value = "정렬 기준(DATE or HEARTS_COUNT)", readOnly = true, dataType = "string", paramType = "query")
+			@ApiImplicitParam(name = "limit", value = "조회할 개수", readOnly = true, dataType = "int", paramType = "query"),
+			@ApiImplicitParam(name = "offset", value = "조회할 시작 위치", readOnly = true, dataType = "int", paramType = "query"),
+			@ApiImplicitParam(name = "sortType", value = "정렬 기준(ASC or DESC)", readOnly = true, dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "orderStandard", value = "정렬 기준(DATE or HEARTS_COUNT)", readOnly = true, dataType = "string", paramType = "query")
 	})
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
@@ -140,7 +137,7 @@ public class ReviewController {
 	@PatchMapping("/{uuid}")
 	@PreAuthorize("isAuthenticated() and hasAuthority('ROLE_USER')")
 	public ReviewResponse update(@PathVariable UUID uuid, @RequestBody @Valid ReviewUpdateRequest reviewUpdateRequest,
-		UserAuthentication userAuthentication) {
+			UserAuthentication userAuthentication) {
 		String email = userAuthentication.getEmail();
 		Review review = reviewService.updateReview(uuid, reviewUpdateRequest, email);
 		return ReviewResponse.of(review);
