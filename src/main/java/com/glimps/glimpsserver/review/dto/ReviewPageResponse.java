@@ -1,19 +1,17 @@
 package com.glimps.glimpsserver.review.dto;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import com.glimps.glimpsserver.perfume.domain.Brand;
-import org.springframework.data.domain.Page;
 import com.glimps.glimpsserver.review.domain.Review;
 import com.glimps.glimpsserver.review.domain.ReviewPhoto;
-
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,6 +20,7 @@ import lombok.NoArgsConstructor;
 public class ReviewPageResponse {
 	private String title;
 	private String body;
+	private UUID uuid;
 	private String nickname;
 	private List<String> photoUrl;
 	private String perfumeName;
@@ -48,6 +47,7 @@ public class ReviewPageResponse {
 		return review -> ReviewPageResponse.builder()
 			.title(review.getTitle())
 			.body(review.getBody())
+			.uuid(review.getUuid())
 			.nickname(review.getUser().getNickname())
 			.photoUrl(review.getReviewPhotos().stream()
 				.map(ReviewPhoto::getUrl)
