@@ -5,6 +5,7 @@ import com.glimps.glimpsserver.review.domain.ReviewPhoto;
 import com.google.common.collect.Lists;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class ReviewResponse {
 	private String title;
 	private String body;
 	private String nickname;
+	private UUID uuid;
 	@Builder.Default
 	private List<String> photoUrls = Lists.newArrayList();
 	private String perfumeName;
@@ -35,6 +37,7 @@ public class ReviewResponse {
 		return ReviewResponse.builder()
 			.title(review.getTitle())
 			.body(review.getBody())
+			.uuid(review.getUuid())
 			.nickname(review.getUser().getNickname())
 			.photoUrls(review.getReviewPhotos().stream()
 				.map(ReviewPhoto::getUrl)
