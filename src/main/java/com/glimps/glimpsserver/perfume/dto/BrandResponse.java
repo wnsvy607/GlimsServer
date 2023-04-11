@@ -7,5 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class BrandResponse {
 	private Long brandId;
-	private String brandName;
+	private String brandNameKor;
+	private String brandNameEng;
 }

@@ -54,7 +54,10 @@ class ReviewServiceTest {
 	private static final UUID EXISTS_REVIEW_UUID = UUID.randomUUID();
 	private static final UUID NOT_EXISTS_REVIEW_UUID = UUID.randomUUID();
 	private static final UUID NOT_EXISTS_PERFUME_UUID = UUID.randomUUID();
-	private static final Brand TEST_BRAND = Brand.builder().brandName("chanel").build();
+	private static final Brand TEST_BRAND = Brand.builder()
+			.brandNameEng("chanel")
+			.brandNameKor("샤넬")
+			.build();
 	private static final Perfume EXISTS_PERFUME = Perfume.builder()
 		.id(EXISTS_PERFUME_ID)
 		.uuid(EXISTS_PERFUME_UUID)
